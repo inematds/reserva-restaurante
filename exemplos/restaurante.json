@@ -1,0 +1,43 @@
+{
+  "nome": "Cantina Teste",
+  "token": "TROQUE-ESTE-TOKEN",
+  "passo_min": 30,
+  "antecedencia_min_horas": 1,
+  "janela_dias": 30,
+  "confirmacao_horas": 24,
+  "grupo_grande_a_partir": 8,
+  "limite_pessoas_por_horario": 20,
+  "reativacao_dias": 60,
+  "feriados": ["2026-10-15"],
+  "duracao": [
+    {"ate": 2, "min": 90},
+    {"ate": 6, "min": 120},
+    {"ate": null, "min": 180}
+  ],
+  "saloes": [
+    {"id": "interno", "nome": "Salão interno"},
+    {"id": "varanda", "nome": "Varanda"}
+  ],
+  "combinacoes": [
+    {"id": "m3m4", "mesas": ["m3", "m4"], "min": 7, "max": 8}
+  ],
+  "turnos": [
+    {"id": "almoco", "nome": "Almoço", "dias": ["ter", "qua", "qui", "sex", "sab", "dom"], "inicio": "11:30", "fim": "15:00"},
+    {"id": "jantar", "nome": "Jantar", "dias": ["ter", "qua", "qui", "sex", "sab"], "inicio": "19:00", "fim": "23:00"}
+  ],
+  "mesas": [
+    {"id": "m1", "salao": "interno", "min": 1, "max": 2},
+    {"id": "m2", "salao": "interno", "min": 1, "max": 2},
+    {"id": "m3", "salao": "interno", "min": 3, "max": 4},
+    {"id": "m4", "salao": "interno", "min": 3, "max": 4},
+    {"id": "m5", "salao": "interno", "min": 5, "max": 6},
+    {"id": "v1", "salao": "varanda", "min": 1, "max": 4},
+    {"id": "v2", "salao": "varanda", "min": 1, "max": 4}
+  ],
+  "faq": [
+    {"id": "estacionamento", "perguntas": ["tem estacionamento"], "resposta": "Temos estacionamento próprio na lateral, grátis para clientes."},
+    {"id": "pet", "perguntas": ["aceitam pet", "posso levar cachorro"], "resposta": "Sim, pets são bem-vindos na varanda."},
+    {"id": "cardapio", "perguntas": ["qual o cardápio", "tem opção vegetariana"], "resposta": "O cardápio completo está no balcão e no nosso perfil; temos opções vegetarianas e sem glúten."},
+    {"id": "acessibilidade", "perguntas": ["tem acessibilidade", "acesso para cadeirante"], "resposta": "Entrada com rampa e banheiro acessível no salão interno."}
+  ]
+}
