@@ -1,5 +1,13 @@
 # reserva-restaurante
 
+**🇧🇷 [Português](README.md) · 🇺🇸 [English](README.en.md) · 🇪🇸 [Español](README.es.md)**
+
+[![Reserva Restaurante](guia/assets/banner.jpg)](https://inematds.github.io/reserva-restaurante/guia/)
+
+## 📖 Guia de uso
+
+Guia completo (landing + passo a passo): **https://inematds.github.io/reserva-restaurante/guia/**
+
 Reserva de mesa para **um restaurante**, com Python 3 e biblioteca padrão (planejado): salões e mesas com capacidade, turnos por dia da semana, alocação automática da menor mesa que serve, confirmação automática ("1 confirma / 2 cancela"), no-show, lista de espera, grupo grande com aprovação da equipe, FAQ, passagem para humano, base própria de clientes com consentimento (aniversário, convite de retorno, campanhas), chat web + WhatsApp pela Evolution API, equipe pelo Telegram e pela página `/equipe`, backup/restauração, Docker e exportação mensal para o Painel de Recuperação do Raio-X de Margem (pacote `restaurante`).
 
 **Estado (05/10/2026): só o plano.** Este repo tem o contrato (`docs/ESPECIFICACAO.md`), 93 testes de aceitação caixa-preta (`tests/`), as decisões (`docs/DECISOES-ABERTAS.md`), o mapa para o Raio-X (`docs/MAPA-RAIO-X.md`) e a pasta de execução longa (`longrun/2026-10-05-reservas-v1/`). **Não há implementação** (`./reserva`, `src/`, `web/`, `Dockerfile`): ela é produzida por um agente rodando contra os testes, no seu ambiente, como descrito abaixo. O README da implementação (execução local, deploy, webhooks, backup) é parte do que o agente entrega (seção 19 da spec).
