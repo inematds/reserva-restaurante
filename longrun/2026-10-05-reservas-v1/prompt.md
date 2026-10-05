@@ -17,4 +17,6 @@ SE UM TESTE CONTRADIZ A ESPECIFICAÇÃO: não altere o teste nem a spec. Registr
 
 INTEGRAÇÕES: Evolution e Telegram só pelas variáveis de ambiente da spec; teste só contra o servidor falso dos testes. Nunca chame api.telegram.org nem uma Evolution real, nunca escreva URL externa no código. `.env.exemplo` com valores vazios.
 
+README: acrescente ao `README.md` existente as seções da implementação (executar localmente e `Deploy na VPS`, seção 19 da spec) e atualize a linha de "Estado"; NÃO apague a seção "Como rodar no seu ambiente" nem a estrutura — o README é também o manual deste longrun.
+
 RESTRIÇÕES: não altere tests/, pytest.ini, docs/, goal.md, hash-congelado.txt, congelar.sh, verificar-*, loop.env, prompt.md. Só biblioteca padrão do Python 3 (`python3`, não `python`). Nenhuma API, nenhuma rede externa, nenhuma chave. Servidor só em 127.0.0.1 (o `0.0.0.0` existe só no CMD do Dockerfile). Não use `pkill -f`; mate só o PID que você subiu. Não copie valores da fixture (nomes, telefones, datas, ids de mesa) para o código: a lógica tem que valer para qualquer restaurante.json. Não faça commit (o loop externo faz).

@@ -49,7 +49,7 @@ Canais: **chat web**, **WhatsApp pela Evolution API** (seção 17) e caixa de sa
 }
 ```
 
-Dias da semana: `seg ter qua qui sex sab dom`. `duracao` é avaliada na ordem escrita; a lista termina obrigatoriamente com `ate: null`. A fixture dos testes está em `tests/fixtures/restaurante.json`; o exemplo em `exemplos/restaurante.json` é igual, com token `TROQUE-ESTE-TOKEN`.
+Dias da semana: `seg ter qua qui sex sab dom`. `duracao` é avaliada na ordem escrita; a lista termina obrigatoriamente com `ate: null`. As `mesas` de uma combinação são **do mesmo salão** (a combinação pertence a esse salão); o `salao` de uma reserva é o salão da(s) mesa(s) alocada(s). A fixture dos testes está em `tests/fixtures/restaurante.json`; o exemplo em `exemplos/restaurante.json` é igual, com token `TROQUE-ESTE-TOKEN`.
 
 ## 3. Regras de horário e alocação
 
@@ -88,7 +88,7 @@ Rotas marcadas **[E]** (equipe) exigem header `X-Token` igual a `restaurante.jso
 | `GET /api/saloes` | — | 200 `{"saloes": [{id, nome}]}` na ordem do JSON |
 | `GET /api/turnos` | — | 200 `{"turnos": [{id, nome, dias, inicio, fim, ativo}]}` só os ativos, ordem do cadastro |
 | `GET /api/horarios?data=AAAA-MM-DD&pessoas=N[&salao=S]` | — | 200 `{"horarios": [{"inicio", "turno"}]}` ordenado por `inicio`; `pessoas` ausente, não inteiro ou `< 1` → 422; `salao` inexistente → 404; data sem turno, feriado, fora da janela ou passada → 200 com lista vazia |
-| `POST /api/clientes` [E] | `{nome, telefone, consentimento_marketing?: bool, aniversario?: "MM-DD", origem?}` | 201 `{id}`; telefone já cadastrado → 200 com o mesmo `{id}` (demais campos não mudam); telefone inválido ou `aniversario` fora de `MM-DD` → 400; `origem` fora da lista (seção 9) → 422 `{"erro": "origem_invalida"}` |
+| `POST /api/clientes` [E] | `{nome, telefone, consentimento_marketing?: bool, aniversario?: "MM-DD", origem?}` | 201 `{id}`; telefone já cadastrado → 200 com o mesmo `{id}` (demais campos não mudam); telefone inválido ou `aniversario` inválido → 400 (`aniversario` válido = exatamente `MM-DD`, mês `01`–`12`, dia existente nesse mês — `02-29` aceito; `13-01`, `7/10`, `2026-10-07` → 400); `origem` fora da lista (seção 9) → 422 `{"erro": "origem_invalida"}` |
 | `GET /api/clientes?busca=T` [E] | — | 200 `{"clientes": [{id, nome, telefone, consentimento_marketing, nao_contatar, aniversario, origem, ultima_visita, visitas}]}`; `busca` casa parte do nome (sem acento, sem caixa) ou dígitos do telefone; sem `busca` = todos, ordem de criação |
 | `PUT /api/clientes/{id}` [E] | `{nome?, telefone?, consentimento_marketing?, nao_contatar?, aniversario?, origem?}` | 200 com o cliente; telefone inválido/aniversário inválido → 400; telefone de outro cliente → 409; origem inválida → 422; inexistente → 404 |
 | `GET /api/clientes/{id}/dados` [E] | — | 200 `{cliente, reservas, mensagens}` (seção 11) |
@@ -105,7 +105,7 @@ Rotas marcadas **[E]** (equipe) exigem header `X-Token` igual a `restaurante.jso
 | `POST /api/espera` [E] | `{cliente_id, data, turno, pessoas}` | 201 `{id}`; turno inexistente/inativo → 404; `pessoas < 1` → 422 |
 | `GET /api/espera?data=AAAA-MM-DD` [E] | — | 200 `{"espera": [{id, cliente_id, nome, telefone, data, turno, pessoas, status}]}` ordem de criação; `status` ∈ `pendente, ofertada, atendida, cancelada` |
 | `POST /api/tarefas/rodar` [E] | `{agora?}` (padrão = relógio do processo) | 200 `{"enviadas": n, "reenviadas": n}` (seção 8); idempotente: rodar de novo no mesmo instante → `enviadas: 0` |
-| `GET /api/saida` [E] | — | 200 `{"mensagens": [{id, tipo, telefone, cliente_id, texto, reserva_id, status, quando}]}` em ordem de criação. `tipo` ∈ `confirmacao, espera, aprovacao, recusa, aniversario, reativacao, campanha, humano`; `status` ∈ `simulado, enviado, pendente` (seção 17) |
+| `GET /api/saida` [E] | — | 200 `{"mensagens": [{id, tipo, telefone, cliente_id, texto, reserva_id, status, quando}]}` em ordem de criação. `tipo` ∈ `confirmacao, espera, aprovacao, recusa, aniversario, reativacao, campanha, humano`; `reserva_id` = id da reserva em `confirmacao`, `aprovacao` e `recusa`, `null` nos demais tipos; `status` ∈ `simulado, enviado, pendente` (seção 17) |
 | `POST /api/mensagens` | `{telefone, texto}` | 200 `{"respostas": [texto, ...]}` (seção 6) |
 | `GET /api/atendimento-humano` [E] | — | 200 `{"fila": [{id, telefone, nome, motivo, status}]}` só os `aberto`, ordem de abertura |
 | `POST /api/atendimento-humano/{id}/responder` [E] / `.../encerrar` [E] | `{texto}` / — | 200 (seção 18) |
@@ -176,7 +176,7 @@ Os três últimos não são entradas do pacote: o painel só lê as entradas de 
 
 ## 11. LGPD
 
-- `GET /api/clientes/{id}/dados` devolve tudo o que há do cliente: `cliente` `{id, nome, telefone, consentimento_marketing, nao_contatar, aniversario, origem, ultima_visita, visitas}`, `reservas` (mesmo formato da listagem) e `mensagens` = recebidas e enviadas, cada uma `{direcao: "entrada" | "saida", texto, quando}`.
+- `GET /api/clientes/{id}/dados` devolve tudo o que há do cliente: `cliente` `{id, nome, telefone, consentimento_marketing, nao_contatar, aniversario, origem, ultima_visita, visitas}`, `reservas` (mesmo formato da listagem) e `mensagens` = tudo o que entrou e saiu pelo telefone dele, cada uma `{direcao: "entrada" | "saida", texto, quando}`: `entrada` = textos recebidos (chat web ou Evolution); `saida` = as respostas do bot na conversa (inclusive FAQ) **e** as mensagens da caixa de saída (seção 5) para esse telefone. Mensagens trocadas antes do cadastro (telefone desconhecido) passam a pertencer ao cliente quando ele é criado com esse telefone.
 - `DELETE /api/clientes/{id}`: nome vira `removido`, telefone, aniversário vira `null`, reservas futuras ativas (`reservada`, `confirmada`, `pendente`) viram `cancelada` pelo caminho normal (dispara espera), `chegou`/`no_show` ficam, textos de mensagens dele viram `""`, pedidos de espera dele viram `cancelada`. Depois disso, mensagens ao telefone antigo são tratadas como de telefone desconhecido. Números agregados do `/api/raiox` continuam contando as visitas passadas.
 
 ## 12. Fora do v1 (não implementar; portão humano ou próxima versão)
