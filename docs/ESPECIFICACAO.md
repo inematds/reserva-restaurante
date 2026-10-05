@@ -114,6 +114,8 @@ Rotas marcadas **[E]** (equipe) exigem header `X-Token` igual a `restaurante.jso
 
 Cadastros (mesas, turnos, FAQ) e bloqueios: seções 14 e 15.
 
+**Ids inexistentes:** qualquer rota com `{id}` no caminho (`/api/reservas/{id}/...`, `/api/clientes/{id}...`, `/api/mesas/{id}`, `/api/turnos/{id}`, `/api/faq/{id}`, `/api/bloqueios/{id}`, `/api/atendimento-humano/{id}/...`) e qualquer referência por id no corpo (`cliente_id`, `salao`, `mesa`, `turno`) a algo que não existe → **404**, antes das validações de 409/422. Corpo que não é JSON ou sem os campos obrigatórios → **422**.
+
 **Telefone:** aceita com ou sem `+55`, espaços, parênteses e hífen; normaliza para `+55DDNNNNNNNNN` (DDD + 8 ou 9 dígitos). Fora disso → inválido. Todas as respostas usam o telefone normalizado.
 
 **Rotas síncronas:** `POST /api/mensagens`, `tarefas/rodar`, `campanhas`, `cancelar` (oferta da lista de espera), `aprovar`, `recusar`, `responder`, e `DELETE /api/clientes/{id}` só devolvem a resposta HTTP depois de criar as mensagens de saída e tentar os envios (o `status` em `/api/saida` já está definido). Respostas ao webhook da Evolution e avisos ao Telegram podem ser assíncronos.
