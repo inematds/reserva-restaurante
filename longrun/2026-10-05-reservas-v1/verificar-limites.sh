@@ -8,7 +8,7 @@ D=longrun/2026-10-05-reservas-v1
 falha() { echo "LIMITE VIOLADO: $*"; exit 1; }
 [ -f $D/hash-congelado.txt ] || falha "contrato não congelado (rode $D/congelar.sh)"
 source $D/hash-congelado.txt
-h=$(cat $(git ls-files tests pytest.ini docs/ESPECIFICACAO.md $D/verificar-limites.sh | sort) | sha256sum | cut -c1-16)
+h=$(cat $(git ls-files tests pytest.ini docs/ESPECIFICACAO.md $D/verificar-limites.sh $D/verificar-independente.py | sort) | sha256sum | cut -c1-16)
 [ "$h" = "$HASH" ] || falha "hash do contrato mudou ($h ≠ $HASH)"
 git diff --quiet -- tests pytest.ini docs/ESPECIFICACAO.md || falha "contrato alterado no working tree"
 n=$(python3 -m pytest --collect-only -q 2>/dev/null | grep -oE '^[0-9]+ tests? collected' | grep -oE '^[0-9]+')

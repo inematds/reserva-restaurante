@@ -15,3 +15,4 @@
 | 2026-10-05 | validação: `test_dados_e_exclusao` espera `GET .../dados` 200 anonimizado após `DELETE`; §5/§11 só diziam "204; anonimiza" | frase na linha do `DELETE` | prompt |
 | 2026-10-05 | validação: §10 não dizia que a data de um `chegou` é o `inicio` da reserva (não o momento da marcação) para coorte e retorno | frase em §10 | prompt |
 | 2026-10-05 | validação: §6 fluxo — `test_reserva_cliente_conhecido` exige que a resposta ao cliente conhecido não contenha `nome`; spec só dizia o caso do desconhecido | frase em §6 | prompt |
+| 2026-10-05 | hash congelado não cobria `verificar-independente.py`: no /goal interativo o agente podia enfraquecer o verificador (achado na validação do reserva-hotel) | incluir o arquivo na lista do hash em congelar.sh e verificar-limites.sh | prompt |
