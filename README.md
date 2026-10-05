@@ -79,7 +79,8 @@ python3 longrun/2026-10-05-reservas-v1/verificar-independente.py   # INDEPENDENT
 docs/ESPECIFICACAO.md      contrato (protegido)
 docs/DECISOES-ABERTAS.md   propostas padrão + perguntas do dono
 docs/MAPA-RAIO-X.md        vazamentos do Raio-X × peças do sistema
-tests/                     93 testes caixa-preta + conftest (servidor falso de Evolution/Telegram)
+docs/VALIDACAO.md          validação adversarial do plano (05/10): checklist, contas conferidas, saída dos checks
+tests/                     93 testes caixa-preta + conftest (servidor falso de Evolution/Telegram; teardown autouse derruba todo servidor)
 tests/fixtures/restaurante.json   restaurante de teste (token segredo-teste)
 exemplos/restaurante.json  mesmo restaurante, token TROQUE-ESTE-TOKEN (copiado para --dados se faltar)
 longrun/2026-10-05-reservas-v1/   goal, plan, state, loop.env, prompts, congelar, verificadores

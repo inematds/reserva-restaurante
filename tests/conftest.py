@@ -102,8 +102,21 @@ class Cliente:
         return next(x for x in self.reservas(data) if x["id"] == reserva_id)
 
 
+SERVIDORES = []
+
+
+@pytest.fixture(autouse=True)
+def _parar_servidores():
+    """Derruba todo servidor subido no teste, mesmo quando uma asserção falha antes do parar() explícito
+    (em 05/10 um `serve` ficou órfão 14 h no projeto irmão por isso)."""
+    yield
+    while SERVIDORES:
+        SERVIDORES.pop().parar()
+
+
 class Servidor:
     def __init__(self, dados, agora=AGORA, env=None):
+        SERVIDORES.append(self)  # o teardown autouse para todos; parar() é idempotente
         self.dados = dados
         self.agora = agora
         self.env = env or {}

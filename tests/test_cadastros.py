@@ -12,7 +12,7 @@ def test_mesa_nova_validacoes_e_menor_max_vence(api):
     m6 = next(m for m in api.get("/api/mesas")[1]["mesas"] if m["id"] == "m6")
     assert m6["ativa"] is True and m6["salao"] == "interno"
     assert api.post("/api/mesas", {"id": "m6", "salao": "interno", "min": 1, "max": 2})[0] == 409
-    assert api.post("/api/mesas", {"id": "m7", "salao": "xyz", "min": 1, "max": 2})[0] == 422
+    assert api.post("/api/mesas", {"id": "m7", "salao": "xyz", "min": 1, "max": 2})[0] == 404   # salão inexistente (regra geral, seção 5)
     assert api.post("/api/mesas", {"id": "m7", "salao": "interno", "min": 0, "max": 2})[0] == 422
     assert api.post("/api/mesas", {"id": "m7", "salao": "interno", "min": 3, "max": 2})[0] == 422
     assert api.put("/api/mesas/naoexiste", {"max": 4})[0] == 404

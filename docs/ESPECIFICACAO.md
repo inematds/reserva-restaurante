@@ -18,7 +18,7 @@ Canais: **chat web**, **WhatsApp pela Evolution API** (seção 17) e caixa de sa
   - `--porta 0` = porta livre escolhida pelo sistema. A **primeira linha** do stdout é `PORTA=<n>` (com flush), impressa quando o servidor já aceita conexões.
   - Escuta em `--host` (padrão `127.0.0.1`; no Docker, `0.0.0.0` passado pelo comando do container — nunca escrito no código).
   - `DIR/restaurante.json` = configuração (seção 2). Se não existir, copiar `exemplos/restaurante.json`.
-  - Todo o estado persiste em `DIR/` (ex.: SQLite). Reiniciar com o mesmo `DIR` mantém tudo.
+  - Todo o estado persiste em `DIR/` (ex.: SQLite). **Cria `DIR` se não existir** (no container, `/dados` pode não ter volume montado). Reiniciar com o mesmo `DIR` mantém tudo.
 - **Relógio:** variável de ambiente `RESERVA_AGORA` (`AAAA-MM-DDTHH:MM`, hora local do restaurante, sem fuso) fixa o "agora" do processo. Sem ela, usa o relógio real. Datas/horas no contrato são sempre `AAAA-MM-DDTHH:MM` local; datas soltas, `AAAA-MM-DD`.
 - `./reserva raiox --dados DIR --mes AAAA-MM --acompanhamento ARQ` (seção 10).
 - `./reserva backup` / `./reserva restaurar` (seção 16).
@@ -78,9 +78,11 @@ Dias da semana: `seg ter qua qui sex sab dom`. `duracao` é avaliada na ordem es
 
 ## 4. Autenticação
 
-Rotas marcadas **[E]** (equipe) exigem header `X-Token` igual a `restaurante.json.token`; sem ele ou errado → **401**. Rotas públicas: `/`, `/equipe` (página; os dados vêm de rotas [E]), `/api/saude`, `GET /api/turnos`, `GET /api/saloes`, `/api/horarios`, `/api/mensagens`. Webhooks têm segredo próprio (seções 17 e 18).
+Rotas marcadas **[E]** (equipe) exigem header `X-Token` igual a `restaurante.json.token`; sem ele ou errado → **401**, e essa checagem vem **antes** de qualquer outra (corpo vazio ou inválido sem token → 401, não 422/404). Rotas públicas: `/`, `/equipe` (página; os dados vêm de rotas [E]), `/api/saude`, `GET /api/turnos`, `GET /api/saloes`, `/api/horarios`, `/api/mensagens`. Webhooks têm segredo próprio (seções 17 e 18).
 
 ## 5. API HTTP (JSON, UTF-8)
+
+Toda resposta com corpo JSON (2xx e erros) sai com header `Content-Type: application/json` (os testes só decodificam JSON quando o header diz `json`); `204` sem corpo.
 
 | Método e rota | Corpo | Resposta |
 |---|---|---|
@@ -92,12 +94,12 @@ Rotas marcadas **[E]** (equipe) exigem header `X-Token` igual a `restaurante.jso
 | `GET /api/clientes?busca=T` [E] | — | 200 `{"clientes": [{id, nome, telefone, consentimento_marketing, nao_contatar, aniversario, origem, ultima_visita, visitas}]}`; `busca` casa parte do nome (sem acento, sem caixa) ou dígitos do telefone; sem `busca` = todos, ordem de criação |
 | `PUT /api/clientes/{id}` [E] | `{nome?, telefone?, consentimento_marketing?, nao_contatar?, aniversario?, origem?}` | 200 com o cliente; telefone inválido/aniversário inválido → 400; telefone de outro cliente → 409; origem inválida → 422; inexistente → 404 |
 | `GET /api/clientes/{id}/dados` [E] | — | 200 `{cliente, reservas, mensagens}` (seção 11) |
-| `DELETE /api/clientes/{id}` [E] | — | 204; anonimiza (seção 11) |
+| `DELETE /api/clientes/{id}` [E] | — | 204; anonimiza (seção 11). O registro **continua existindo** com o mesmo `id`: `GET /api/clientes/{id}/dados` depois disso devolve 200 com os dados anonimizados |
 | `POST /api/reservas` [E] | `{cliente_id, inicio, pessoas, salao?, mesa?, observacao?}` | 201 `{id, status, inicio, fim, pessoas, turno, salao, mesas: [ids], cliente_id, observacao}`; `status` = `pendente` se `pessoas >= grupo_grande_a_partir`, senão `reservada`; 409/422 conforme seção 3; cliente, salão ou mesa inexistente → 404 |
 | `GET /api/reservas?data=AAAA-MM-DD[&turno=T][&salao=S]` [E] | — | 200 `{"reservas": [{id, cliente_id, nome, telefone, pessoas, inicio, fim, turno, salao, mesas, status, observacao}]}` ordenado por `inicio`, depois `id`; inclui canceladas/recusadas (filtrar pelo `status`) |
 | `GET /api/reservas?de=AAAA-MM-DD&ate=AAAA-MM-DD[&turno=T][&salao=S]` [E] | — | mesma lista, pontas inclusivas |
 | `POST /api/reservas/{id}/cancelar` [E] | — | 200 `{status: "cancelada"}`; dispara a lista de espera (seção 7); só de `reservada`, `confirmada` ou `pendente`, senão 409 `{"erro": "status"}` |
-| `POST /api/reservas/{id}/remarcar` [E] | `{inicio?, pessoas?}` (ao menos um) | 200 com a reserva realocada (mesmo `id`; mesas podem mudar; as mesas da própria reserva contam como livres); `status` vira `reservada` (ou `pendente` se as novas `pessoas >= grupo_grande_a_partir`) e a confirmação volta a ser devida; mesmas regras 409/422; só de `reservada`, `confirmada` ou `pendente`, senão 409 |
+| `POST /api/reservas/{id}/remarcar` [E] | `{inicio?, pessoas?}` (ao menos um) | 200 com a reserva realocada (mesmo `id`; mesas podem mudar; as mesas da própria reserva contam como livres e as `pessoas` dela **não** entram na soma do limite da cozinha); `status` vira `reservada` (ou `pendente` se as novas `pessoas >= grupo_grande_a_partir`) e a confirmação volta a ser devida; mesmas regras 409/422; só de `reservada`, `confirmada` ou `pendente`, senão 409 |
 | `POST /api/reservas/{id}/chegada` [E] | `{compareceu: bool}` | 200 `{status: "chegou" \| "no_show"}`; só de `reservada` ou `confirmada`, senão 409; `chegou` atualiza `ultima_visita`/`visitas` do cliente (seção 9); não depende do relógio |
 | `POST /api/reservas/{id}/aprovar` [E] | — | 200 `{status: "reservada"}`; só de `pendente`, senão 409; envia mensagem `tipo: "aprovacao"` ao cliente (seção 9) |
 | `POST /api/reservas/{id}/recusar` [E] | — | 200 `{status: "recusada"}`; só de `pendente`, senão 409; libera as mesas (**não** dispara a lista de espera); envia `tipo: "recusa"` |
@@ -127,14 +129,14 @@ O texto é normalizado (minúsculas, sem acento, sem pontuação; `amanhã` vira
 1. **Parar** — texto igual a `parar`, `sair` ou `pare`: cliente fica `nao_contatar`; resposta contém `não vai mais receber`. Mensagens automáticas (`confirmacao`, `espera`, `aniversario`, `reativacao`, `campanha`) não vão mais para esse telefone; respostas a pedidos dele (`aprovacao`, `recusa`, `humano`) continuam.
 2. **Humano** — contém `atendente`, `humano` ou `falar com alguem`: fila humana; resposta contém `atendente`.
 3. **Fluxo em andamento** (reserva, cancelamento ou lista de espera, abaixo) consome a mensagem.
-4. **Resposta a pendência:** se a última mensagem de saída para o telefone foi `confirmacao` (sem resposta ainda): `1`/`sim`/`confirmo` → status `confirmada`, resposta contém `confirmad`; `2`/`cancelar`/`nao` → `cancelada` (dispara espera), resposta contém `cancelad`. Se foi `espera` (sem resposta): `1`/`sim` → cria a reserva no horário ofertado se ainda couber (resposta contém `reservad`), senão resposta contém `ocupad`; a espera vira `atendida` no primeiro caso. Qualquer outro texto não consome a pendência.
-5. **Consultar/cancelar** — contém `minha reserva`, `minhas reservas` ou `cancelar`: lista as reservas **futuras ativas** (`inicio > agora`, exceto `chegou`/`no_show`) do telefone, uma linha `N) DD/MM HH:MM — P pessoas` cada. Sem reservas → resposta contém `não encontrei`. Com `cancelar`: uma só → cancela na hora (resposta contém `cancelad`, `DD/MM`); várias → lista e a próxima mensagem com o número cancela (fluxo de cancelamento; `0` ou `cancelar` sai sem cancelar).
+4. **Resposta a pendência:** se a última mensagem da **caixa de saída** (`/api/saida`, seção 5 — não conta resposta do bot na conversa) para o telefone foi `confirmacao` (sem resposta ainda): `1`/`sim`/`confirmo` → status `confirmada`, resposta contém `confirmad`; `2`/`cancelar`/`nao` → `cancelada` (dispara espera), resposta contém `cancelad`. Se foi `espera` (sem resposta): `1`/`sim` → cria a reserva no horário ofertado se ainda couber (resposta contém `reservad`), senão resposta contém `ocupad`; a espera vira `atendida` no primeiro caso. Qualquer outro texto não consome a pendência.
+5. **Consultar/cancelar** — contém `minha reserva`, `minhas reservas` ou `cancelar`: lista as reservas **futuras ativas** (`inicio > agora`, exceto `chegou`/`no_show`) do telefone, **em ordem de `inicio`**, uma linha `N) DD/MM HH:MM — P pessoas` cada (o `N` escolhido depois se refere a essa ordem). Sem reservas → resposta contém `não encontrei`. Com `cancelar`: uma só → cancela na hora (resposta contém `cancelad`, `DD/MM`); várias → lista e a próxima mensagem com o número cancela (fluxo de cancelamento; `0` ou `cancelar` sai sem cancelar).
 6. **Reservar** — contém `reservar` ou `reserva`: inicia o fluxo de reserva.
 7. **FAQ** — palavras significativas (≥ 3 letras, fora de artigos/preposições/pronomes comuns) de alguma pergunta do FAQ: se ≥ 60 % delas aparecem no texto, responde **exatamente** a `resposta` daquele item (só ela, uma mensagem). Mais de um item casa → o de maior %; empate → o primeiro do FAQ.
 8. **Não entendi** — resposta contém `não entendi` e oferece `atendente`. Na **segunda** seguida sem entender, entra na fila humana automaticamente.
 
 **Fluxo de reserva pelo chat** (estado por telefone, persistido; em cada passo a resposta faz a pergunta do passo):
-- telefone sem cliente → pergunta o nome (resposta contém `nome`); a próxima mensagem vira o nome e o cliente é criado (`consentimento_marketing: false`, `origem: "chat"`, ou `"whatsapp"` quando vem pela Evolution);
+- telefone sem cliente → pergunta o nome (resposta contém `nome`); a próxima mensagem vira o nome e o cliente é criado (`consentimento_marketing: false`, `origem: "chat"`, ou `"whatsapp"` quando vem pela Evolution). Telefone com cliente → pula este passo (a resposta **não** contém `nome`);
 - pergunta **quantas pessoas** (resposta contém `pessoas`); aceita inteiro ≥ 1, senão repete;
 - pergunta **o dia** (resposta contém `dia`); aceita `hoje`, `amanha`, `DD/MM` ou `DD/MM/AAAA`. `DD/MM` = a próxima ocorrência a partir de hoje (hoje incluso). Dia inválido, passado, sem turno, feriado ou fora da janela → resposta contém `não` e `dia`, repete;
 - lista os horários livres do dia para o grupo (regra da seção 3, a partir de `agora + antecedencia_min_horas`), **até 8**, em ordem, uma linha `N) HH:MM (<nome do turno>)` cada; o número escolhido cria a reserva; resposta contém `reservad`, `DD/MM`, `HH:MM` e `<P> pessoas`. Se o status for `pendente` (grupo grande), a resposta contém `aguardando` e `equipe`;
@@ -164,8 +166,8 @@ Ao cancelar uma reserva (pela API, pela conversa ou pela exclusão LGPD), o prim
 
 `GET /api/raiox?mes=AAAA-MM` → `{"pacote": "restaurante", "mes": "AAAA-MM", "valores": {...}}`, percentuais arredondados a 1 casa (`round` half-even do Python):
 
-- `clientes_novos_mes` = clientes cujo **primeiro** `chegou` cai no mês (inteiro) — **id real** do pacote `setores/restaurante.js`;
-- `retorno_atual_pct` = da coorte acima, % com um **segundo** `chegou` até 60 dias (inclusive) depois do primeiro (0 se a coorte for vazia) — **id real** do pacote ("desses, quantos voltam em 60 dias");
+- `clientes_novos_mes` = clientes cujo **primeiro** `chegou` cai no mês (inteiro; a data de um `chegou` é sempre a data do `inicio` da reserva, não o momento em que a equipe marcou a chegada) — **id real** do pacote `setores/restaurante.js`;
+- `retorno_atual_pct` = da coorte acima, % com um **segundo** `chegou` até 60 dias (inclusive) depois do primeiro, pelas datas de `inicio` (0 se a coorte for vazia) — **id real** do pacote ("desses, quantos voltam em 60 dias");
 - `reservas_atendidas_mes` = reservas `chegou` com `inicio` no mês (inteiro);
 - `no_show_pct` = `no_show ÷ (chegou + no_show) × 100` das reservas com `inicio` no mês (0 se não houver);
 - `ocupacao_pct` = mesa-minutos reservados ÷ mesa-minutos disponíveis × 100, onde reservados = soma, nas reservas ativas com `inicio` no mês, de `nº de mesas ocupadas × duracao`, e disponíveis = soma, por dia do mês que não é feriado, de `mesas ativas × soma das durações dos turnos ativos do dia` (bloqueios **não** são descontados).
@@ -195,10 +197,10 @@ Pedido/delivery e cardápio com carrinho, pagamento (sinal por Pix, PSP, cobran�
 | Método e rota | Corpo | Resposta |
 |---|---|---|
 | `GET /api/mesas` | — | 200 `{"mesas": [{id, salao, min, max, ativa}]}` ordem do cadastro (inclui inativas) |
-| `POST /api/mesas` | `{id, salao, min, max}` | 201; `id` repetido → 409; salão inexistente, `min < 1` ou `max < min` → 422 |
-| `PUT /api/mesas/{id}` | campos parciais (`salao, min, max`) | 200 com a mesa; inexistente → 404; mesmas validações |
+| `POST /api/mesas` | `{id, salao, min, max}` | 201; `id` repetido → 409; salão inexistente → 404 (regra geral da seção 5); `min < 1` ou `max < min` → 422 |
+| `PUT /api/mesas/{id}` | campos parciais (`salao, min, max`) | 200 com a mesa; mesa inexistente → 404; mesmas validações (salão inexistente → 404, `min`/`max` → 422) |
 | `DELETE /api/mesas/{id}` | — | 200 `{"ativa": false}`. Inativa não serve reserva nova, some de `mesas_total` e inutiliza combinações que a incluem; as reservas já feitas continuam |
-| `POST /api/turnos` | `{id, nome, dias, inicio, fim}` | 201; `id` repetido → 409; `dias` fora de `seg..dom`, `inicio >= fim` ou sobreposição com turno ativo no mesmo dia → 422 |
+| `POST /api/turnos` | `{id, nome, dias, inicio, fim}` | 201; `id` repetido → 409; `dias` fora de `seg..dom`, `inicio >= fim` ou sobreposição com turno ativo no mesmo dia → 422 (sobreposição com a mesma regra semiaberta da seção 3: `[11:30, 15:00)` e `[15:00, 17:00)` **não** se sobrepõem) |
 | `PUT /api/turnos/{id}` / `DELETE /api/turnos/{id}` | parcial / — | 200 / 200 `{"ativo": false}` (horários do turno somem na hora; reservas já feitas continuam) |
 | `GET /api/faq` | — | 200 `{"faq": [{id, perguntas, resposta}]}` |
 | `POST /api/faq` | `{perguntas: [..], resposta}` | 201 `{id}`; o bot passa a usar na hora |
@@ -215,7 +217,7 @@ Pedido/delivery e cardápio com carrinho, pagamento (sinal por Pix, PSP, cobran�
 
 ## 17. WhatsApp pela Evolution API
 
-Variáveis: `EVOLUTION_URL` (ex.: `http://evolution:8080`), `EVOLUTION_API_KEY`, `EVOLUTION_INSTANCIA`, `WEBHOOK_SEGREDO`. Sem `EVOLUTION_URL` → canal simulado (só caixa de saída, `status: "simulado"`).
+Variáveis: `EVOLUTION_URL` (ex.: `http://evolution:8080` — este exemplo fica **só nesta spec e no README**: no código e no `.env.exemplo` nenhuma URL além de `127.0.0.1`/`localhost`, senão o `verificar-limites.sh` e o teste do `.env.exemplo` acusam), `EVOLUTION_API_KEY`, `EVOLUTION_INSTANCIA`, `WEBHOOK_SEGREDO`. Sem `EVOLUTION_URL` → canal simulado (só caixa de saída, `status: "simulado"`).
 
 **Entrada** — `POST /webhook/evolution/{WEBHOOK_SEGREDO}` (segredo errado → 404). Formato da Evolution v2:
 ```json
@@ -245,7 +247,7 @@ Variáveis: `TELEGRAM_API_URL`, `TELEGRAM_TOKEN`, `TELEGRAM_CHAT_ID` (grupo da e
 
 ## 19. Docker / VPS
 
-- `Dockerfile` (imagem oficial `python:3-slim` ou similar, **sem `pip install`**) que roda `./reserva serve --host 0.0.0.0 --porta 8080 --dados /dados`, com `HEALTHCHECK` em `/api/saude`.
+- `Dockerfile` (imagem oficial `python:3-slim` ou similar, **sem `pip install`**) que roda `./reserva serve --host 0.0.0.0 --porta 8080 --dados /dados`, com `HEALTHCHECK` em `/api/saude` (a imagem não tem `curl`: usar `python3 -c` com `urllib`). O container precisa subir **sem volume** em `/dados` (a verificação independente faz `docker run` sem `-v`): o `serve` cria a pasta (seção 1).
 - `docker-compose.yml` com o serviço `reserva`: `build: .`, `restart: unless-stopped`, `env_file: .env`, volume para `/dados`, porta publicada só em `127.0.0.1:8080` (na VPS fica atrás de proxy reverso com HTTPS).
-- `.env.exemplo` com todas as variáveis das seções 17 e 18, **valores vazios** (nenhum segredo, nenhuma URL real).
+- `.env.exemplo` com todas as variáveis das seções 17 e 18, **valores vazios** (`VARIAVEL=` e nada depois do `=`; nenhum segredo, nenhuma URL, e a palavra `http` não aparece em linha nenhuma — nem em comentário).
 - `README.md` com a seção **Deploy na VPS**: subir o compose, proxy HTTPS, configurar o webhook da Evolution para `/webhook/evolution/<segredo>` (evento `MESSAGES_UPSERT`), registrar o webhook do Telegram com `setWebhook` + `secret_token`, e o backup diário (`./reserva backup` no cron).
