@@ -10,7 +10,7 @@ Guia completo (landing + passo a passo): **https://inematds.github.io/reserva-re
 
 Reserva de mesa para **um restaurante**, com Python 3 e biblioteca padrão (planejado): salões e mesas com capacidade, turnos por dia da semana, alocação automática da menor mesa que serve, confirmação automática ("1 confirma / 2 cancela"), no-show, lista de espera, grupo grande com aprovação da equipe, FAQ, passagem para humano, base própria de clientes com consentimento (aniversário, convite de retorno, campanhas), chat web + WhatsApp pela Evolution API, equipe pelo Telegram e pela página `/equipe`, backup/restauração, Docker e exportação mensal para o Painel de Recuperação do Raio-X de Margem (pacote `restaurante`).
 
-**Estado (05/10/2026): só o plano.** Este repo tem o contrato (`docs/ESPECIFICACAO.md`), 93 testes de aceitação caixa-preta (`tests/`), as decisões (`docs/DECISOES-ABERTAS.md`), o mapa para o Raio-X (`docs/MAPA-RAIO-X.md`) e a pasta de execução longa (`longrun/2026-10-05-reservas-v1/`). **Não há implementação** (`./reserva`, `src/`, `web/`, `Dockerfile`): ela é produzida por um agente rodando contra os testes, no seu ambiente, como descrito abaixo. O README da implementação (execução local, deploy, webhooks, backup) é parte do que o agente entrega (seção 19 da spec).
+**Estado (19/10/2026): implementação em andamento, v0.2.0.** CLI HTTP, SQLite, autenticação, relógio configurável e cadastros de mesas/turnos/FAQ implementados. Verificação deste ciclo: **6 passed / 87 failed**, com `LIMITES OK`. Reservas, conversa, integrações, páginas, backup e Docker ainda pendentes. O roteiro de execução longa abaixo continua válido.
 
 ## O que o sistema faz (resumo do contrato)
 
@@ -93,3 +93,39 @@ tests/fixtures/restaurante.json   restaurante de teste (token segredo-teste)
 exemplos/restaurante.json  mesmo restaurante, token TROQUE-ESTE-TOKEN (copiado para --dados se faltar)
 longrun/2026-10-05-reservas-v1/   goal, plan, state, loop.env, prompts, congelar, verificadores
 ```
+
+
+## Executar localmente
+
+Requer Python 3, sem pacotes adicionais para a aplicação:
+
+```sh
+./reserva serve --porta 8080 --dados ./dados
+```
+
+A primeira linha informa `PORTA=<n>`; `--porta 0` escolhe uma porta livre.
+O servidor escuta em `127.0.0.1`. Na primeira execução cria a pasta de dados,
+copia `exemplos/restaurante.json` e semeia `reservas.sqlite3`.
+Troque o token no JSON antes de usar dados reais. Rotas da equipe exigem
+`X-Token`; `/api/saude`, `/api/saloes` e `GET /api/turnos` são públicas.
+Mesas, turnos e FAQ são persistidos no SQLite e editados pelas rotas da seção 14;
+editar essas listas no JSON depois da primeira execução não altera o banco.
+Outras configurações do JSON são recarregadas ao reiniciar.
+
+`RESERVA_AGORA=AAAA-MM-DDTHH:MM` fixa o relógio para testes; sem a variável,
+o sistema usa a hora local. A versão atual ainda não oferece reserva nem chat.
+
+## Deploy na VPS
+
+**Pendente nesta versão:** Docker, integrações e comandos de backup ainda precisam
+ser implementados e validados antes do deploy. A entrega seguirá a seção 19 do
+contrato: serviço `reserva` no Compose, volume `/dados`, `.env` com as variáveis
+de integração e porta publicada apenas em `127.0.0.1:8080`.
+
+Com essa entrega disponível, o procedimento será `docker compose up -d --build`,
+com proxy reverso HTTPS na frente. Configure a Evolution com evento
+`MESSAGES_UPSERT` e caminho `/webhook/evolution/<segredo>`; registre o webhook do
+Telegram em `/webhook/telegram` usando `setWebhook` e `secret_token`.
+O backup diário usará `./reserva backup --dados DIR --saida ARQ` no cron;
+restauração será feita com o servidor parado. Estes comandos de operação serão
+completados e verificados no ciclo de Docker/backup. Nenhum deploy foi executado.
