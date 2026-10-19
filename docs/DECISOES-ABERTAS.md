@@ -32,3 +32,7 @@ Cada item tem uma **proposta padrão** já escrita na `docs/ESPECIFICACAO.md` e 
 - Quer o **mapa de mesas gráfico** já no v1? O padrão é tabela de ocupação por horário (seção 5, `/api/ocupacao`); o gráfico fica para v2.
 - Qual a **política de sinal/Pix para grupo grande** (texto a colocar no FAQ)? Sem resposta, o FAQ do exemplo não fala em sinal.
 - Página `/equipe` só funcional (padrão) ou já com o visual INEMA?
+
+## Resposta do dono (19/10/2026)
+
+"ok em tudo": todas as propostas padrão aceitas. Perguntas abertas ficam para depois do v1 (exemplo fictício, sem piloto real, `/equipe` só funcional). Execução: loop headless com Codex.
