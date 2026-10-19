@@ -1,0 +1,532 @@
+....F.......FF.F......................FFF..................FFFFF.FFFFFFF [ 77%]
+FFFFFF...............                                                    [100%]
+=================================== FAILURES ===================================
+_________________________________ test_paginas _________________________________
+
+api = <conftest.Cliente object at 0xe37d445be900>
+
+    def test_paginas(api):
+        st, html = api.get("/", token=None)
+>       assert st == 200 and 'id="chat"' in html
+E       assert (404 == 200)
+
+tests/test_basico.py:40: AssertionError
+_____________________ test_bloqueio_do_restaurante_inteiro _____________________
+
+api = <conftest.Cliente object at 0xe37d443cc6b0>
+
+    def test_bloqueio_do_restaurante_inteiro(api):
+        cid = api.cliente()
+        _, a = api.reserva(cid, "2026-10-08T12:00", 2)
+        st, r = api.post("/api/bloqueios", {"inicio": "2026-10-08T00:00", "fim": "2026-10-09T00:00", "motivo": "evento fechado"})
+>       assert st == 201 and r["conflitos"] == [a["id"]]
+E       assert (404 == 201)
+
+tests/test_cadastros.py:82: AssertionError
+_______________________ test_bloqueio_de_mesa_e_de_salao _______________________
+
+api = <conftest.Cliente object at 0xe37d443cc650>
+
+    def test_bloqueio_de_mesa_e_de_salao(api):
+        cid = api.cliente()
+        st, r = api.post("/api/bloqueios", {"inicio": "2026-10-08T00:00", "fim": "2026-10-09T00:00", "motivo": "conserto", "mesa": "m5"})
+>       assert st == 201 and r["conflitos"] == []
+E       assert (404 == 201)
+
+tests/test_cadastros.py:95: AssertionError
+___________________________ test_backup_e_restaurar ____________________________
+
+dados = PosixPath('/tmp/pytest-of-nmaldaner/pytest-77/test_backup_e_restaurar0/dados')
+tmp_path = PosixPath('/tmp/pytest-of-nmaldaner/pytest-77/test_backup_e_restaurar0')
+
+    def test_backup_e_restaurar(dados, tmp_path):
+        s = Servidor(dados)
+        api = s.subir()
+        cid = api.cliente("Guardada", "41999990009")
+        api.reserva(cid, f"{D}T12:00", 2)
+        arq = tmp_path / "copia.bak"
+        r = subprocess.run([str(RAIZ / "reserva"), "backup", "--dados", str(dados), "--saida", str(arq)],
+                           cwd=RAIZ, capture_output=True, timeout=30)
+>       assert r.returncode == 0 and arq.exists() and arq.stat().st_size > 0
+E       assert (2 == 0)
+E        +  where 2 = CompletedProcess(args=['/home/nmaldaner/projetos/reserva-restaurante/reserva', 'backup', '--dados', '/tmp/pytest-of-nm...b"usage: reserva [-h] {serve} ...\nreserva: error: argument command: invalid choice: 'backup' (choose from 'serve')\n").returncode
+
+tests/test_cadastros.py:131: AssertionError
+_______________________________ test_dockerfile ________________________________
+
+    def test_dockerfile():
+>       d = ler("Dockerfile")
+            ^^^^^^^^^^^^^^^^^
+
+tests/test_docker.py:14: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+nome = 'Dockerfile'
+
+    def ler(nome):
+        p = RAIZ / nome
+>       assert p.exists(), f"falta {nome}"
+E       AssertionError: falta Dockerfile
+E       assert False
+E        +  where False = exists()
+E        +    where exists = PosixPath('/home/nmaldaner/projetos/reserva-restaurante/Dockerfile').exists
+
+tests/test_docker.py:9: AssertionError
+_________________________________ test_compose _________________________________
+
+    def test_compose():
+>       c = ler("docker-compose.yml")
+            ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_docker.py:22: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+nome = 'docker-compose.yml'
+
+    def ler(nome):
+        p = RAIZ / nome
+>       assert p.exists(), f"falta {nome}"
+E       AssertionError: falta docker-compose.yml
+E       assert False
+E        +  where False = exists()
+E        +    where exists = PosixPath('/home/nmaldaner/projetos/reserva-restaurante/docker-compose.yml').exists
+
+tests/test_docker.py:9: AssertionError
+________________ test_env_exemplo_tem_todas_as_variaveis_vazias ________________
+
+    def test_env_exemplo_tem_todas_as_variaveis_vazias():
+>       e = ler(".env.exemplo")
+            ^^^^^^^^^^^^^^^^^^^
+
+tests/test_docker.py:28: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+nome = '.env.exemplo'
+
+    def ler(nome):
+        p = RAIZ / nome
+>       assert p.exists(), f"falta {nome}"
+E       AssertionError: falta .env.exemplo
+E       assert False
+E        +  where False = exists()
+E        +    where exists = PosixPath('/home/nmaldaner/projetos/reserva-restaurante/.env.exemplo').exists
+
+tests/test_docker.py:9: AssertionError
+____________________ test_whatsapp_responde_pela_evolution _____________________
+
+api_int = <conftest.Cliente object at 0xe37d4446e360>
+externo = <conftest.Externo object at 0xe37d4443f350>
+
+    def test_whatsapp_responde_pela_evolution(api_int, externo):
+>       evo(api_int, "tem estacionamento?")
+
+tests/test_integracoes.py:66: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+api = <conftest.Cliente object at 0xe37d4446e360>, texto = 'tem estacionamento?'
+numero = '5541988887777', msg_id = None, from_me = False
+sufixo = '@s.whatsapp.net', evento = 'messages.upsert'
+message = {'conversation': 'tem estacionamento?'}
+
+    def evo(api, texto=None, numero=NUM, msg_id=None, from_me=False, sufixo="@s.whatsapp.net",
+            evento="messages.upsert", message=None):
+        if message is None:
+            message = {"conversation": texto}
+        corpo = {"event": evento, "instance": "restaurante",
+                 "data": {"key": {"remoteJid": numero + sufixo, "fromMe": from_me, "id": msg_id or f"M{next(_ids)}"},
+                          "pushName": "Cliente", "message": message, "messageType": "conversation"}}
+        st, _ = api.post(f"/webhook/evolution/{SEGREDO_WH}", corpo, token=None)
+>       assert st == 200
+E       assert 404 == 200
+
+tests/test_integracoes.py:24: AssertionError
+_________________ test_whatsapp_ignora_o_que_nao_e_do_cliente __________________
+
+api_int = <conftest.Cliente object at 0xe37d4446ee10>
+externo = <conftest.Externo object at 0xe37d4446e2a0>
+
+    def test_whatsapp_ignora_o_que_nao_e_do_cliente(api_int, externo):
+>       evo(api_int, "tem estacionamento?", msg_id="DUP1")
+
+tests/test_integracoes.py:74: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+api = <conftest.Cliente object at 0xe37d4446ee10>, texto = 'tem estacionamento?'
+numero = '5541988887777', msg_id = 'DUP1', from_me = False
+sufixo = '@s.whatsapp.net', evento = 'messages.upsert'
+message = {'conversation': 'tem estacionamento?'}
+
+    def evo(api, texto=None, numero=NUM, msg_id=None, from_me=False, sufixo="@s.whatsapp.net",
+            evento="messages.upsert", message=None):
+        if message is None:
+            message = {"conversation": texto}
+        corpo = {"event": evento, "instance": "restaurante",
+                 "data": {"key": {"remoteJid": numero + sufixo, "fromMe": from_me, "id": msg_id or f"M{next(_ids)}"},
+                          "pushName": "Cliente", "message": message, "messageType": "conversation"}}
+        st, _ = api.post(f"/webhook/evolution/{SEGREDO_WH}", corpo, token=None)
+>       assert st == 200
+E       assert 404 == 200
+
+tests/test_integracoes.py:24: AssertionError
+___________________________ test_whatsapp_sem_texto ____________________________
+
+api_int = <conftest.Cliente object at 0xe37d4446fb00>
+externo = <conftest.Externo object at 0xe37d4446ecf0>
+
+    def test_whatsapp_sem_texto(api_int, externo):
+>       evo(api_int, message={"audioMessage": {"seconds": 5}})
+
+tests/test_integracoes.py:84: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+api = <conftest.Cliente object at 0xe37d4446fb00>, texto = None
+numero = '5541988887777', msg_id = None, from_me = False
+sufixo = '@s.whatsapp.net', evento = 'messages.upsert'
+message = {'audioMessage': {'seconds': 5}}
+
+    def evo(api, texto=None, numero=NUM, msg_id=None, from_me=False, sufixo="@s.whatsapp.net",
+            evento="messages.upsert", message=None):
+        if message is None:
+            message = {"conversation": texto}
+        corpo = {"event": evento, "instance": "restaurante",
+                 "data": {"key": {"remoteJid": numero + sufixo, "fromMe": from_me, "id": msg_id or f"M{next(_ids)}"},
+                          "pushName": "Cliente", "message": message, "messageType": "conversation"}}
+        st, _ = api.post(f"/webhook/evolution/{SEGREDO_WH}", corpo, token=None)
+>       assert st == 200
+E       assert 404 == 200
+
+tests/test_integracoes.py:24: AssertionError
+_____________________ test_whatsapp_reserva_e_avisa_equipe _____________________
+
+api_int = <conftest.Cliente object at 0xe37d432b4170>
+externo = <conftest.Externo object at 0xe37d4446fa10>
+
+    def test_whatsapp_reserva_e_avisa_equipe(api_int, externo):
+        def tem(trecho):
+            return esperar(lambda: any(trecho in norm(t) for t in textos_whats(externo)))
+    
+>       evo(api_int, "quero reservar uma mesa")
+
+tests/test_integracoes.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+api = <conftest.Cliente object at 0xe37d432b4170>
+texto = 'quero reservar uma mesa', numero = '5541988887777', msg_id = None
+from_me = False, sufixo = '@s.whatsapp.net', evento = 'messages.upsert'
+message = {'conversation': 'quero reservar uma mesa'}
+
+    def evo(api, texto=None, numero=NUM, msg_id=None, from_me=False, sufixo="@s.whatsapp.net",
+            evento="messages.upsert", message=None):
+        if message is None:
+            message = {"conversation": texto}
+        corpo = {"event": evento, "instance": "restaurante",
+                 "data": {"key": {"remoteJid": numero + sufixo, "fromMe": from_me, "id": msg_id or f"M{next(_ids)}"},
+                          "pushName": "Cliente", "message": message, "messageType": "conversation"}}
+        st, _ = api.post(f"/webhook/evolution/{SEGREDO_WH}", corpo, token=None)
+>       assert st == 200
+E       assert 404 == 200
+
+tests/test_integracoes.py:24: AssertionError
+____________________ test_saida_pela_evolution_com_reenvio _____________________
+
+api_int = <conftest.Cliente object at 0xe37d4446d820>
+externo = <conftest.Externo object at 0xe37d4446df70>
+
+    def test_saida_pela_evolution_com_reenvio(api_int, externo):
+        cid = api_int.cliente("Maria", TEL)
+        api_int.reserva(cid, "2026-10-06T19:00", 2)
+        externo.falhas = 1
+        st, r = api_int.post("/api/tarefas/rodar", {})
+        assert r["enviadas"] == 1
+        [m] = api_int.saida("confirmacao")
+>       assert m["status"] == "pendente"
+E       AssertionError: assert 'simulado' == 'pendente'
+E         
+E         - pendente
+E         + simulado
+
+tests/test_integracoes.py:116: AssertionError
+__________________________ test_abertura_vai_ao_grupo __________________________
+
+api_int = <conftest.Cliente object at 0xe37d4443ddc0>
+externo = <conftest.Externo object at 0xe37d4446ec90>
+
+    def test_abertura_vai_ao_grupo(api_int, externo):
+>       at, abertura = abre_atendimento(api_int, externo)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_integracoes.py:134: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+api = <conftest.Cliente object at 0xe37d4443ddc0>
+externo = <conftest.Externo object at 0xe37d4446ec90>
+
+    def abre_atendimento(api, externo):
+        api.msg(TEL, "quero falar com um atendente")
+>       assert esperar(lambda: len(externo.telegram()) >= 1)
+E       assert False
+E        +  where False = esperar(<function abre_atendimento.<locals>.<lambda> at 0xe37d4457f380>)
+
+tests/test_integracoes.py:53: AssertionError
+________________ test_atendimento_aberto_silencia_bot_e_repassa ________________
+
+api_int = <conftest.Cliente object at 0xe37d443ce570>
+externo = <conftest.Externo object at 0xe37d4446e870>
+
+    def test_atendimento_aberto_silencia_bot_e_repassa(api_int, externo):
+>       at, abertura = abre_atendimento(api_int, externo)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_integracoes.py:142: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+api = <conftest.Cliente object at 0xe37d443ce570>
+externo = <conftest.Externo object at 0xe37d4446e870>
+
+    def abre_atendimento(api, externo):
+        api.msg(TEL, "quero falar com um atendente")
+>       assert esperar(lambda: len(externo.telegram()) >= 1)
+E       assert False
+E        +  where False = esperar(<function abre_atendimento.<locals>.<lambda> at 0xe37d454c9ee0>)
+
+tests/test_integracoes.py:53: AssertionError
+___________________ test_equipe_responde_em_cima_da_mensagem ___________________
+
+api_int = <conftest.Cliente object at 0xe37d443ce7b0>
+externo = <conftest.Externo object at 0xe37d4443cbc0>
+
+    def test_equipe_responde_em_cima_da_mensagem(api_int, externo):
+>       at, abertura = abre_atendimento(api_int, externo)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_integracoes.py:150: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+api = <conftest.Cliente object at 0xe37d443ce7b0>
+externo = <conftest.Externo object at 0xe37d4443cbc0>
+
+    def abre_atendimento(api, externo):
+        api.msg(TEL, "quero falar com um atendente")
+>       assert esperar(lambda: len(externo.telegram()) >= 1)
+E       assert False
+E        +  where False = esperar(<function abre_atendimento.<locals>.<lambda> at 0xe37d448b23e0>)
+
+tests/test_integracoes.py:53: AssertionError
+_______________________ test_webhook_telegram_protegido ________________________
+
+api_int = <conftest.Cliente object at 0xe37d445be690>
+externo = <conftest.Externo object at 0xe37d443cc800>
+
+    def test_webhook_telegram_protegido(api_int, externo):
+>       at, abertura = abre_atendimento(api_int, externo)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_integracoes.py:158: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+api = <conftest.Cliente object at 0xe37d445be690>
+externo = <conftest.Externo object at 0xe37d443cc800>
+
+    def abre_atendimento(api, externo):
+        api.msg(TEL, "quero falar com um atendente")
+>       assert esperar(lambda: len(externo.telegram()) >= 1)
+E       assert False
+E        +  where False = esperar(<function abre_atendimento.<locals>.<lambda> at 0xe37d44475580>)
+
+tests/test_integracoes.py:53: AssertionError
+____________________ test_comandos_responder_encerrar_fila _____________________
+
+api_int = <conftest.Cliente object at 0xe37d4331a6f0>
+externo = <conftest.Externo object at 0xe37d445bec30>
+
+    def test_comandos_responder_encerrar_fila(api_int, externo):
+>       at, _ = abre_atendimento(api_int, externo)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_integracoes.py:166: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+api = <conftest.Cliente object at 0xe37d4331a6f0>
+externo = <conftest.Externo object at 0xe37d445bec30>
+
+    def abre_atendimento(api, externo):
+        api.msg(TEL, "quero falar com um atendente")
+>       assert esperar(lambda: len(externo.telegram()) >= 1)
+E       assert False
+E        +  where False = esperar(<function abre_atendimento.<locals>.<lambda> at 0xe37d444777e0>)
+
+tests/test_integracoes.py:53: AssertionError
+____________________________ test_comando_reservas _____________________________
+
+api_int = <conftest.Cliente object at 0xe37d4331b200>
+externo = <conftest.Externo object at 0xe37d43319c70>
+
+    def test_comando_reservas(api_int, externo):
+        cid = api_int.cliente("Maria Lima", "41999990001")
+        api_int.reserva(cid, "2026-10-07T12:00", 2)
+        api_int.reserva(cid, "2026-10-07T19:00", 7)
+        _, c = api_int.reserva(cid, "2026-10-07T13:00", 2)
+        api_int.post(f"/api/reservas/{c['id']}/cancelar")
+        tg(api_int, "/reservas 2026-10-07")
+    
+        def achou():
+            return any("12:00 Maria Lima — 2 pessoas — m1 (reservada)" in t
+                       and "19:00 Maria Lima — 7 pessoas — m3+m4 (reservada)" in t and "13:00" not in t
+                       for t in textos_tg(externo))
+>       assert esperar(achou)
+E       assert False
+E        +  where False = esperar(<function test_comando_reservas.<locals>.achou at 0xe37d44476340>)
+
+tests/test_integracoes.py:189: AssertionError
+________________ test_grupo_grande_avisa_e_aprova_pelo_telegram ________________
+
+api_int = <conftest.Cliente object at 0xe37d43318b90>
+externo = <conftest.Externo object at 0xe37d4331ade0>
+
+    def test_grupo_grande_avisa_e_aprova_pelo_telegram(api_int, externo):
+        cid = api_int.cliente("Maria", TEL)
+        _, a = api_int.reserva(cid, "2026-10-07T12:00", 8)
+>       assert esperar(lambda: any(t.startswith(f"Grupo grande #{a['id']}:") and "07/10 12:00 Maria — 8 pessoas" in t
+                                   for t in textos_tg(externo)))
+E       assert False
+E        +  where False = esperar(<function test_grupo_grande_avisa_e_aprova_pelo_telegram.<locals>.<lambda> at 0xe37d44476a20>)
+
+tests/test_integracoes.py:195: AssertionError
+__________________________ test_recusa_pelo_telegram ___________________________
+
+api_int = <conftest.Cliente object at 0xe37d43319fd0>
+externo = <conftest.Externo object at 0xe37d43318a40>
+
+    def test_recusa_pelo_telegram(api_int, externo):
+        cid = api_int.cliente("Maria", TEL)
+        _, a = api_int.reserva(cid, "2026-10-07T12:00", 8)
+        tg(api_int, f"/recusar {a['id']}")
+>       assert esperar(lambda: api_int.por_id("2026-10-07", a["id"])["status"] == "recusada")
+E       assert False
+E        +  where False = esperar(<function test_recusa_pelo_telegram.<locals>.<lambda> at 0xe37d44477d80>)
+
+tests/test_integracoes.py:208: AssertionError
+___________________ test_pagina_da_equipe_responde_e_encerra ___________________
+
+api_int = <conftest.Cliente object at 0xe37d4331b800>
+externo = <conftest.Externo object at 0xe37d43319e50>
+
+    def test_pagina_da_equipe_responde_e_encerra(api_int, externo):
+>       at, _ = abre_atendimento(api_int, externo)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_integracoes.py:213: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+api = <conftest.Cliente object at 0xe37d4331b800>
+externo = <conftest.Externo object at 0xe37d43319e50>
+
+    def abre_atendimento(api, externo):
+        api.msg(TEL, "quero falar com um atendente")
+>       assert esperar(lambda: len(externo.telegram()) >= 1)
+E       assert False
+E        +  where False = esperar(<function abre_atendimento.<locals>.<lambda> at 0xe37d44476c00>)
+
+tests/test_integracoes.py:53: AssertionError
+___________________ test_cancelamento_pelo_chat_avisa_equipe ___________________
+
+api_int = <conftest.Cliente object at 0xe37d432ece90>
+externo = <conftest.Externo object at 0xe37d4331b680>
+
+    def test_cancelamento_pelo_chat_avisa_equipe(api_int, externo):
+        cid = api_int.cliente("Maria", TEL)
+        api_int.reserva(cid, "2026-10-06T19:00", 2)
+        api_int.post("/api/tarefas/rodar", {})
+        assert "cancelad" in norm(api_int.msg(TEL, "2"))
+>       assert esperar(lambda: any(t.startswith("Cancelada:") and "06/10 19:00" in t for t in textos_tg(externo)))
+E       assert False
+E        +  where False = esperar(<function test_cancelamento_pelo_chat_avisa_equipe.<locals>.<lambda> at 0xe37d44477920>)
+
+tests/test_integracoes.py:225: AssertionError
+____________________________ test_dados_e_exclusao _____________________________
+
+api = <conftest.Cliente object at 0xe37d432ee0f0>
+
+    def test_dados_e_exclusao(api):
+        tel = "41999990001"
+        cid = api.cliente("Maria Silva", tel, marketing=True, aniversario="05-02")
+        p2 = api.cliente("José", "41999990002")
+        _, a = api.reserva(cid, "2026-10-07T12:00", 2)
+        _, b = api.reserva(cid, "2026-10-08T12:00", 2)
+        api.post(f"/api/reservas/{b['id']}/chegada", {"compareceu": True})
+        api.post("/api/espera", {"cliente_id": p2, "data": "2026-10-07", "turno": "almoco", "pessoas": 2})
+        api.msg(tel, "tem estacionamento")
+        st, d = api.get(f"/api/clientes/{cid}/dados")
+        assert st == 200
+        assert d["cliente"]["nome"] == "Maria Silva" and d["cliente"]["telefone"] == "+5541999990001"
+        assert d["cliente"]["aniversario"] == "05-02" and d["cliente"]["visitas"] == 1
+        assert {x["id"] for x in d["reservas"]} == {a["id"], b["id"]}
+        assert {"entrada", "saida"} <= {m["direcao"] for m in d["mensagens"]}
+        assert any("estacionamento" in m["texto"] for m in d["mensagens"])
+    
+>       assert api.delete(f"/api/clientes/{cid}")[0] == 204
+E       assert 404 == 204
+
+tests/test_lgpd_raiox.py:30: AssertionError
+__________________________ test_raiox_numeros_do_mes ___________________________
+
+dados = PosixPath('/tmp/pytest-of-nmaldaner/pytest-77/test_raiox_numeros_do_mes0/dados')
+
+    def test_raiox_numeros_do_mes(dados):
+        s, api = montar_mes(dados)
+        try:
+            st, r = api.get("/api/raiox?mes=2026-10")
+>           assert st == 200 and r["pacote"] == "restaurante" and r["mes"] == "2026-10"
+E           assert (404 == 200)
+
+tests/test_lgpd_raiox.py:78: AssertionError
+________________ test_cli_grava_mes_no_acompanhamento_do_painel ________________
+
+dados = PosixPath('/tmp/pytest-of-nmaldaner/pytest-77/test_cli_grava_mes_no_acompanh0/dados')
+tmp_path = PosixPath('/tmp/pytest-of-nmaldaner/pytest-77/test_cli_grava_mes_no_acompanh0')
+
+    def test_cli_grava_mes_no_acompanhamento_do_painel(dados, tmp_path):
+        s, _ = montar_mes(dados)
+        s.parar()
+        arq = tmp_path / "acompanhamento.json"
+        arq.write_text(json.dumps({
+            "tipo": "acompanhamento", "pacote": "restaurante", "cliente": "Cantina Teste",
+            "base": {"data": "2026-09-01", "valores": {"retorno_atual_pct": 20, "ticket_medio": 50, "clientes_novos_mes": 400}},
+            "meses": [],
+        }))
+        cmd = [str(RAIZ / "reserva"), "raiox", "--dados", str(dados), "--mes", "2026-10", "--acompanhamento", str(arq)]
+        for _ in range(2):  # rodar duas vezes substitui o mês, não duplica
+>           assert subprocess.run(cmd, cwd=RAIZ, capture_output=True, timeout=30).returncode == 0
+E           assert 2 == 0
+E            +  where 2 = CompletedProcess(args=['/home/nmaldaner/projetos/reserva-restaurante/reserva', 'raiox', '--dados', '/tmp/pytest-of-nma...=b"usage: reserva [-h] {serve} ...\nreserva: error: argument command: invalid choice: 'raiox' (choose from 'serve')\n").returncode
+E            +    where CompletedProcess(args=['/home/nmaldaner/projetos/reserva-restaurante/reserva', 'raiox', '--dados', '/tmp/pytest-of-nma...=b"usage: reserva [-h] {serve} ...\nreserva: error: argument command: invalid choice: 'raiox' (choose from 'serve')\n") = <function run at 0xe37d4556c360>(['/home/nmaldaner/projetos/reserva-restaurante/reserva', 'raiox', '--dados', '/tmp/pytest-of-nmaldaner/pytest-77/test_cli_grava_mes_no_acompanh0/dados', '--mes', '2026-10', ...], cwd=PosixPath('/home/nmaldaner/projetos/reserva-restaurante'), capture_output=True, timeout=30)
+E            +      where <function run at 0xe37d4556c360> = subprocess.run
+
+tests/test_lgpd_raiox.py:107: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_basico.py::test_paginas - assert (404 == 200)
+FAILED tests/test_cadastros.py::test_bloqueio_do_restaurante_inteiro - assert...
+FAILED tests/test_cadastros.py::test_bloqueio_de_mesa_e_de_salao - assert (40...
+FAILED tests/test_cadastros.py::test_backup_e_restaurar - assert (2 == 0)
+FAILED tests/test_docker.py::test_dockerfile - AssertionError: falta Dockerfile
+FAILED tests/test_docker.py::test_compose - AssertionError: falta docker-comp...
+FAILED tests/test_docker.py::test_env_exemplo_tem_todas_as_variaveis_vazias
+FAILED tests/test_integracoes.py::test_whatsapp_responde_pela_evolution - ass...
+FAILED tests/test_integracoes.py::test_whatsapp_ignora_o_que_nao_e_do_cliente
+FAILED tests/test_integracoes.py::test_whatsapp_sem_texto - assert 404 == 200
+FAILED tests/test_integracoes.py::test_whatsapp_reserva_e_avisa_equipe - asse...
+FAILED tests/test_integracoes.py::test_saida_pela_evolution_com_reenvio - Ass...
+FAILED tests/test_integracoes.py::test_abertura_vai_ao_grupo - assert False
+FAILED tests/test_integracoes.py::test_atendimento_aberto_silencia_bot_e_repassa
+FAILED tests/test_integracoes.py::test_equipe_responde_em_cima_da_mensagem - ...
+FAILED tests/test_integracoes.py::test_webhook_telegram_protegido - assert False
+FAILED tests/test_integracoes.py::test_comandos_responder_encerrar_fila - ass...
+FAILED tests/test_integracoes.py::test_comando_reservas - assert False
+FAILED tests/test_integracoes.py::test_grupo_grande_avisa_e_aprova_pelo_telegram
+FAILED tests/test_integracoes.py::test_recusa_pelo_telegram - assert False
+FAILED tests/test_integracoes.py::test_pagina_da_equipe_responde_e_encerra - ...
+FAILED tests/test_integracoes.py::test_cancelamento_pelo_chat_avisa_equipe - ...
+FAILED tests/test_lgpd_raiox.py::test_dados_e_exclusao - assert 404 == 204
+FAILED tests/test_lgpd_raiox.py::test_raiox_numeros_do_mes - assert (404 == 200)
+FAILED tests/test_lgpd_raiox.py::test_cli_grava_mes_no_acompanhamento_do_painel
+25 failed, 68 passed in 65.24s (0:01:05)

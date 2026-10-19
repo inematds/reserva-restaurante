@@ -12,3 +12,6 @@ Formato: `- AAAA-MM-DD HH:MM · fato|aprendizado|glossário|armadilha · texto`
 
 - 2026-10-19 13:54 -0300 · fato · Todos os testes de horários/reservas passam; total 38/93. O servidor agora repassa query string ao dispatch. Booking/APIError ficam em src/booking.py, evitando import circular.
 - 2026-10-19 13:54 -0300 · armadilha · Cancelamento ainda não dispara espera e dados do cliente ainda não incluem mensagens; integrar esses efeitos antes de considerar as rotas completas. Alocador já lê bloqueios do armazenamento, mas ainda falta API de bloqueios. No-show continua ativo; remarcação ignora a própria reserva em mesas e cozinha.
+
+- 2026-10-19 13:59 -0300 · fato · Conversa/confirmação/espera/grupo/base própria passam integralmente; total 68/93. Conversation é mixin de Application, com saída simulada e histórico por telefone. Store suporta novos tipos sem migração.
+- 2026-10-19 13:59 -0300 · armadilha · Testes de integrações aguardam avisos ausentes e levam a suíte a 65 s. Ainda não há transporte: reenviadas=0. Fila humana local silencia bot; mensagens recebidas ficam no histórico, mas repasse Telegram falta. LGPD deve limpar conversas e textos antigos além de cancelar pelo helper cancel().

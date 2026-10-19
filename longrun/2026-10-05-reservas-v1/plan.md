@@ -1,9 +1,9 @@
 # Plano
 
 ## Estratégia atual
-Base, clientes e motor de horários/reservas implementados e verificados. Reutilizar o alocador transacional em todos os canais. A consulta de dados do cliente ainda não tem histórico; acrescentá-lo junto com a conversa.
+Conversa e automações locais implementadas; 68/93 testes passam. Completar operações locais antes dos transportes externos. Reutilizar cancelamento e saída compartilhados.
 
 ## Próximos 3 passos
-1. Conversa persistente por telefone: normalização/FAQ, histórico entrada/saída, fluxo nome/pessoas/dia/horário, consulta/cancelamento e fila humana; garantir PARAR e precedência das intenções.
-2. Caixa de saída, confirmação e lista de espera: tarefas idempotentes, resposta à pendência, ofertas na mesma data/turno após cancelamento, remarcação renovando confirmação; aprovação/recusa e base própria (aniversário/reativação/campanhas).
-3. Bloqueios e backup → LGPD/Raio-X → Evolution/Telegram usando apenas servidor falso → Docker/README → páginas. Rodar suíte completa e verificar limites a cada ciclo; manter contratos congelados.
+1. Bloqueios e backup/restauração; depois exclusão LGPD (cancelamento normal, ofertas, anonimização de mensagens e estado) e Raio-X HTTP/CLI.
+2. Evolution e Telegram exclusivamente pelos ambientes da spec e servidores falsos: envio/retry, webhooks, deduplicação, fila humana e avisos. Rever invalidação de pendências na remarcação.
+3. Docker/Compose/.env.exemplo e README operacional, depois páginas em web/. Rodar suíte completa e limites; concluir apenas com 93 passed e LIMITES OK.

@@ -177,7 +177,7 @@ class Booking:
                     digits = re.sub(r'\D', '', term)
                     return 200, {'clientes': [c for c in self.store.items(db, kind) if term in normalized(c['nome']) or (digits and digits in (c['telefone'] or ''))]}
                 if method == 'GET' and action == 'dados':
-                    return 200, {'cliente': existing, 'reservas': self.reservation_list(db, {'cliente_id': existing['id']}), 'mensagens': []}
+                    return 200, {'cliente': existing, 'reservas': self.reservation_list(db, {'cliente_id': existing['id']}), 'mensagens': [{k: m[k] for k in ('direcao', 'texto', 'quando')} for m in self.store.items(db, 'mensagens') if m['telefone'] == existing['telefone']]}
                 if method in ('POST', 'PUT') and action is None:
                     if method == 'POST':
                         required(body, 'nome', 'telefone')
@@ -210,13 +210,20 @@ class Booking:
                         if existing['status'] not in ('reservada', 'confirmada', 'pendente'):
                             raise APIError(409, 'status')
                         if action == 'cancelar':
-                            existing['status'] = 'cancelada'
+                            self.cancel(db, existing)
                         else:
                             if not any(k in body for k in ('inicio', 'pessoas')):
                                 raise APIError(422, 'campos_obrigatorios')
                             allocation = self.allocate(db, body.get('inicio', existing['inicio']), body.get('pessoas', existing['pessoas']), exclude=existing['id'])
                             existing.update(allocation)
                             existing.pop('confirmacao_enviada', None)
+                    elif action in ('aprovar', 'recusar'):
+                        if existing['status'] != 'pendente':
+                            raise APIError(409, 'status')
+                        existing['status'] = 'reservada' if action == 'aprovar' else 'recusada'
+                        client = self.find(db, 'clientes', existing['cliente_id'])
+                        self.output(db, client, 'aprovacao' if action == 'aprovar' else 'recusa',
+                                    ('Confirmada: ' + self.describe(existing)) if action == 'aprovar' else 'Não foi possível aprovar sua reserva.', existing['id'])
                     elif action == 'chegada':
                         if existing['status'] not in ('reservada', 'confirmada'):
                             raise APIError(409, 'status')

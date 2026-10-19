@@ -14,7 +14,10 @@ from .storage import ROOT
 from .booking import APIError, Booking
 
 
-class Application(Booking):
+from .conversation import Conversation
+
+
+class Application(Conversation, Booking):
     def __init__(self, store):
         self.store = store
         self.config = store.config
@@ -25,6 +28,8 @@ class Application(Booking):
         return self.fixed_now or datetime.now().replace(second=0, microsecond=0)
 
     def dispatch(self, method, path, body, query=None):
+        if path.split("/")[2:3] and path.split("/")[2] in ("mensagens", "saida", "espera", "tarefas", "campanhas", "atendimento-humano"):
+            return self.conversation_dispatch(method, path, body, query or {})
         if path.split("/")[1:2] == ["api"] and path.split("/")[2:3] and path.split("/")[2] in ("clientes", "reservas", "horarios", "ocupacao"):
             return self.booking_dispatch(method, path, body, query or {})
         if method == "GET" and path == "/api/saude":
