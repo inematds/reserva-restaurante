@@ -5,19 +5,16 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 import os
 import re
-from urllib.parse import urlsplit
+from urllib.parse import urlsplit, parse_qs
 from uuid import uuid4
 
 from .storage import ROOT
 
 
-class APIError(Exception):
-    def __init__(self, status, message):
-        self.status = status
-        self.message = message
+from .booking import APIError, Booking
 
 
-class Application:
+class Application(Booking):
     def __init__(self, store):
         self.store = store
         self.config = store.config
@@ -27,7 +24,9 @@ class Application:
     def now(self):
         return self.fixed_now or datetime.now().replace(second=0, microsecond=0)
 
-    def dispatch(self, method, path, body):
+    def dispatch(self, method, path, body, query=None):
+        if path.split("/")[1:2] == ["api"] and path.split("/")[2:3] and path.split("/")[2] in ("clientes", "reservas", "horarios", "ocupacao"):
+            return self.booking_dispatch(method, path, body, query or {})
         if method == "GET" and path == "/api/saude":
             return 200, {"ok": True, "versao": (ROOT / "VERSION").read_text().strip()}
         if method == "GET" and path == "/api/saloes":
@@ -128,7 +127,7 @@ def make_server(app, host, port):
                             raise ValueError()
                     except (ValueError, UnicodeError):
                         raise APIError(422, "json_invalido")
-                status, result = app.dispatch(self.command, path, body)
+                status, result = app.dispatch(self.command, path, body, {k: v[-1] for k, v in parse_qs(urlsplit(self.path).query).items()})
             except APIError as error:
                 status, result = error.status, {"erro": error.message}
             payload = b"" if status == 204 else json.dumps(result, ensure_ascii=False).encode("utf-8")

@@ -1,9 +1,9 @@
 # Plano
 
 ## Estratégia atual
-Base e cadastros persistentes implementados. Próximo incremento deve habilitar reservas reais, usando regras e transações compartilhadas entre horários, reserva e posteriormente chat. Não adicionar respostas fictícias para rotas pendentes.
+Base, clientes e motor de horários/reservas implementados e verificados. Reutilizar o alocador transacional em todos os canais. A consulta de dados do cliente ainda não tem histórico; acrescentá-lo junto com a conversa.
 
 ## Próximos 3 passos
-1. Clientes: normalização/deduplicação de telefone, validação de origem/aniversário, consulta/edição; criar tabelas próprias no SQLite.
-2. Horários/alocação e reservas: grade, duração, antecedência/janela/feriados, menor capacidade e ordem, combinações, cozinha e transação atômica; listagem, cancelamento, remarcação, chegada e ocupação. Rodar suíte completa.
-3. Conversa persistida com FAQ/fila humana e fluxo de reserva; confirmação e espera com caixa de saída simulada. Depois seguir grupos/base própria → bloqueios/backup → LGPD/Raio-X → integrações falsas → Docker/README → páginas.
+1. Conversa persistente por telefone: normalização/FAQ, histórico entrada/saída, fluxo nome/pessoas/dia/horário, consulta/cancelamento e fila humana; garantir PARAR e precedência das intenções.
+2. Caixa de saída, confirmação e lista de espera: tarefas idempotentes, resposta à pendência, ofertas na mesma data/turno após cancelamento, remarcação renovando confirmação; aprovação/recusa e base própria (aniversário/reativação/campanhas).
+3. Bloqueios e backup → LGPD/Raio-X → Evolution/Telegram usando apenas servidor falso → Docker/README → páginas. Rodar suíte completa e verificar limites a cada ciclo; manter contratos congelados.

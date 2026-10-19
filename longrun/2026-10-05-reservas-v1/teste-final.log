@@ -1,0 +1,2212 @@
+...FFF.FFFFFFF.FFFFFFFFFFFFFFFFFFFFFFFFFF.FFFFFFFFFFFFFFFF.FFFFFFFFFFFFF [ 77%]
+FFFFFFFFFFFFFFFFFFFFF                                                    [100%]
+=================================== FAILURES ===================================
+________________________ test_rotas_publicas_sem_token _________________________
+
+api = <conftest.Cliente object at 0xf45b56f56b10>
+
+    def test_rotas_publicas_sem_token(api):
+>       assert api.get("/api/horarios?data=2026-10-07&pessoas=2", token=None)[0] == 200
+E       assert 404 == 200
+
+tests/test_basico.py:33: AssertionError
+_________________________________ test_paginas _________________________________
+
+api = <conftest.Cliente object at 0xf45b56f54980>
+
+    def test_paginas(api):
+        st, html = api.get("/", token=None)
+>       assert st == 200 and 'id="chat"' in html
+E       assert (404 == 200)
+
+tests/test_basico.py:40: AssertionError
+______________________ test_estado_persiste_ao_reiniciar _______________________
+
+dados = PosixPath('/tmp/pytest-of-nmaldaner/pytest-53/test_estado_persiste_ao_reinic0/dados')
+
+    def test_estado_persiste_ao_reiniciar(dados):
+        s = Servidor(dados)
+        api = s.subir()
+>       cid = api.cliente()
+              ^^^^^^^^^^^^^
+
+tests/test_basico.py:50: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56f572f0>, nome = 'Maria Silva'
+telefone = '(41) 99999-0001', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria Silva', 'telefone': '(41) 99999-0001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+_________________ test_mesa_nova_validacoes_e_menor_max_vence __________________
+
+api = <conftest.Cliente object at 0xf45b56fb47a0>
+
+    def test_mesa_nova_validacoes_e_menor_max_vence(api):
+        st, r = api.post("/api/mesas", {"id": "m6", "salao": "interno", "min": 1, "max": 3})
+        assert st == 201, r
+        m6 = next(m for m in api.get("/api/mesas")[1]["mesas"] if m["id"] == "m6")
+        assert m6["ativa"] is True and m6["salao"] == "interno"
+        assert api.post("/api/mesas", {"id": "m6", "salao": "interno", "min": 1, "max": 2})[0] == 409
+        assert api.post("/api/mesas", {"id": "m7", "salao": "xyz", "min": 1, "max": 2})[0] == 404   # salão inexistente (regra geral, seção 5)
+        assert api.post("/api/mesas", {"id": "m7", "salao": "interno", "min": 0, "max": 2})[0] == 422
+        assert api.post("/api/mesas", {"id": "m7", "salao": "interno", "min": 3, "max": 2})[0] == 422
+        assert api.put("/api/mesas/naoexiste", {"max": 4})[0] == 404
+>       cid = api.cliente()
+              ^^^^^^^^^^^^^
+
+tests/test_cadastros.py:19: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56fb47a0>, nome = 'Maria Silva'
+telefone = '(41) 99999-0001', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria Silva', 'telefone': '(41) 99999-0001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+_____________________________ test_desativar_mesa ______________________________
+
+api = <conftest.Cliente object at 0xf45b56fb7590>
+
+    def test_desativar_mesa(api):
+>       cid = api.cliente()
+              ^^^^^^^^^^^^^
+
+tests/test_cadastros.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56fb7590>, nome = 'Maria Silva'
+telefone = '(41) 99999-0001', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria Silva', 'telefone': '(41) 99999-0001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+_________________________ test_turno_novo_e_validacoes _________________________
+
+api = <conftest.Cliente object at 0xf45b56fb7bf0>
+
+    def test_turno_novo_e_validacoes(api):
+        st, r = api.post("/api/turnos", {"id": "seg_almoco", "nome": "Almoço de segunda", "dias": ["seg"],
+                                          "inicio": "11:30", "fim": "14:00"})
+        assert st == 201, r
+        st, r = api.get("/api/horarios?data=2026-10-12&pessoas=2", token=None)   # segunda 12/10
+>       assert [(h["inicio"][11:], h["turno"]) for h in r["horarios"]] == \
+                                                        ^^^^^^^^^^^^^
+            [("11:30", "seg_almoco"), ("12:00", "seg_almoco"), ("12:30", "seg_almoco")]   # 12:30 + 90 = 14:00
+E       KeyError: 'horarios'
+
+tests/test_cadastros.py:44: KeyError
+_____________________________ test_desativar_turno _____________________________
+
+api = <conftest.Cliente object at 0xf45b56fb7c80>
+
+    def test_desativar_turno(api):
+>       cid = api.cliente()
+              ^^^^^^^^^^^^^
+
+tests/test_cadastros.py:57: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56fb7c80>, nome = 'Maria Silva'
+telefone = '(41) 99999-0001', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria Silva', 'telefone': '(41) 99999-0001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+__________________________ test_faq_crud_vale_na_hora __________________________
+
+api = <conftest.Cliente object at 0xf45b56fb6d50>
+
+    def test_faq_crud_vale_na_hora(api):
+        st, r = api.post("/api/faq", {"perguntas": ["tem rodízio", "fazem rodizio"], "resposta": "Rodízio só aos domingos."})
+        assert st == 201
+>       assert api.msg("41988887777", "vocês fazem rodízio?") == "Rodízio só aos domingos."
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_cadastros.py:71: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56fb6d50>, telefone = '41988887777'
+texto = 'vocês fazem rodízio?'
+
+    def msg(self, telefone, texto):
+        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
+>       assert st == 200, (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 == 200
+
+tests/conftest.py:87: AssertionError
+_____________________ test_bloqueio_do_restaurante_inteiro _____________________
+
+api = <conftest.Cliente object at 0xf45b56f57ec0>
+
+    def test_bloqueio_do_restaurante_inteiro(api):
+>       cid = api.cliente()
+              ^^^^^^^^^^^^^
+
+tests/test_cadastros.py:79: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56f57ec0>, nome = 'Maria Silva'
+telefone = '(41) 99999-0001', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria Silva', 'telefone': '(41) 99999-0001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+_______________________ test_bloqueio_de_mesa_e_de_salao _______________________
+
+api = <conftest.Cliente object at 0xf45b56f576e0>
+
+    def test_bloqueio_de_mesa_e_de_salao(api):
+>       cid = api.cliente()
+              ^^^^^^^^^^^^^
+
+tests/test_cadastros.py:93: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56f576e0>, nome = 'Maria Silva'
+telefone = '(41) 99999-0001', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria Silva', 'telefone': '(41) 99999-0001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+___________________________ test_backup_e_restaurar ____________________________
+
+dados = PosixPath('/tmp/pytest-of-nmaldaner/pytest-53/test_backup_e_restaurar0/dados')
+tmp_path = PosixPath('/tmp/pytest-of-nmaldaner/pytest-53/test_backup_e_restaurar0')
+
+    def test_backup_e_restaurar(dados, tmp_path):
+        s = Servidor(dados)
+        api = s.subir()
+>       cid = api.cliente("Guardada", "41999990009")
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_cadastros.py:126: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56fb59a0>, nome = 'Guardada'
+telefone = '41999990009', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Guardada', 'telefone': '41999990009'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+____________________ test_confirmacao_dentro_de_24h_uma_vez ____________________
+
+api = <conftest.Cliente object at 0xf45b56fb7e90>
+
+    def test_confirmacao_dentro_de_24h_uma_vez(api):
+>       p1 = api.cliente("Maria", T1)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_confirmacao_espera.py:17: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56fb7e90>, nome = 'Maria'
+telefone = '41999990001', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria', 'telefone': '41999990001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+__________________________ test_responder_1_confirma ___________________________
+
+api = <conftest.Cliente object at 0xf45b56fb5340>
+
+    def test_responder_1_confirma(api):
+>       p = api.cliente("Maria", T1)
+            ^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_confirmacao_espera.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56fb5340>, nome = 'Maria'
+telefone = '41999990001', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria', 'telefone': '41999990001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+___________________________ test_responder_2_cancela ___________________________
+
+api = <conftest.Cliente object at 0xf45b56fb7ec0>
+
+    def test_responder_2_cancela(api):
+>       p = api.cliente("Maria", T1)
+            ^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_confirmacao_espera.py:43: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56fb7ec0>, nome = 'Maria'
+telefone = '41999990001', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria', 'telefone': '41999990001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+_____________________ test_pendente_nao_recebe_confirmacao _____________________
+
+api = <conftest.Cliente object at 0xf45b56fdbd70>
+
+    def test_pendente_nao_recebe_confirmacao(api):
+>       p = api.cliente("Maria", T1)
+            ^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_confirmacao_espera.py:51: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56fdbd70>, nome = 'Maria'
+telefone = '41999990001', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria', 'telefone': '41999990001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+____________________ test_remarcar_pede_confirmacao_de_novo ____________________
+
+api = <conftest.Cliente object at 0xf45b56fb51c0>
+
+    def test_remarcar_pede_confirmacao_de_novo(api):
+>       p = api.cliente("Maria", T1)
+            ^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_confirmacao_espera.py:60: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56fb51c0>, nome = 'Maria'
+telefone = '41999990001', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria', 'telefone': '41999990001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+____________________ test_lista_de_espera_oferece_e_reserva ____________________
+
+api = <conftest.Cliente object at 0xf45b56fb7620>
+
+    def test_lista_de_espera_oferece_e_reserva(api):
+>       p1 = api.cliente("Maria", T1)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_confirmacao_espera.py:71: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56fb7620>, nome = 'Maria'
+telefone = '41999990001', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria', 'telefone': '41999990001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+________________________ test_espera_horario_ja_ocupado ________________________
+
+api = <conftest.Cliente object at 0xf45b56fd8d10>
+
+    def test_espera_horario_ja_ocupado(api):
+>       p1 = api.cliente("Maria", T1)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_confirmacao_espera.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56fd8d10>, nome = 'Maria'
+telefone = '41999990001', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria', 'telefone': '41999990001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+_______ test_espera_de_outro_turno_dia_ou_grupo_que_nao_cabe_nao_recebe ________
+
+api = <conftest.Cliente object at 0xf45b56fda360>
+
+    def test_espera_de_outro_turno_dia_ou_grupo_que_nao_cabe_nao_recebe(api):
+>       p1 = api.cliente("Maria", T1)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_confirmacao_espera.py:103: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56fda360>, nome = 'Maria'
+telefone = '41999990001', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria', 'telefone': '41999990001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+__________________ test_cancelar_pela_conversa_dispara_espera __________________
+
+api = <conftest.Cliente object at 0xf45b56fda810>
+
+    def test_cancelar_pela_conversa_dispara_espera(api):
+>       p1 = api.cliente("Maria", T1)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_confirmacao_espera.py:116: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56fda810>, nome = 'Maria'
+telefone = '41999990001', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria', 'telefone': '41999990001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+____________________ test_confirmacao_sobrevive_a_reinicio _____________________
+
+dados = PosixPath('/tmp/pytest-of-nmaldaner/pytest-53/test_confirmacao_sobrevive_a_r0/dados')
+
+    def test_confirmacao_sobrevive_a_reinicio(dados):
+        s = Servidor(dados)
+        api = s.subir()
+>       p = api.cliente("Maria", T1)
+            ^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_confirmacao_espera.py:129: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56fd84d0>, nome = 'Maria'
+telefone = '41999990001', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria', 'telefone': '41999990001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+_________________________ test_faq_responde_exatamente _________________________
+
+api = <conftest.Cliente object at 0xf45b56fb43e0>
+
+    def test_faq_responde_exatamente(api):
+>       assert api.msg(TEL, "Oi, tem estacionamento aí?") == ESTAC
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_conversa.py:19: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56fb43e0>, telefone = '41988887777'
+texto = 'Oi, tem estacionamento aí?'
+
+    def msg(self, telefone, texto):
+        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
+>       assert st == 200, (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 == 200
+
+tests/conftest.py:87: AssertionError
+_________________ test_nao_entendi_e_depois_passa_para_humano __________________
+
+api = <conftest.Cliente object at 0xf45b56fd8dd0>
+
+    def test_nao_entendi_e_depois_passa_para_humano(api):
+>       r = norm(api.msg(TEL, "qual o preço do rodízio?"))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_conversa.py:25: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56fd8dd0>, telefone = '41988887777'
+texto = 'qual o preço do rodízio?'
+
+    def msg(self, telefone, texto):
+        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
+>       assert st == 200, (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 == 200
+
+tests/conftest.py:87: AssertionError
+___________________________ test_pedido_de_atendente ___________________________
+
+api = <conftest.Cliente object at 0xf45b56fda6c0>
+
+    def test_pedido_de_atendente(api):
+>       assert "atendente" in norm(api.msg(TEL, "quero falar com um atendente"))
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_conversa.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56fda6c0>, telefone = '41988887777'
+texto = 'quero falar com um atendente'
+
+    def msg(self, telefone, texto):
+        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
+>       assert st == 200, (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 == 200
+
+tests/conftest.py:87: AssertionError
+_____________________ test_reserva_pelo_chat_cliente_novo ______________________
+
+api = <conftest.Cliente object at 0xf45b56fd8680>
+
+    def test_reserva_pelo_chat_cliente_novo(api):
+>       assert "nome" in norm(api.msg(TEL, "quero fazer uma reserva"))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_conversa.py:39: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56fd8680>, telefone = '41988887777'
+texto = 'quero fazer uma reserva'
+
+    def msg(self, telefone, texto):
+        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
+>       assert st == 200, (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 == 200
+
+tests/conftest.py:87: AssertionError
+_____________ test_reserva_cliente_conhecido_hoje_e_opcao_invalida _____________
+
+api = <conftest.Cliente object at 0xf45b57028560>
+
+    def test_reserva_cliente_conhecido_hoje_e_opcao_invalida(api):
+>       api.cliente("Maria", TEL)
+
+tests/test_conversa.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b57028560>, nome = 'Maria'
+telefone = '41988887777', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria', 'telefone': '41988887777'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+_____________________ test_dia_invalido_repete_a_pergunta ______________________
+
+api = <conftest.Cliente object at 0xf45b570289e0>
+
+    def test_dia_invalido_repete_a_pergunta(api):
+>       api.cliente("Maria", TEL)
+
+tests/test_conversa.py:73: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b570289e0>, nome = 'Maria'
+telefone = '41988887777', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria', 'telefone': '41988887777'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+__________ test_dia_lotado_entra_na_lista_de_espera_escolhendo_turno ___________
+
+api = <conftest.Cliente object at 0xf45b56fd83e0>
+
+    def test_dia_lotado_entra_na_lista_de_espera_escolhendo_turno(api):
+>       cid = api.cliente("Ocupa", "41900000001")
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_conversa.py:85: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56fd83e0>, nome = 'Ocupa'
+telefone = '41900000001', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Ocupa', 'telefone': '41900000001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+______________ test_dia_lotado_com_um_turno_so_nao_pergunta_turno ______________
+
+api = <conftest.Cliente object at 0xf45b56fb50d0>
+
+    def test_dia_lotado_com_um_turno_so_nao_pergunta_turno(api):
+>       cid = api.cliente("Ocupa", "41900000001")
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_conversa.py:102: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56fb50d0>, nome = 'Ocupa'
+telefone = '41900000001', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Ocupa', 'telefone': '41900000001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+____________ test_cancelar_dentro_do_fluxo_sai_sem_cancelar_reserva ____________
+
+api = <conftest.Cliente object at 0xf45b57028b90>
+
+    def test_cancelar_dentro_do_fluxo_sai_sem_cancelar_reserva(api):
+>       cid = api.cliente("Maria", TEL)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_conversa.py:122: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b57028b90>, nome = 'Maria'
+telefone = '41988887777', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria', 'telefone': '41988887777'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+___________________ test_minha_reserva_e_cancelar_pelo_chat ____________________
+
+api = <conftest.Cliente object at 0xf45b5702a360>
+
+    def test_minha_reserva_e_cancelar_pelo_chat(api):
+>       cid = api.cliente("Maria", TEL)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_conversa.py:131: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b5702a360>, nome = 'Maria'
+telefone = '41988887777', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria', 'telefone': '41988887777'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+_________________________ test_parar_bloqueia_contato __________________________
+
+api = <conftest.Cliente object at 0xf45b57029700>
+
+    def test_parar_bloqueia_contato(api):
+>       cid = api.cliente("Maria", TEL, marketing=True)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_conversa.py:149: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b57029700>, nome = 'Maria'
+telefone = '41988887777', marketing = True, extra = {}
+corpo = {'consentimento_marketing': True, 'nome': 'Maria', 'telefone': '41988887777'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+_________________ test_grupo_grande_pelo_chat_fica_aguardando __________________
+
+api = <conftest.Cliente object at 0xf45b57029ee0>
+
+    def test_grupo_grande_pelo_chat_fica_aguardando(api):
+>       api.cliente("Maria", TEL)
+
+tests/test_conversa.py:160: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b57029ee0>, nome = 'Maria'
+telefone = '41988887777', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria', 'telefone': '41988887777'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+_______________________________ test_dockerfile ________________________________
+
+    def test_dockerfile():
+>       d = ler("Dockerfile")
+            ^^^^^^^^^^^^^^^^^
+
+tests/test_docker.py:14: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+nome = 'Dockerfile'
+
+    def ler(nome):
+        p = RAIZ / nome
+>       assert p.exists(), f"falta {nome}"
+E       AssertionError: falta Dockerfile
+E       assert False
+E        +  where False = exists()
+E        +    where exists = PosixPath('/home/nmaldaner/projetos/reserva-restaurante/Dockerfile').exists
+
+tests/test_docker.py:9: AssertionError
+_________________________________ test_compose _________________________________
+
+    def test_compose():
+>       c = ler("docker-compose.yml")
+            ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_docker.py:22: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+nome = 'docker-compose.yml'
+
+    def ler(nome):
+        p = RAIZ / nome
+>       assert p.exists(), f"falta {nome}"
+E       AssertionError: falta docker-compose.yml
+E       assert False
+E        +  where False = exists()
+E        +    where exists = PosixPath('/home/nmaldaner/projetos/reserva-restaurante/docker-compose.yml').exists
+
+tests/test_docker.py:9: AssertionError
+________________ test_env_exemplo_tem_todas_as_variaveis_vazias ________________
+
+    def test_env_exemplo_tem_todas_as_variaveis_vazias():
+>       e = ler(".env.exemplo")
+            ^^^^^^^^^^^^^^^^^^^
+
+tests/test_docker.py:28: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+nome = '.env.exemplo'
+
+    def ler(nome):
+        p = RAIZ / nome
+>       assert p.exists(), f"falta {nome}"
+E       AssertionError: falta .env.exemplo
+E       assert False
+E        +  where False = exists()
+E        +    where exists = PosixPath('/home/nmaldaner/projetos/reserva-restaurante/.env.exemplo').exists
+
+tests/test_docker.py:9: AssertionError
+__________________ test_grupo_grande_pendente_ocupa_e_aprovar __________________
+
+api = <conftest.Cliente object at 0xf45b5702b4a0>
+
+    def test_grupo_grande_pendente_ocupa_e_aprovar(api):
+>       p = api.cliente("Maria", T1)
+            ^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grupo_canal.py:14: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b5702b4a0>, nome = 'Maria'
+telefone = '41999990001', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria', 'telefone': '41999990001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+_____________ test_grupo_grande_recusar_libera_sem_disparar_espera _____________
+
+api = <conftest.Cliente object at 0xf45b5702b020>
+
+    def test_grupo_grande_recusar_libera_sem_disparar_espera(api):
+>       p = api.cliente("Maria", T1)
+            ^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grupo_canal.py:29: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b5702b020>, nome = 'Maria'
+telefone = '41999990001', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria', 'telefone': '41999990001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+_________________ test_origem_de_marketplace_nao_entra_na_base _________________
+
+api = <conftest.Cliente object at 0xf45b56fdcbc0>
+
+    def test_origem_de_marketplace_nao_entra_na_base(api):
+        for origem in ("ifood", "marketplace", "rappi", "99food", "keeta"):
+            st, r = api.post("/api/clientes", {"nome": "X", "telefone": T1, "origem": origem})
+>           assert (st, r["erro"]) == (422, "origem_invalida"), origem
+E           AssertionError: ifood
+E           assert (404, 'rota_inexistente') == (422, 'origem_invalida')
+E             
+E             At index 0 diff: 404 != 422
+E             Use -v to get more diff
+
+tests/test_grupo_canal.py:45: AssertionError
+____________ test_aniversario_so_com_consentimento_uma_vez_por_ano _____________
+
+api = <conftest.Cliente object at 0xf45b56fde3f0>
+
+    def test_aniversario_so_com_consentimento_uma_vez_por_ano(api):
+>       api.cliente("Maria Lima", T1, marketing=True, aniversario="10-07")
+
+tests/test_grupo_canal.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56fde3f0>, nome = 'Maria Lima'
+telefone = '41999990001', marketing = True, extra = {'aniversario': '10-07'}
+corpo = {'aniversario': '10-07', 'consentimento_marketing': True, 'nome': 'Maria Lima', 'telefone': '41999990001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+_________________ test_reativacao_apos_60_dias_uma_por_visita __________________
+
+dados = PosixPath('/tmp/pytest-of-nmaldaner/pytest-53/test_reativacao_apos_60_dias_u0/dados')
+
+    def test_reativacao_apos_60_dias_uma_por_visita(dados):
+        s = Servidor(dados)
+        api = s.subir()
+>       p1 = api.cliente("Maria", T1, marketing=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grupo_canal.py:73: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56fde330>, nome = 'Maria'
+telefone = '41999990001', marketing = True, extra = {}
+corpo = {'consentimento_marketing': True, 'nome': 'Maria', 'telefone': '41999990001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+________________ test_campanha_so_com_consentimento_e_sem_parar ________________
+
+api = <conftest.Cliente object at 0xf45b56fdcd70>
+
+    def test_campanha_so_com_consentimento_e_sem_parar(api):
+>       api.cliente("Com", T1, marketing=True)
+
+tests/test_grupo_canal.py:100: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56fdcd70>, nome = 'Com'
+telefone = '41999990001', marketing = True, extra = {}
+corpo = {'consentimento_marketing': True, 'nome': 'Com', 'telefone': '41999990001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+_________________________ test_clientes_busca_e_edicao _________________________
+
+api = <conftest.Cliente object at 0xf45b57029d00>
+
+    def test_clientes_busca_e_edicao(api):
+>       p1 = api.cliente("José Antônio Souza", T1)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grupo_canal.py:112: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b57029d00>, nome = 'José Antônio Souza'
+telefone = '41999990001', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'José Antônio Souza', 'telefone': '41999990001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+_________________________ test_grade_2_pessoas_90_min __________________________
+
+api = <conftest.Cliente object at 0xf45b56fdd430>
+
+    def test_grade_2_pessoas_90_min(api):
+        # almoço: 11:30 + k·30 com inicio + 90 ≤ 15:00 → 11:30..13:30 (5); jantar: 19:00..21:30 (6)
+>       assert com_turno(api, D, 2) == [(h, "almoco") for h in ("11:30", "12:00", "12:30", "13:00", "13:30")] + \
+               ^^^^^^^^^^^^^^^^^^^^
+            [(h, "jantar") for h in ("19:00", "19:30", "20:00", "20:30", "21:00", "21:30")]
+
+tests/test_horarios.py:19: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+api = <conftest.Cliente object at 0xf45b56fdd430>, data = '2026-10-07'
+pessoas = 2
+
+    def com_turno(api, data, pessoas):
+        st, r = api.get(f"/api/horarios?data={data}&pessoas={pessoas}", token=None)
+>       assert st == 200, (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 == 200
+
+tests/test_horarios.py:13: AssertionError
+_________________________ test_grade_4_pessoas_120_min _________________________
+
+api = <conftest.Cliente object at 0xf45b56fdfbc0>
+
+    def test_grade_4_pessoas_120_min(api):
+>       h = api.horarios(D, 4)
+            ^^^^^^^^^^^^^^^^^^
+
+tests/test_horarios.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56fdfbc0>, data = '2026-10-07'
+pessoas = 4, salao = None
+
+    def horarios(self, data, pessoas=2, salao=None):
+        rota = f"/api/horarios?data={data}&pessoas={pessoas}" + (f"&salao={salao}" if salao else "")
+        st, r = self.get(rota, token=None)
+>       assert st == 200, (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 == 200
+
+tests/conftest.py:82: AssertionError
+_______________ test_grade_7_pessoas_180_min_so_pela_combinacao ________________
+
+api = <conftest.Cliente object at 0xf45b56fdd880>
+
+    def test_grade_7_pessoas_180_min_so_pela_combinacao(api):
+        # só m3+m4 (min 7, max 8) serve 7; 180 min: almoço 11:30 e 12:00 (12:00 + 180 = 15:00); jantar 19:00..20:00
+>       assert api.horarios(D, 7) == [f"{D}T{x}" for x in ("11:30", "12:00", "19:00", "19:30", "20:00")]
+               ^^^^^^^^^^^^^^^^^^
+
+tests/test_horarios.py:31: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56fdd880>, data = '2026-10-07'
+pessoas = 7, salao = None
+
+    def horarios(self, data, pessoas=2, salao=None):
+        rota = f"/api/horarios?data={data}&pessoas={pessoas}" + (f"&salao={salao}" if salao else "")
+        st, r = self.get(rota, token=None)
+>       assert st == 200, (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 == 200
+
+tests/conftest.py:82: AssertionError
+________________ test_domingo_so_almoco_segunda_fechado_feriado ________________
+
+api = <conftest.Cliente object at 0xf45b56fde3c0>
+
+    def test_domingo_so_almoco_segunda_fechado_feriado(api):
+>       assert com_turno(api, "2026-10-11", 2) == [(h, "almoco") for h in ("11:30", "12:00", "12:30", "13:00", "13:30")]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_horarios.py:37: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+api = <conftest.Cliente object at 0xf45b56fde3c0>, data = '2026-10-11'
+pessoas = 2
+
+    def com_turno(api, data, pessoas):
+        st, r = api.get(f"/api/horarios?data={data}&pessoas={pessoas}", token=None)
+>       assert st == 200, (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 == 200
+
+tests/test_horarios.py:13: AssertionError
+______________ test_antecedencia_minima_corta_o_primeiro_horario _______________
+
+dados = PosixPath('/tmp/pytest-of-nmaldaner/pytest-53/test_antecedencia_minima_corta0/dados')
+
+    def test_antecedencia_minima_corta_o_primeiro_horario(dados):
+        s = Servidor(dados, agora="2026-10-06T11:00")   # agora + 1 h = 12:00 → 11:30 cai, 12:00 fica
+        try:
+            api = s.subir()
+>           h = api.horarios("2026-10-06", 2)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_horarios.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b5703eff0>, data = '2026-10-06'
+pessoas = 2, salao = None
+
+    def horarios(self, data, pessoas=2, salao=None):
+        rota = f"/api/horarios?data={data}&pessoas={pessoas}" + (f"&salao={salao}" if salao else "")
+        st, r = self.get(rota, token=None)
+>       assert st == 200, (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 == 200
+
+tests/conftest.py:82: AssertionError
+_________________________ test_janela_maxima_inclusiva _________________________
+
+api = <conftest.Cliente object at 0xf45b5703c560>
+
+    def test_janela_maxima_inclusiva(api):
+        # 06/10 + 30 dias = 05/11 (quinta) ainda vale; 06/11 não
+>       assert len(api.horarios("2026-11-05", 2)) == 11
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_horarios.py:55: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b5703c560>, data = '2026-11-05'
+pessoas = 2, salao = None
+
+    def horarios(self, data, pessoas=2, salao=None):
+        rota = f"/api/horarios?data={data}&pessoas={pessoas}" + (f"&salao={salao}" if salao else "")
+        st, r = self.get(rota, token=None)
+>       assert st == 200, (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 == 200
+
+tests/conftest.py:82: AssertionError
+__________________________ test_parametros_invalidos ___________________________
+
+api = <conftest.Cliente object at 0xf45b56fdd010>
+
+    def test_parametros_invalidos(api):
+>       assert api.get(f"/api/horarios?data={D}", token=None)[0] == 422
+E       assert 404 == 422
+
+tests/test_horarios.py:61: AssertionError
+____________________________ test_filtro_por_salao _____________________________
+
+api = <conftest.Cliente object at 0xf45b56fb5880>
+
+    def test_filtro_por_salao(api):
+>       assert len(api.horarios(D, 2, salao="varanda")) == 11   # v1/v2 servem 1–4
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_horarios.py:68: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56fb5880>, data = '2026-10-07'
+pessoas = 2, salao = 'varanda'
+
+    def horarios(self, data, pessoas=2, salao=None):
+        rota = f"/api/horarios?data={data}&pessoas={pessoas}" + (f"&salao={salao}" if salao else "")
+        st, r = self.get(rota, token=None)
+>       assert st == 200, (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 == 200
+
+tests/conftest.py:82: AssertionError
+_________ test_horario_some_quando_as_mesas_que_servem_estao_ocupadas __________
+
+api = <conftest.Cliente object at 0xf45b5702a180>
+
+    def test_horario_some_quando_as_mesas_que_servem_estao_ocupadas(api):
+>       cid = api.cliente()
+              ^^^^^^^^^^^^^
+
+tests/test_horarios.py:74: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b5702a180>, nome = 'Maria Silva'
+telefone = '(41) 99999-0001', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria Silva', 'telefone': '(41) 99999-0001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+____________________ test_whatsapp_responde_pela_evolution _____________________
+
+api_int = <conftest.Cliente object at 0xf45b566481d0>
+externo = <conftest.Externo object at 0xf45b57028950>
+
+    def test_whatsapp_responde_pela_evolution(api_int, externo):
+>       evo(api_int, "tem estacionamento?")
+
+tests/test_integracoes.py:66: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+api = <conftest.Cliente object at 0xf45b566481d0>, texto = 'tem estacionamento?'
+numero = '5541988887777', msg_id = None, from_me = False
+sufixo = '@s.whatsapp.net', evento = 'messages.upsert'
+message = {'conversation': 'tem estacionamento?'}
+
+    def evo(api, texto=None, numero=NUM, msg_id=None, from_me=False, sufixo="@s.whatsapp.net",
+            evento="messages.upsert", message=None):
+        if message is None:
+            message = {"conversation": texto}
+        corpo = {"event": evento, "instance": "restaurante",
+                 "data": {"key": {"remoteJid": numero + sufixo, "fromMe": from_me, "id": msg_id or f"M{next(_ids)}"},
+                          "pushName": "Cliente", "message": message, "messageType": "conversation"}}
+        st, _ = api.post(f"/webhook/evolution/{SEGREDO_WH}", corpo, token=None)
+>       assert st == 200
+E       assert 404 == 200
+
+tests/test_integracoes.py:24: AssertionError
+_________________ test_whatsapp_ignora_o_que_nao_e_do_cliente __________________
+
+api_int = <conftest.Cliente object at 0xf45b566485f0>
+externo = <conftest.Externo object at 0xf45b5663fec0>
+
+    def test_whatsapp_ignora_o_que_nao_e_do_cliente(api_int, externo):
+>       evo(api_int, "tem estacionamento?", msg_id="DUP1")
+
+tests/test_integracoes.py:74: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+api = <conftest.Cliente object at 0xf45b566485f0>, texto = 'tem estacionamento?'
+numero = '5541988887777', msg_id = 'DUP1', from_me = False
+sufixo = '@s.whatsapp.net', evento = 'messages.upsert'
+message = {'conversation': 'tem estacionamento?'}
+
+    def evo(api, texto=None, numero=NUM, msg_id=None, from_me=False, sufixo="@s.whatsapp.net",
+            evento="messages.upsert", message=None):
+        if message is None:
+            message = {"conversation": texto}
+        corpo = {"event": evento, "instance": "restaurante",
+                 "data": {"key": {"remoteJid": numero + sufixo, "fromMe": from_me, "id": msg_id or f"M{next(_ids)}"},
+                          "pushName": "Cliente", "message": message, "messageType": "conversation"}}
+        st, _ = api.post(f"/webhook/evolution/{SEGREDO_WH}", corpo, token=None)
+>       assert st == 200
+E       assert 404 == 200
+
+tests/test_integracoes.py:24: AssertionError
+___________________________ test_whatsapp_sem_texto ____________________________
+
+api_int = <conftest.Cliente object at 0xf45b56648ef0>
+externo = <conftest.Externo object at 0xf45b566488f0>
+
+    def test_whatsapp_sem_texto(api_int, externo):
+>       evo(api_int, message={"audioMessage": {"seconds": 5}})
+
+tests/test_integracoes.py:84: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+api = <conftest.Cliente object at 0xf45b56648ef0>, texto = None
+numero = '5541988887777', msg_id = None, from_me = False
+sufixo = '@s.whatsapp.net', evento = 'messages.upsert'
+message = {'audioMessage': {'seconds': 5}}
+
+    def evo(api, texto=None, numero=NUM, msg_id=None, from_me=False, sufixo="@s.whatsapp.net",
+            evento="messages.upsert", message=None):
+        if message is None:
+            message = {"conversation": texto}
+        corpo = {"event": evento, "instance": "restaurante",
+                 "data": {"key": {"remoteJid": numero + sufixo, "fromMe": from_me, "id": msg_id or f"M{next(_ids)}"},
+                          "pushName": "Cliente", "message": message, "messageType": "conversation"}}
+        st, _ = api.post(f"/webhook/evolution/{SEGREDO_WH}", corpo, token=None)
+>       assert st == 200
+E       assert 404 == 200
+
+tests/test_integracoes.py:24: AssertionError
+_____________________ test_whatsapp_reserva_e_avisa_equipe _____________________
+
+api_int = <conftest.Cliente object at 0xf45b56649ca0>
+externo = <conftest.Externo object at 0xf45b56649370>
+
+    def test_whatsapp_reserva_e_avisa_equipe(api_int, externo):
+        def tem(trecho):
+            return esperar(lambda: any(trecho in norm(t) for t in textos_whats(externo)))
+    
+>       evo(api_int, "quero reservar uma mesa")
+
+tests/test_integracoes.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+api = <conftest.Cliente object at 0xf45b56649ca0>
+texto = 'quero reservar uma mesa', numero = '5541988887777', msg_id = None
+from_me = False, sufixo = '@s.whatsapp.net', evento = 'messages.upsert'
+message = {'conversation': 'quero reservar uma mesa'}
+
+    def evo(api, texto=None, numero=NUM, msg_id=None, from_me=False, sufixo="@s.whatsapp.net",
+            evento="messages.upsert", message=None):
+        if message is None:
+            message = {"conversation": texto}
+        corpo = {"event": evento, "instance": "restaurante",
+                 "data": {"key": {"remoteJid": numero + sufixo, "fromMe": from_me, "id": msg_id or f"M{next(_ids)}"},
+                          "pushName": "Cliente", "message": message, "messageType": "conversation"}}
+        st, _ = api.post(f"/webhook/evolution/{SEGREDO_WH}", corpo, token=None)
+>       assert st == 200
+E       assert 404 == 200
+
+tests/test_integracoes.py:24: AssertionError
+____________________ test_saida_pela_evolution_com_reenvio _____________________
+
+api_int = <conftest.Cliente object at 0xf45b5664ae40>
+externo = <conftest.Externo object at 0xf45b5664a0c0>
+
+    def test_saida_pela_evolution_com_reenvio(api_int, externo):
+>       cid = api_int.cliente("Maria", TEL)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_integracoes.py:110: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b5664ae40>, nome = 'Maria'
+telefone = '41988887777', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria', 'telefone': '41988887777'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+______________________ test_sem_evolution_status_simulado ______________________
+
+api = <conftest.Cliente object at 0xf45b56fb72f0>
+
+    def test_sem_evolution_status_simulado(api):
+>       cid = api.cliente("Maria", TEL)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_integracoes.py:125: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56fb72f0>, nome = 'Maria'
+telefone = '41988887777', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria', 'telefone': '41988887777'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+__________________________ test_abertura_vai_ao_grupo __________________________
+
+api_int = <conftest.Cliente object at 0xf45b56fde090>
+externo = <conftest.Externo object at 0xf45b56fdd640>
+
+    def test_abertura_vai_ao_grupo(api_int, externo):
+>       at, abertura = abre_atendimento(api_int, externo)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_integracoes.py:134: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_integracoes.py:52: in abre_atendimento
+    api.msg(TEL, "quero falar com um atendente")
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56fde090>, telefone = '41988887777'
+texto = 'quero falar com um atendente'
+
+    def msg(self, telefone, texto):
+        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
+>       assert st == 200, (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 == 200
+
+tests/conftest.py:87: AssertionError
+________________ test_atendimento_aberto_silencia_bot_e_repassa ________________
+
+api_int = <conftest.Cliente object at 0xf45b5664ac30>
+externo = <conftest.Externo object at 0xf45b56fdd040>
+
+    def test_atendimento_aberto_silencia_bot_e_repassa(api_int, externo):
+>       at, abertura = abre_atendimento(api_int, externo)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_integracoes.py:142: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_integracoes.py:52: in abre_atendimento
+    api.msg(TEL, "quero falar com um atendente")
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b5664ac30>, telefone = '41988887777'
+texto = 'quero falar com um atendente'
+
+    def msg(self, telefone, texto):
+        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
+>       assert st == 200, (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 == 200
+
+tests/conftest.py:87: AssertionError
+___________________ test_equipe_responde_em_cima_da_mensagem ___________________
+
+api_int = <conftest.Cliente object at 0xf45b5664b2c0>
+externo = <conftest.Externo object at 0xf45b5664b8c0>
+
+    def test_equipe_responde_em_cima_da_mensagem(api_int, externo):
+>       at, abertura = abre_atendimento(api_int, externo)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_integracoes.py:150: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_integracoes.py:52: in abre_atendimento
+    api.msg(TEL, "quero falar com um atendente")
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b5664b2c0>, telefone = '41988887777'
+texto = 'quero falar com um atendente'
+
+    def msg(self, telefone, texto):
+        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
+>       assert st == 200, (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 == 200
+
+tests/conftest.py:87: AssertionError
+_______________________ test_webhook_telegram_protegido ________________________
+
+api_int = <conftest.Cliente object at 0xf45b5664afc0>
+externo = <conftest.Externo object at 0xf45b5664a240>
+
+    def test_webhook_telegram_protegido(api_int, externo):
+>       at, abertura = abre_atendimento(api_int, externo)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_integracoes.py:158: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_integracoes.py:52: in abre_atendimento
+    api.msg(TEL, "quero falar com um atendente")
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b5664afc0>, telefone = '41988887777'
+texto = 'quero falar com um atendente'
+
+    def msg(self, telefone, texto):
+        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
+>       assert st == 200, (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 == 200
+
+tests/conftest.py:87: AssertionError
+____________________ test_comandos_responder_encerrar_fila _____________________
+
+api_int = <conftest.Cliente object at 0xf45b56666ea0>
+externo = <conftest.Externo object at 0xf45b5664b8f0>
+
+    def test_comandos_responder_encerrar_fila(api_int, externo):
+>       at, _ = abre_atendimento(api_int, externo)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_integracoes.py:166: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_integracoes.py:52: in abre_atendimento
+    api.msg(TEL, "quero falar com um atendente")
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56666ea0>, telefone = '41988887777'
+texto = 'quero falar com um atendente'
+
+    def msg(self, telefone, texto):
+        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
+>       assert st == 200, (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 == 200
+
+tests/conftest.py:87: AssertionError
+____________________________ test_comando_reservas _____________________________
+
+api_int = <conftest.Cliente object at 0xf45b5664aea0>
+externo = <conftest.Externo object at 0xf45b5664a750>
+
+    def test_comando_reservas(api_int, externo):
+>       cid = api_int.cliente("Maria Lima", "41999990001")
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_integracoes.py:178: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b5664aea0>, nome = 'Maria Lima'
+telefone = '41999990001', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria Lima', 'telefone': '41999990001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+________________ test_grupo_grande_avisa_e_aprova_pelo_telegram ________________
+
+api_int = <conftest.Cliente object at 0xf45b56fde780>
+externo = <conftest.Externo object at 0xf45b56649790>
+
+    def test_grupo_grande_avisa_e_aprova_pelo_telegram(api_int, externo):
+>       cid = api_int.cliente("Maria", TEL)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_integracoes.py:193: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56fde780>, nome = 'Maria'
+telefone = '41988887777', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria', 'telefone': '41988887777'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+__________________________ test_recusa_pelo_telegram ___________________________
+
+api_int = <conftest.Cliente object at 0xf45b566646e0>
+externo = <conftest.Externo object at 0xf45b56fdcb00>
+
+    def test_recusa_pelo_telegram(api_int, externo):
+>       cid = api_int.cliente("Maria", TEL)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_integracoes.py:205: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b566646e0>, nome = 'Maria'
+telefone = '41988887777', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria', 'telefone': '41988887777'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+___________________ test_pagina_da_equipe_responde_e_encerra ___________________
+
+api_int = <conftest.Cliente object at 0xf45b566669c0>
+externo = <conftest.Externo object at 0xf45b57028d40>
+
+    def test_pagina_da_equipe_responde_e_encerra(api_int, externo):
+>       at, _ = abre_atendimento(api_int, externo)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_integracoes.py:213: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_integracoes.py:52: in abre_atendimento
+    api.msg(TEL, "quero falar com um atendente")
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b566669c0>, telefone = '41988887777'
+texto = 'quero falar com um atendente'
+
+    def msg(self, telefone, texto):
+        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
+>       assert st == 200, (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 == 200
+
+tests/conftest.py:87: AssertionError
+___________________ test_cancelamento_pelo_chat_avisa_equipe ___________________
+
+api_int = <conftest.Cliente object at 0xf45b56664bf0>
+externo = <conftest.Externo object at 0xf45b56665940>
+
+    def test_cancelamento_pelo_chat_avisa_equipe(api_int, externo):
+>       cid = api_int.cliente("Maria", TEL)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_integracoes.py:221: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56664bf0>, nome = 'Maria'
+telefone = '41988887777', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria', 'telefone': '41988887777'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+____________________________ test_dados_e_exclusao _____________________________
+
+api = <conftest.Cliente object at 0xf45b56665400>
+
+    def test_dados_e_exclusao(api):
+        tel = "41999990001"
+>       cid = api.cliente("Maria Silva", tel, marketing=True, aniversario="05-02")
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_lgpd_raiox.py:15: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56665400>, nome = 'Maria Silva'
+telefone = '41999990001', marketing = True, extra = {'aniversario': '05-02'}
+corpo = {'aniversario': '05-02', 'consentimento_marketing': True, 'nome': 'Maria Silva', 'telefone': '41999990001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+__________________________ test_raiox_numeros_do_mes ___________________________
+
+dados = PosixPath('/tmp/pytest-of-nmaldaner/pytest-53/test_raiox_numeros_do_mes0/dados')
+
+    def test_raiox_numeros_do_mes(dados):
+>       s, api = montar_mes(dados)
+                 ^^^^^^^^^^^^^^^^^
+
+tests/test_lgpd_raiox.py:75: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_lgpd_raiox.py:46: in montar_mes
+    p9 = api.cliente("Nove", "41900000009")
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56649d60>, nome = 'Nove'
+telefone = '41900000009', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Nove', 'telefone': '41900000009'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+________________ test_cli_grava_mes_no_acompanhamento_do_painel ________________
+
+dados = PosixPath('/tmp/pytest-of-nmaldaner/pytest-53/test_cli_grava_mes_no_acompanh0/dados')
+tmp_path = PosixPath('/tmp/pytest-of-nmaldaner/pytest-53/test_cli_grava_mes_no_acompanh0')
+
+    def test_cli_grava_mes_no_acompanhamento_do_painel(dados, tmp_path):
+>       s, _ = montar_mes(dados)
+               ^^^^^^^^^^^^^^^^^
+
+tests/test_lgpd_raiox.py:97: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_lgpd_raiox.py:46: in montar_mes
+    p9 = api.cliente("Nove", "41900000009")
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56665460>, nome = 'Nove'
+telefone = '41900000009', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Nove', 'telefone': '41900000009'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+____________________________ test_reservar_e_listar ____________________________
+
+api = <conftest.Cliente object at 0xf45b56667680>
+
+    def test_reservar_e_listar(api):
+>       cid = api.cliente()
+              ^^^^^^^^^^^^^
+
+tests/test_reservas.py:11: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56667680>, nome = 'Maria Silva'
+telefone = '(41) 99999-0001', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria Silva', 'telefone': '(41) 99999-0001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+_______________ test_menor_mesa_que_serve_e_desempate_pela_ordem _______________
+
+api = <conftest.Cliente object at 0xf45b566652e0>
+
+    def test_menor_mesa_que_serve_e_desempate_pela_ordem(api):
+>       cid = api.cliente()
+              ^^^^^^^^^^^^^
+
+tests/test_reservas.py:22: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b566652e0>, nome = 'Maria Silva'
+telefone = '(41) 99999-0001', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria Silva', 'telefone': '(41) 99999-0001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+______________ test_combinacao_so_quando_nenhuma_mesa_unica_serve ______________
+
+api = <conftest.Cliente object at 0xf45b566d8680>
+
+    def test_combinacao_so_quando_nenhuma_mesa_unica_serve(api):
+>       cid = api.cliente()
+              ^^^^^^^^^^^^^
+
+tests/test_reservas.py:32: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b566d8680>, nome = 'Maria Silva'
+telefone = '(41) 99999-0001', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria Silva', 'telefone': '(41) 99999-0001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+_________________________ test_mesa_e_salao_explicitos _________________________
+
+api = <conftest.Cliente object at 0xf45b566dbc80>
+
+    def test_mesa_e_salao_explicitos(api):
+>       cid = api.cliente()
+              ^^^^^^^^^^^^^
+
+tests/test_reservas.py:45: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b566dbc80>, nome = 'Maria Silva'
+telefone = '(41) 99999-0001', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria Silva', 'telefone': '(41) 99999-0001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+______________________ test_limite_da_cozinha_por_horario ______________________
+
+api = <conftest.Cliente object at 0xf45b56667a40>
+
+    def test_limite_da_cozinha_por_horario(api):
+>       cid = api.cliente()
+              ^^^^^^^^^^^^^
+
+tests/test_reservas.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56667a40>, nome = 'Maria Silva'
+telefone = '(41) 99999-0001', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria Silva', 'telefone': '(41) 99999-0001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+______________________________ test_invalidos_422 ______________________________
+
+api = <conftest.Cliente object at 0xf45b5702b230>
+
+    def test_invalidos_422(api):
+>       cid = api.cliente()
+              ^^^^^^^^^^^^^
+
+tests/test_reservas.py:74: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b5702b230>, nome = 'Maria Silva'
+telefone = '(41) 99999-0001', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria Silva', 'telefone': '(41) 99999-0001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+____________________ test_antecedencia_e_janela_nas_pontas _____________________
+
+dados = PosixPath('/tmp/pytest-of-nmaldaner/pytest-53/test_antecedencia_e_janela_nas0/dados')
+
+    def test_antecedencia_e_janela_nas_pontas(dados):
+        from conftest import Servidor
+        s = Servidor(dados, agora="2026-10-06T11:00")    # agora + 1 h = 12:00
+        try:
+            api = s.subir()
+>           cid = api.cliente()
+                  ^^^^^^^^^^^^^
+
+tests/test_reservas.py:95: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b566dbd40>, nome = 'Maria Silva'
+telefone = '(41) 99999-0001', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria Silva', 'telefone': '(41) 99999-0001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+____________________________ test_inexistentes_404 _____________________________
+
+api = <conftest.Cliente object at 0xf45b566d96a0>
+
+    def test_inexistentes_404(api):
+>       cid = api.cliente()
+              ^^^^^^^^^^^^^
+
+tests/test_reservas.py:105: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b566d96a0>, nome = 'Maria Silva'
+telefone = '(41) 99999-0001', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria Silva', 'telefone': '(41) 99999-0001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+________________________ test_concorrencia_um_so_vence _________________________
+
+api = <conftest.Cliente object at 0xf45b566d9c70>
+
+    def test_concorrencia_um_so_vence(api):
+>       cid = api.cliente()
+              ^^^^^^^^^^^^^
+
+tests/test_reservas.py:113: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b566d9c70>, nome = 'Maria Silva'
+telefone = '(41) 99999-0001', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria Silva', 'telefone': '(41) 99999-0001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+______________________ test_cancelar_libera_e_so_de_ativa ______________________
+
+api = <conftest.Cliente object at 0xf45b566d8b30>
+
+    def test_cancelar_libera_e_so_de_ativa(api):
+>       cid = api.cliente()
+              ^^^^^^^^^^^^^
+
+tests/test_reservas.py:126: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b566d8b30>, nome = 'Maria Silva'
+telefone = '(41) 99999-0001', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria Silva', 'telefone': '(41) 99999-0001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+________________________________ test_remarcar _________________________________
+
+api = <conftest.Cliente object at 0xf45b56fd8290>
+
+    def test_remarcar(api):
+>       cid = api.cliente()
+              ^^^^^^^^^^^^^
+
+tests/test_reservas.py:137: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56fd8290>, nome = 'Maria Silva'
+telefone = '(41) 99999-0001', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria Silva', 'telefone': '(41) 99999-0001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+________________________ test_chegada_no_show_e_visitas ________________________
+
+api = <conftest.Cliente object at 0xf45b56f563c0>
+
+    def test_chegada_no_show_e_visitas(api):
+>       cid = api.cliente()
+              ^^^^^^^^^^^^^
+
+tests/test_reservas.py:157: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56f563c0>, nome = 'Maria Silva'
+telefone = '(41) 99999-0001', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria Silva', 'telefone': '(41) 99999-0001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+____________________ test_listar_por_periodo_turno_e_salao _____________________
+
+api = <conftest.Cliente object at 0xf45b56fdd070>
+
+    def test_listar_por_periodo_turno_e_salao(api):
+>       cid = api.cliente()
+              ^^^^^^^^^^^^^
+
+tests/test_reservas.py:172: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b56fdd070>, nome = 'Maria Silva'
+telefone = '(41) 99999-0001', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria Silva', 'telefone': '(41) 99999-0001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+__________________________ test_ocupacao_por_horario ___________________________
+
+api = <conftest.Cliente object at 0xf45b570291f0>
+
+    def test_ocupacao_por_horario(api):
+>       cid = api.cliente()
+              ^^^^^^^^^^^^^
+
+tests/test_reservas.py:187: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <conftest.Cliente object at 0xf45b570291f0>, nome = 'Maria Silva'
+telefone = '(41) 99999-0001', marketing = False, extra = {}
+corpo = {'consentimento_marketing': False, 'nome': 'Maria Silva', 'telefone': '(41) 99999-0001'}
+st = 404, r = {'erro': 'rota_inexistente'}, @py_assert2 = (200, 201)
+@py_assert1 = False, @py_format4 = '404 in (200, 201)'
+@py_format6 = "(404, {'erro': 'rota_inexistente'})\n>assert 404 in (200, 201)"
+
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+>       assert st in (200, 201), (st, r)
+E       AssertionError: (404, {'erro': 'rota_inexistente'})
+E       assert 404 in (200, 201)
+
+tests/conftest.py:68: AssertionError
+____________________ test_telefone_normalizado_e_duplicado _____________________
+
+api = <conftest.Cliente object at 0xf45b5664a960>
+
+    def test_telefone_normalizado_e_duplicado(api):
+        st, r = api.post("/api/clientes", {"nome": "A", "telefone": "(41) 99999-0001"})
+>       assert st == 201
+E       assert 404 == 201
+
+tests/test_reservas.py:212: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_basico.py::test_rotas_publicas_sem_token - assert 404 == 200
+FAILED tests/test_basico.py::test_paginas - assert (404 == 200)
+FAILED tests/test_basico.py::test_estado_persiste_ao_reiniciar - AssertionErr...
+FAILED tests/test_cadastros.py::test_mesa_nova_validacoes_e_menor_max_vence
+FAILED tests/test_cadastros.py::test_desativar_mesa - AssertionError: (404, {...
+FAILED tests/test_cadastros.py::test_turno_novo_e_validacoes - KeyError: 'hor...
+FAILED tests/test_cadastros.py::test_desativar_turno - AssertionError: (404, ...
+FAILED tests/test_cadastros.py::test_faq_crud_vale_na_hora - AssertionError: ...
+FAILED tests/test_cadastros.py::test_bloqueio_do_restaurante_inteiro - Assert...
+FAILED tests/test_cadastros.py::test_bloqueio_de_mesa_e_de_salao - AssertionE...
+FAILED tests/test_cadastros.py::test_backup_e_restaurar - AssertionError: (40...
+FAILED tests/test_confirmacao_espera.py::test_confirmacao_dentro_de_24h_uma_vez
+FAILED tests/test_confirmacao_espera.py::test_responder_1_confirma - Assertio...
+FAILED tests/test_confirmacao_espera.py::test_responder_2_cancela - Assertion...
+FAILED tests/test_confirmacao_espera.py::test_pendente_nao_recebe_confirmacao
+FAILED tests/test_confirmacao_espera.py::test_remarcar_pede_confirmacao_de_novo
+FAILED tests/test_confirmacao_espera.py::test_lista_de_espera_oferece_e_reserva
+FAILED tests/test_confirmacao_espera.py::test_espera_horario_ja_ocupado - Ass...
+FAILED tests/test_confirmacao_espera.py::test_espera_de_outro_turno_dia_ou_grupo_que_nao_cabe_nao_recebe
+FAILED tests/test_confirmacao_espera.py::test_cancelar_pela_conversa_dispara_espera
+FAILED tests/test_confirmacao_espera.py::test_confirmacao_sobrevive_a_reinicio
+FAILED tests/test_conversa.py::test_faq_responde_exatamente - AssertionError:...
+FAILED tests/test_conversa.py::test_nao_entendi_e_depois_passa_para_humano - ...
+FAILED tests/test_conversa.py::test_pedido_de_atendente - AssertionError: (40...
+FAILED tests/test_conversa.py::test_reserva_pelo_chat_cliente_novo - Assertio...
+FAILED tests/test_conversa.py::test_reserva_cliente_conhecido_hoje_e_opcao_invalida
+FAILED tests/test_conversa.py::test_dia_invalido_repete_a_pergunta - Assertio...
+FAILED tests/test_conversa.py::test_dia_lotado_entra_na_lista_de_espera_escolhendo_turno
+FAILED tests/test_conversa.py::test_dia_lotado_com_um_turno_so_nao_pergunta_turno
+FAILED tests/test_conversa.py::test_cancelar_dentro_do_fluxo_sai_sem_cancelar_reserva
+FAILED tests/test_conversa.py::test_minha_reserva_e_cancelar_pelo_chat - Asse...
+FAILED tests/test_conversa.py::test_parar_bloqueia_contato - AssertionError: ...
+FAILED tests/test_conversa.py::test_grupo_grande_pelo_chat_fica_aguardando - ...
+FAILED tests/test_docker.py::test_dockerfile - AssertionError: falta Dockerfile
+FAILED tests/test_docker.py::test_compose - AssertionError: falta docker-comp...
+FAILED tests/test_docker.py::test_env_exemplo_tem_todas_as_variaveis_vazias
+FAILED tests/test_grupo_canal.py::test_grupo_grande_pendente_ocupa_e_aprovar
+FAILED tests/test_grupo_canal.py::test_grupo_grande_recusar_libera_sem_disparar_espera
+FAILED tests/test_grupo_canal.py::test_origem_de_marketplace_nao_entra_na_base
+FAILED tests/test_grupo_canal.py::test_aniversario_so_com_consentimento_uma_vez_por_ano
+FAILED tests/test_grupo_canal.py::test_reativacao_apos_60_dias_uma_por_visita
+FAILED tests/test_grupo_canal.py::test_campanha_so_com_consentimento_e_sem_parar
+FAILED tests/test_grupo_canal.py::test_clientes_busca_e_edicao - AssertionErr...
+FAILED tests/test_horarios.py::test_grade_2_pessoas_90_min - AssertionError: ...
+FAILED tests/test_horarios.py::test_grade_4_pessoas_120_min - AssertionError:...
+FAILED tests/test_horarios.py::test_grade_7_pessoas_180_min_so_pela_combinacao
+FAILED tests/test_horarios.py::test_domingo_so_almoco_segunda_fechado_feriado
+FAILED tests/test_horarios.py::test_antecedencia_minima_corta_o_primeiro_horario
+FAILED tests/test_horarios.py::test_janela_maxima_inclusiva - AssertionError:...
+FAILED tests/test_horarios.py::test_parametros_invalidos - assert 404 == 422
+FAILED tests/test_horarios.py::test_filtro_por_salao - AssertionError: (404, ...
+FAILED tests/test_horarios.py::test_horario_some_quando_as_mesas_que_servem_estao_ocupadas
+FAILED tests/test_integracoes.py::test_whatsapp_responde_pela_evolution - ass...
+FAILED tests/test_integracoes.py::test_whatsapp_ignora_o_que_nao_e_do_cliente
+FAILED tests/test_integracoes.py::test_whatsapp_sem_texto - assert 404 == 200
+FAILED tests/test_integracoes.py::test_whatsapp_reserva_e_avisa_equipe - asse...
+FAILED tests/test_integracoes.py::test_saida_pela_evolution_com_reenvio - Ass...
+FAILED tests/test_integracoes.py::test_sem_evolution_status_simulado - Assert...
+FAILED tests/test_integracoes.py::test_abertura_vai_ao_grupo - AssertionError...
+FAILED tests/test_integracoes.py::test_atendimento_aberto_silencia_bot_e_repassa
+FAILED tests/test_integracoes.py::test_equipe_responde_em_cima_da_mensagem - ...
+FAILED tests/test_integracoes.py::test_webhook_telegram_protegido - Assertion...
+FAILED tests/test_integracoes.py::test_comandos_responder_encerrar_fila - Ass...
+FAILED tests/test_integracoes.py::test_comando_reservas - AssertionError: (40...
+FAILED tests/test_integracoes.py::test_grupo_grande_avisa_e_aprova_pelo_telegram
+FAILED tests/test_integracoes.py::test_recusa_pelo_telegram - AssertionError:...
+FAILED tests/test_integracoes.py::test_pagina_da_equipe_responde_e_encerra - ...
+FAILED tests/test_integracoes.py::test_cancelamento_pelo_chat_avisa_equipe - ...
+FAILED tests/test_lgpd_raiox.py::test_dados_e_exclusao - AssertionError: (404...
+FAILED tests/test_lgpd_raiox.py::test_raiox_numeros_do_mes - AssertionError: ...
+FAILED tests/test_lgpd_raiox.py::test_cli_grava_mes_no_acompanhamento_do_painel
+FAILED tests/test_reservas.py::test_reservar_e_listar - AssertionError: (404,...
+FAILED tests/test_reservas.py::test_menor_mesa_que_serve_e_desempate_pela_ordem
+FAILED tests/test_reservas.py::test_combinacao_so_quando_nenhuma_mesa_unica_serve
+FAILED tests/test_reservas.py::test_mesa_e_salao_explicitos - AssertionError:...
+FAILED tests/test_reservas.py::test_limite_da_cozinha_por_horario - Assertion...
+FAILED tests/test_reservas.py::test_invalidos_422 - AssertionError: (404, {'e...
+FAILED tests/test_reservas.py::test_antecedencia_e_janela_nas_pontas - Assert...
+FAILED tests/test_reservas.py::test_inexistentes_404 - AssertionError: (404, ...
+FAILED tests/test_reservas.py::test_concorrencia_um_so_vence - AssertionError...
+FAILED tests/test_reservas.py::test_cancelar_libera_e_so_de_ativa - Assertion...
+FAILED tests/test_reservas.py::test_remarcar - AssertionError: (404, {'erro':...
+FAILED tests/test_reservas.py::test_chegada_no_show_e_visitas - AssertionErro...
+FAILED tests/test_reservas.py::test_listar_por_periodo_turno_e_salao - Assert...
+FAILED tests/test_reservas.py::test_ocupacao_por_horario - AssertionError: (4...
+FAILED tests/test_reservas.py::test_telefone_normalizado_e_duplicado - assert...
+86 failed, 7 passed in 12.85s

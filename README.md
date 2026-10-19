@@ -10,7 +10,7 @@ Guia completo (landing + passo a passo): **https://inematds.github.io/reserva-re
 
 Reserva de mesa para **um restaurante**, com Python 3 e biblioteca padrão (planejado): salões e mesas com capacidade, turnos por dia da semana, alocação automática da menor mesa que serve, confirmação automática ("1 confirma / 2 cancela"), no-show, lista de espera, grupo grande com aprovação da equipe, FAQ, passagem para humano, base própria de clientes com consentimento (aniversário, convite de retorno, campanhas), chat web + WhatsApp pela Evolution API, equipe pelo Telegram e pela página `/equipe`, backup/restauração, Docker e exportação mensal para o Painel de Recuperação do Raio-X de Margem (pacote `restaurante`).
 
-**Estado (19/10/2026): implementação em andamento, v0.2.0.** CLI HTTP, SQLite, autenticação, relógio configurável e cadastros de mesas/turnos/FAQ implementados. Verificação deste ciclo: **6 passed / 87 failed**, com `LIMITES OK`. Reservas, conversa, integrações, páginas, backup e Docker ainda pendentes. O roteiro de execução longa abaixo continua válido.
+**Estado (19/10/2026): implementação em andamento, v0.3.0.** Base HTTP/SQLite, autenticação, cadastros, clientes, horários/alocação, reservas, remarcação, chegada/no-show e ocupação implementados. Verificação deste ciclo: **38 passed / 55 failed**, com `LIMITES OK`. Conversa, confirmação/espera, aprovação de grupos, integrações, páginas, bloqueios, LGPD/Raio-X, backup e Docker ainda pendentes. O roteiro de execução longa abaixo continua válido.
 
 ## O que o sistema faz (resumo do contrato)
 
@@ -113,7 +113,11 @@ editar essas listas no JSON depois da primeira execução não altera o banco.
 Outras configurações do JSON são recarregadas ao reiniciar.
 
 `RESERVA_AGORA=AAAA-MM-DDTHH:MM` fixa o relógio para testes; sem a variável,
-o sistema usa a hora local. A versão atual ainda não oferece reserva nem chat.
+o sistema usa a hora local. Clientes e reservas já podem ser gerenciados pela API
+(`/api/clientes`, `/api/reservas` e `/api/ocupacao`); a disponibilidade é pública
+em `/api/horarios?data=AAAA-MM-DD&pessoas=N`. Cancelamento, remarcação e
+chegada/no-show usam as ações da seção 5 do contrato. Chat, ofertas de espera e
+aprovação de grupos ainda estão pendentes.
 
 ## Deploy na VPS
 
