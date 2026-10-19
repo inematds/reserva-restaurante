@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Reserva Restaurante — plan kit for table booking, WhatsApp and a Telegram team desk</title>
-<meta name="description" content="Open plan kit for a restaurant table-booking system: specification, 93 acceptance tests, guardrails and prompts for an agent (Claude Code or Codex) to build it in your own environment. The system is not implemented yet.">
+<title>Reserva Restaurante — table-booking system with WhatsApp and a Telegram team desk</title>
+<meta name="description" content="Open restaurant table-booking system, ready to run (v0.7.0, 93 out of 93 tests): web chat and WhatsApp via Evolution, a Telegram team desk, a waitlist, your own customer base and Docker for the VPS. Built by an agent against a frozen contract and tests.">
 <link rel="alternate" hreflang="pt-BR" href="https://inematds.github.io/reserva-restaurante/guia/">
 <link rel="alternate" hreflang="en" href="https://inematds.github.io/reserva-restaurante/guia/en/">
 <link rel="alternate" hreflang="es" href="https://inematds.github.io/reserva-restaurante/guia/es/">
@@ -125,9 +125,9 @@
   <div class="glow"></div>
   <div class="wrap">
     <div>
-      <span class="chip">Plan kit · table booking · open source</span>
-      <h1>The complete plan so no <span class="amb">table</span> ever sits empty</h1>
-      <p class="lead">Specification, 93 acceptance tests, guardrails and prompts for an agent to build, in your own environment, a restaurant booking system: web chat and WhatsApp, a Telegram team desk, a waitlist and your own customer base. <strong>The system is not implemented yet: this repository is the plan, and you run the implementation.</strong></p>
+      <span class="chip">Ready system · v0.7.0 · table booking · open source</span>
+      <h1>The complete system so no <span class="amb">table</span> ever sits empty</h1>
+      <p class="lead">Table booking for one restaurant, ready to run in your own environment: web chat and WhatsApp, a Telegram team desk, a waitlist and your own customer base. <strong>Version 0.7.0 is implemented: 93 out of 93 tests pass, LIMITES OK and the independent verification passed (docker build + healthcheck). Only your part is left: credentials, VPS and real data.</strong></p>
       <div class="cta">
         <a class="btn" href="#guia">Start the guide</a>
         <a class="btn ghost" href="https://github.com/inematds/reserva-restaurante" target="_blank" rel="noopener">View on GitHub</a>
@@ -139,12 +139,12 @@
 
 <section id="oque"><div class="wrap">
   <span class="chip">What it is</span>
-  <h2>A kit to hand to an agent: from the contract to 93 green tests</h2>
-  <p class="sub">There is no ready-made app here. There is the contract for what the app must do, the test battery that proves it, and the guardrails that stop the agent from cheating. The builder is Claude Code or Codex, running on your machine under your subscription. The sibling project <a href="https://inematds.github.io/atende-clinica/guia/en/" target="_blank" rel="noopener">Atende Clínica</a> was made exactly this way and closed 93 out of 93 tests.</p>
+  <h2>A ready system, built by an agent and proven by 93 tests</h2>
+  <p class="sub">Here you get the working app and also the path that produced it: the contract for what it must do, the test battery that proves it, and the guardrails that stopped the agent from cheating. It was built by Claude Code and Codex, under the subscription, with the long-run execution method. The sibling project <a href="https://inematds.github.io/atende-clinica/guia/en/" target="_blank" rel="noopener">Atende Clínica</a> was made exactly this way and also closed 93 out of 93 tests.</p>
   <figure style="margin:0 0 26px;border-radius:16px;overflow:hidden;border:1px solid var(--line);box-shadow:0 30px 80px -30px #000"><img src="../assets/banner-grade-en.jpg" alt="Table booking, automatic table allocation, confirmation, waitlist, WhatsApp Evolution, team on Telegram, LGPD and Raio-X" loading="lazy" style="width:100%;display:block"></figure>
   <div class="grid g3">
-    <div class="card"><h3>🍽️ The system that comes out of the plan</h3><p>Dining rooms and tables with capacity, shifts by weekday, allocation of the smallest table that fits, "1 confirms / 2 cancels" confirmation, no-show, waitlist and large parties approved by the staff. Python 3 with the standard library only, and SQLite, one restaurant per installation.</p></div>
-    <div class="card"><h3>📦 The kit</h3><p>A 20-section specification, 93 black-box tests, default decisions already proposed, a map to Raio-X, prompts for <code>/goal</code> and for the headless loop, and the guardrails that freeze the contract. An adversarial validator went through all of it and fixed 13 problems.</p></div>
+    <div class="card"><h3>🍽️ The system</h3><p>Dining rooms and tables with capacity, shifts by weekday, allocation of the smallest table that fits, "1 confirms / 2 cancels" confirmation, no-show, waitlist and large parties approved by the staff. Python 3 with the standard library only, and SQLite, one restaurant per installation, with Docker for the VPS.</p></div>
+    <div class="card"><h3>📦 The kit</h3><p>The code (<code>./reserva</code>, <code>src/</code>, <code>web/</code>, <code>Dockerfile</code>), the 20-section specification, the 93 black-box tests, the applied decisions, a map to Raio-X, the prompts for <code>/goal</code> and for the headless loop, and the guardrails that froze the contract. An adversarial validator reviewed the plan and fixed 13 problems before the build.</p></div>
     <div class="card"><h3>📈 The Raio-X de Margem rules</h3><p>The customer contact stays with the restaurant, not the marketplace: the origin field rejects iFood and Rappi, and campaigns only go to people who consented (LGPD, Brazil's privacy law). These rules are Brazilian: marketplace terms such as iFood's and the LGPD are built in. The system returns <code>clientes_novos_mes</code> and <code>retorno_atual_pct</code> to the <a href="https://inematds.github.io/raio-x-margem/guia/en/" target="_blank" rel="noopener">Raio-X de Margem</a> dashboard.</p></div>
   </div>
 </div></section>
@@ -152,7 +152,7 @@
 <section id="fluxo"><div class="wrap">
   <span class="chip">How it works</span>
   <h2>From "a table for four, please" to a confirmed booking</h2>
-  <p class="sub">This is the flow of the planned system, what the agent will build. A Python server with no dependencies, SQLite in a data folder and Docker for the VPS. Evolution and Telegram come in only through environment variables; without them the outbox is simulated and no network call leaves the process.</p>
+  <p class="sub">This is the flow of the implemented system. A Python server with no dependencies, SQLite in a data folder and Docker for the VPS. Evolution and Telegram come in only through environment variables; without them the outbox is simulated and no network call leaves the process.</p>
   <div class="flow">
     <span>Site chat or WhatsApp (Evolution)</span><span class="arr">→</span>
     <span>Name, party size, day, time</span><span class="arr">→</span>
@@ -171,83 +171,83 @@
 <section id="pre"><div class="wrap">
   <span class="chip">Prerequisites</span>
   <h2>What you need</h2>
-  <p class="sub">To run the plan you only need Python for the tests and an agent logged in through your subscription. Docker only comes in for the final check and the deploy; Evolution and Telegram are optional and yours.</p>
+  <p class="sub">To run the system you only need Python 3.10+; pytest is there to check the tests. Docker comes in for the VPS deploy; Evolution and Telegram are optional and yours. Claude Code or Codex only if you want to rebuild or adapt the system with the method.</p>
   <div class="grid g3">
-    <div class="card"><h3>Python 3.10+ and pytest</h3><p>The tests use pytest (a development tool). The application itself will have no dependencies.</p><pre><span class="c"># check</span>
+    <div class="card"><h3>Python 3.10+ and pytest</h3><p>The application has no dependencies: standard library only. pytest is a development tool, used to check the 93 tests.</p><pre><span class="c"># check</span>
 <span class="k">python3</span> --version
 <span class="k">python3</span> -m pip install pytest</pre></div>
-    <div class="card"><h3>Claude Code or Codex</h3><p>Through the subscription, no paid API. For the headless loop, clone <a href="https://github.com/inematds/execucao-longa" target="_blank" rel="noopener">execucao-longa</a> into <code>~/projetos</code>.</p><pre><span class="c"># check</span>
-<span class="k">codex</span> --version   <span class="c"># or: claude --version</span></pre></div>
-    <div class="card"><h3>Docker, Evolution and Telegram</h3><p>Docker does the final build and the VPS deploy. An Evolution instance and a Telegram bot only if you want the channels; credentials stay in the <code>.env</code>.</p><pre><span class="c"># check</span>
+    <div class="card"><h3>Docker, Evolution and Telegram</h3><p>Docker brings the system up on the VPS with <code>docker compose</code>. An Evolution instance and a Telegram bot only if you want the channels; credentials stay in the <code>.env</code>.</p><pre><span class="c"># check</span>
 <span class="k">docker</span> --version</pre></div>
+    <div class="card"><h3>Claude Code or Codex (optional)</h3><p>Only to rebuild or adapt with the method, through the subscription, no paid API. For the headless loop, clone <a href="https://github.com/inematds/execucao-longa" target="_blank" rel="noopener">execucao-longa</a> into <code>~/projetos</code>.</p><pre><span class="c"># check</span>
+<span class="k">codex</span> --version   <span class="c"># or: claude --version</span></pre></div>
   </div>
 </div></section>
 
 <section id="guia"><div class="wrap">
   <span class="chip">User guide · step by step</span>
-  <h2>From clone to an implemented system, in your own environment</h2>
-  <p class="sub">The commands below are the repository's own. The cycle: answer the open decisions, freeze the contract, run the agent until <code>93 passed</code> and <code>LIMITES OK</code>, and check with the independent verification.</p>
+  <h2>From clone to a running system, in your own environment</h2>
+  <p class="sub">The system is implemented: <code>./reserva</code> ships in the repository. The commands below are the README's own. The cycle: check the tests, run it locally, configure your restaurant and, when you want, publish it on your VPS with your channels.</p>
 
   <div class="step"><div class="b">1</div><div>
-    <h3>Clone the repository</h3>
-    <p>There is no <code>./reserva</code> yet: the repository only holds the plan. Check that the suite is collected without errors and that nothing passes yet (without the implementation the tests fail or error out, which is expected).</p>
+    <h3>Clone and check the tests</h3>
+    <p>The repository ships the ready system and the 93 black-box tests. On your machine the whole suite should pass.</p>
 <pre><span class="k">git clone</span> <span class="s">https://github.com/inematds/reserva-restaurante</span> && <span class="k">cd</span> reserva-restaurante
 <span class="k">python3</span> -m pytest -q --collect-only | tail -1   <span class="c"># 93 tests collected</span>
-<span class="k">python3</span> -m pytest -q | tail -1                  <span class="c"># 0 passed</span></pre>
+<span class="k">python3</span> -m pytest -q | tail -1                  <span class="c"># 93 passed</span></pre>
   </div></div>
 
   <div class="step"><div class="b">2</div><div>
-    <h3>Answer the open decisions</h3>
-    <p>Read <code>docs/DECISOES-ABERTAS.md</code> (written in Portuguese): 20 default proposals already applied to the specification and the tests. Answering "ok to all" unblocks the run. If you change anything marked ⚠, edit <code>docs/ESPECIFICACAO.md</code> and the tests before freezing. For a real pilot, also replace <code>exemplos/restaurante.json</code> with your own dining rooms, tables and shifts.</p>
-<pre><span class="k">less</span> docs/DECISOES-ABERTAS.md</pre>
+    <h3>Run it locally</h3>
+    <p>The first line prints <code>PORTA=&lt;n&gt;</code> (<code>--porta 0</code> picks a free one). The server listens on <code>127.0.0.1</code>; on the first run it creates the data folder, copies <code>exemplos/restaurante.json</code> and seeds <code>reservas.sqlite3</code>. Open <code>/</code> to chat as a customer and <code>/equipe</code> to operate with the token. Without Evolution and Telegram configured, messages stay in the simulated outbox (<code>GET /api/saida</code>).</p>
+<pre><span class="k">./reserva</span> serve --porta 8080 --dados ./dados   <span class="c"># PORTA=8080</span>
+<span class="c"># open http://127.0.0.1:8080/ and http://127.0.0.1:8080/equipe</span></pre>
   </div></div>
 
   <div class="step"><div class="b">3</div><div>
-    <h3>Freeze the contract</h3>
-    <p>With everything committed, the script records the hash of <code>tests/</code>, <code>pytest.ini</code>, the specification and the verifier, plus the base commit, in <code>hash-congelado.txt</code>. From then on, any change to the tests is detected.</p>
-<pre><span class="k">git add</span> -A && <span class="k">git commit</span> -m <span class="s">"contrato v1"</span>
-<span class="k">bash</span> longrun/2026-10-05-reservas-v1/congelar.sh</pre>
+    <h3>Configure your restaurant</h3>
+    <p>In <code>dados/restaurante.json</code>, replace the <code>TROQUE-ESTE-TOKEN</code> token with a unique one and set the real name, dining rooms, tables, shifts and FAQ. After the first run, tables, shifts and FAQ live in SQLite and are edited on the <code>/equipe</code> page or through the API; the other JSON settings are reloaded on restart. Confirmations, birthdays and come-back invitations go out through <code>POST /api/tarefas/rodar</code> (there is a button on the team page). The system does not charge deposits or Pix: any policy for groups goes in the FAQ.</p>
+<pre><span class="k">nano</span> dados/restaurante.json   <span class="c"># token, name, tables, shifts, FAQ</span></pre>
   </div></div>
 
   <div class="step"><div class="b">4</div><div>
-    <h3>Run the agent (pick one path)</h3>
-    <p><strong>a) Headless loop with Codex (recommended).</strong> The <code>loop.env</code> sets 20 cycles of 30 min, 8 GB per cycle, a stop after 3 cycles without progress, model <code>gpt-6-astra</code> and <code>CODEX_ARGS="-c sandbox_workspace_write.network_access=true"</code>: without it the Codex sandbox blocks the tests' local server.</p>
-<pre><span class="k">~/projetos/execucao-longa/tools/loop-longrun.sh</span> longrun/2026-10-05-reservas-v1</pre>
-    <p><strong>b) <code>/goal</code> in Claude Code.</strong> Open a fresh Claude Code session in the project folder and follow <code>longrun/2026-10-05-reservas-v1/prompt-goal-claude.md</code>: paste the <code>/goal</code> condition (the output must show <code>93 passed</code> and <code>LIMITES OK</code>) and, as the first message, the block from <code>prompt-goal-codex.md</code> starting at <code>RESULTADO:</code>.</p>
-<pre><span class="k">claude</span>   <span class="c"># fresh session, inside reserva-restaurante</span></pre>
-    <p><strong>c) Codex TUI, open.</strong> Paste the contents of <code>longrun/2026-10-05-reservas-v1/prompt-goal-codex.md</code>.</p>
-<pre><span class="k">codex</span> -c sandbox_workspace_write.network_access=true</pre>
+    <h3>Backup and numbers for Raio-X</h3>
+    <p>The backup is a ZIP with the configuration and a consistent copy of the SQLite database, even with the server running; store it with restricted access, because it holds personal data. Stop the server before restoring. The <code>raiox</code> command writes <code>clientes_novos_mes</code> and <code>retorno_atual_pct</code> into the Panel tracking file.</p>
+<pre><span class="k">./reserva</span> backup --dados ./dados --saida copia.bak
+<span class="k">./reserva</span> restaurar --dados ./dados --entrada copia.bak   <span class="c"># server stopped</span>
+<span class="k">./reserva</span> raiox --dados ./dados --mes AAAA-MM --acompanhamento painel.json</pre>
   </div></div>
 
   <div class="step"><div class="b">5</div><div>
-    <h3>Follow progress</h3>
-    <p>In the loop, <code>loop.log</code> shows every cycle and <code>progress.md</code> has one line per checkpoint. The loop's exit code tells you what happened: <code>0</code> done (the final test passed), <code>1</code> cycle cap reached, <code>2</code> stopped after 3 cycles without progress, <code>3</code> another loop is already running in the folder. A test that conflicts with the specification goes to <code>failures.md</code>: that is a human gate, and the agent must not adjust the test or the specification.</p>
-<pre><span class="k">tail</span> -f longrun/2026-10-05-reservas-v1/loop.log
-<span class="k">cat</span> longrun/2026-10-05-reservas-v1/state.md</pre>
+    <h3>Deploy to the VPS with Docker</h3>
+    <p>The official Python image, no extra packages. The <code>./dados</code> volume keeps SQLite and configuration, <code>./backups</code> receives the copies and the port is bound to <code>127.0.0.1:8080</code>: put a reverse proxy (Nginx or Caddy) with HTTPS in front, set the time zone (<code>TZ</code>) to the restaurant's, and do not pin <code>RESERVA_AGORA</code> in production. The README has the daily backup cron and the restore with a temporary container.</p>
+<pre><span class="k">cp</span> .env.exemplo .env && <span class="k">mkdir</span> -p dados backups
+<span class="k">cp</span> exemplos/restaurante.json dados/restaurante.json   <span class="c"># edit token, tables and hours</span>
+<span class="k">chmod</span> 600 .env dados/restaurante.json
+<span class="k">docker compose</span> up -d --build && <span class="k">docker compose</span> ps</pre>
   </div></div>
 
   <div class="step"><div class="b">6</div><div>
-    <h3>Check with the independent verification</h3>
-    <p>When the agent says "done", run the three commands. The last one the agent never saw: it looks for fixture values copied into the code, brings up a restaurant that never appeared before (15-minute step, a single shift, a 3-table combination, no kitchen limit) and does a <code>docker build</code> with a healthcheck. Then open <code>/</code> and <code>/equipe</code> in the browser.</p>
-<pre><span class="k">python3</span> -m pytest -q tests/                                        <span class="c"># 93 passed</span>
-<span class="k">bash</span> longrun/2026-10-05-reservas-v1/verificar-limites.sh              <span class="c"># LIMITES OK</span>
-<span class="k">python3</span> longrun/2026-10-05-reservas-v1/verificar-independente.py     <span class="c"># INDEPENDENTE OK</span></pre>
+    <h3>Connect WhatsApp and Telegram with your credentials</h3>
+    <p>Evolution: fill in <code>EVOLUTION_*</code> and <code>WEBHOOK_SEGREDO</code> and set the <code>MESSAGES_UPSERT</code> event on the instance to <code>https://your-domain/webhook/evolution/&lt;secret&gt;</code>. Telegram: fill in <code>TELEGRAM_*</code>, register <code>setWebhook</code> on <code>/webhook/telegram</code> with <code>secret_token</code> equal to <code>TELEGRAM_SEGREDO</code> and add the bot to the group. Schedule <code>POST /api/tarefas/rodar</code> on localhost with <code>X-Token</code> (every five minutes, for example). No real service was called during the build: this part, the deploy and the pilot are yours.</p>
+<pre><span class="k">nano</span> .env   <span class="c"># EVOLUTION_*, TELEGRAM_*, WEBHOOK_SEGREDO, TELEGRAM_SEGREDO</span>
+<span class="k">docker compose</span> up -d</pre>
   </div></div>
 
   <div class="step"><div class="b">7</div><div>
-    <h3>Deploy to the VPS and pilot</h3>
-    <p>The deploy is yours, with your own credentials. The agent itself writes the deploy README as part of the goal: bringing up <code>docker compose</code>, an HTTPS proxy, the Evolution webhook (event <code>MESSAGES_UPSERT</code>), the Telegram webhook with <code>secret_token</code> and a daily backup in cron. After the deploy, configure a real restaurant and use the system for a few weeks.</p>
-<pre><span class="k">cp</span> .env.exemplo .env && <span class="k">chmod</span> 600 .env   <span class="c"># fill in EVOLUTION_*, TELEGRAM_*, WEBHOOK_SEGREDO</span>
-<span class="k">docker compose</span> up -d --build</pre>
+    <h3>Want to rebuild or adapt it? The method stays in the repo</h3>
+    <p>This is how the system was built: decisions answered, contract frozen (specification and 93 tests with a hash), an agent in a long run (Codex headless loop or <code>/goal</code> in Claude Code) until <code>93 passed</code> and <code>LIMITES OK</code>, and an independent verification the agent never saw: it looks for fixture values in the code, brings up a never-seen restaurant (15-minute step, a single shift, a 3-table combination) and does a <code>docker build</code> with a healthcheck. To change rules, edit <code>docs/DECISOES-ABERTAS.md</code> (in Portuguese), the specification and the tests, freeze again and run the same loop. The step by step is in the README and in <code>longrun/2026-10-05-reservas-v1/</code>.</p>
+<pre><span class="k">bash</span> longrun/2026-10-05-reservas-v1/congelar.sh
+<span class="k">~/projetos/execucao-longa/tools/loop-longrun.sh</span> longrun/2026-10-05-reservas-v1
+<span class="k">python3</span> longrun/2026-10-05-reservas-v1/verificar-independente.py   <span class="c"># INDEPENDENTE OK</span></pre>
   </div></div>
 </div></section>
 
 <section id="kit"><div class="wrap">
   <span class="chip">What's in the kit</span>
   <h2>Contract, tests and guardrails, with the real numbers</h2>
-  <p class="sub">Everything the agent needs to build, and everything that stops it from pretending it built.</p>
+  <p class="sub">Everything the agent needed to build, and everything that stopped it from pretending it built. It stays in the repository for anyone who wants to check, rebuild or adapt.</p>
   <div class="grid g3">
-    <div class="card"><h3>93 acceptance tests</h3><p>Black-box, over HTTP and the command line, in 10 files.</p><pre>test_reservas.py              15
+    <div class="card"><h3>93 acceptance tests</h3><p>Black-box, over HTTP and the command line, in 10 files. All of them pass on v0.7.0.</p><pre>test_reservas.py              15
 test_integracoes.py           17
 test_conversa.py              12
 test_confirmacao_espera.py    10
@@ -268,16 +268,16 @@ test_lgpd_raiox.py             3</pre></div>
 <section id="roadmap"><div class="wrap">
   <span class="chip">Roadmap</span>
   <h2>Where it stands and where it goes</h2>
-  <p class="sub">The plan is ready and validated. The implementation does not exist yet: it is born when you run the <code>/goal</code>, using the <a href="https://inematds.github.io/execucao-longa/guia/" target="_blank" rel="noopener">execucao-longa</a> method. <a href="https://inematds.github.io/atende-clinica/guia/en/" target="_blank" rel="noopener">Atende Clínica</a> followed the same path and closed 93 out of 93.</p>
+  <p class="sub">Plan and implementation are done. The system was built with the <a href="https://inematds.github.io/execucao-longa/guia/" target="_blank" rel="noopener">execucao-longa</a> method and passed the independent verification, just like <a href="https://inematds.github.io/atende-clinica/guia/en/" target="_blank" rel="noopener">Atende Clínica</a>, which also closed 93 out of 93. The next step is yours: the pilot in a real restaurant.</p>
   <div class="phase"><div class="tag">Plan ✅</div><div class="d"><strong>Specification, tests and guardrails validated</strong><span>A 20-section contract, 93 acceptance tests, proposed decisions, a map to Raio-X and an adversarial validation completed on 05/10/2026.</span></div></div>
-  <div class="phase"><div class="tag">Build</div><div class="d"><strong>You run the /goal</strong><span>Answer the decisions, freeze the contract and let the agent work until <code>93 passed</code> and <code>LIMITES OK</code>, then the independent verification.</span></div></div>
-  <div class="phase"><div class="tag">Pilot</div><div class="d"><strong>In a real restaurant</strong><span>Configure real dining rooms, tables, shifts and FAQ, publish on the VPS and track new customers and returns in the Raio-X Recovery Panel.</span></div></div>
+  <div class="phase"><div class="tag">Build ✅</div><div class="d"><strong>v0.7.0 built and verified</strong><span>An agent in a long run until <code>93 passed</code> and <code>LIMITES OK</code>; independent verification passed (never-seen restaurant, <code>docker build</code> and container healthcheck); chat and team page checked in a local browser.</span></div></div>
+  <div class="phase"><div class="tag">Pilot</div><div class="d"><strong>In a real restaurant, with you</strong><span>Configure real dining rooms, tables, shifts and FAQ, connect Evolution and Telegram with your credentials, publish on your VPS and track new customers and returns in the Raio-X Recovery Panel. No deploy and no real service was run during the build.</span></div></div>
 </div></section>
 
 <footer>
   <div class="wrap">
     <div class="pill">Python 3 · standard library</div><div class="pill">SQLite</div><div class="pill">Docker</div><div class="pill">Evolution API</div><div class="pill">Telegram</div>
-    <p style="margin-top:18px">Reserva Restaurante · open plan kit ·
+    <p style="margin-top:18px">Reserva Restaurante · open system · v0.7.0 ·
       <a href="https://github.com/inematds/reserva-restaurante">inematds/reserva-restaurante</a> ·
       <a href="https://inema.club">INEMA.CLUB</a></p>
   </div>

@@ -10,7 +10,7 @@ Guia completo (landing + passo a passo): **https://inematds.github.io/reserva-re
 
 Reserva de mesa para **um restaurante**, com Python 3 e biblioteca padrão: salões e mesas com capacidade, turnos por dia da semana, alocação automática da menor mesa que serve, confirmação automática ("1 confirma / 2 cancela"), no-show, lista de espera, grupo grande com aprovação da equipe, FAQ, passagem para humano, base própria de clientes com consentimento (aniversário, convite de retorno, campanhas), chat web + WhatsApp pela Evolution API, equipe pelo Telegram e pela página `/equipe`, backup/restauração, Docker e exportação mensal para o Painel de Recuperação do Raio-X de Margem (pacote `restaurante`).
 
-**Estado:** v0.7.0 — implementação completa, incluindo chat, equipe e entrega Docker; 93/93 testes passam e LIMITES OK. Navegador local validado; build real do Docker aguarda a verificação independente.
+**Estado:** v0.7.0 — implementação completa, incluindo chat, equipe e entrega Docker; 93/93 testes passam e LIMITES OK. Navegador local validado; verificação independente OK (restaurante nunca visto, `docker build` + healthcheck do container). Falta o que depende do dono: credenciais reais da Evolution/WhatsApp e do Telegram, deploy na VPS dele e dados reais do restaurante. Para rodar, veja [Executar localmente](#executar-localmente) e [Deploy na VPS](#deploy-na-vps).
 
 ## O que o sistema faz (resumo do contrato)
 
@@ -20,13 +20,13 @@ Reserva de mesa para **um restaurante**, com Python 3 e biblioteca padrão: sal�
 - `./reserva raiox --mes AAAA-MM --acompanhamento ARQ` grava `clientes_novos_mes` e `retorno_atual_pct` (ids do pacote `restaurante`) no arquivo do Painel.
 - Integrações só por variáveis de ambiente (`EVOLUTION_*`, `TELEGRAM_*`, `WEBHOOK_SEGREDO`); sem elas, caixa de saída simulada e nenhuma chamada de rede.
 
-## Como rodar no seu ambiente
+## Como foi construído (método, para refazer ou adaptar)
 
-O ciclo é: responder as decisões → congelar o contrato → rodar um agente até `93 passed` + `LIMITES OK` → verificação independente. Tudo pela assinatura (Codex ou Claude Code); nenhuma API paga é chamada.
+O sistema foi construído assim: decisões respondidas → contrato congelado → um agente rodou até `93 passed` + `LIMITES OK` → verificação independente aprovada. Tudo pela assinatura (Codex ou Claude Code); nenhuma API paga foi chamada. Para só usar o sistema, pule para [Executar localmente](#executar-localmente). Os passos abaixo continuam no repositório para quem quiser refazer ou adaptar (mudar regras, outro restaurante).
 
 ### Pré-requisitos
 
-- Linux/macOS com `git`, `python3` ≥ 3.10 e `pytest` (`python3 -m pip install pytest` — ferramenta de desenvolvimento; a aplicação não terá dependências).
+- Linux/macOS com `git`, `python3` ≥ 3.10 e `pytest` (`python3 -m pip install pytest` — ferramenta de desenvolvimento; a aplicação não tem dependências).
 - Um agente: **Codex CLI** (`codex`, logado pela assinatura) ou **Claude Code** (`claude`).
 - Para o loop headless: `~/projetos/execucao-longa` clonado (ou copiado) — usa `tools/loop-longrun.sh`; `systemd-run` (Linux) para o teto de memória.
 - Para a verificação independente: `docker` (faz `docker build` e sobe o container uma vez).
@@ -34,10 +34,10 @@ O ciclo é: responder as decisões → congelar o contrato → rodar um agente a
 ### 1. Decisões e congelamento
 
 1. Leia `docs/DECISOES-ABERTAS.md`. Se mudar algo marcado ⚠, edite `docs/ESPECIFICACAO.md` e os testes **antes** de congelar.
-2. Confira que a suíte coleta sem erro e nada passa ainda:
+2. Confira que a suíte coleta sem erro (no repositório atual, com `./reserva` já implementado, ela passa inteira; ao refazer do zero, sem `./reserva`, nada passava no início):
    ```sh
    python3 -m pytest -q --collect-only | tail -1   # 93 tests collected
-   python3 -m pytest -q | tail -1                  # 0 passed (falhas/erros limpos: falta ./reserva)
+   python3 -m pytest -q | tail -1                  # 93 passed (do zero, sem ./reserva: 0 passed)
    ```
 3. Commit tudo e congele o contrato (grava hash de `tests/`, `pytest.ini`, spec e verificador + o commit-base em `hash-congelado.txt`):
    ```sh
@@ -179,7 +179,7 @@ docker compose up -d reserva
 Confirmações, aniversários, reativação e reenvios dependem de `POST /api/tarefas/rodar`.
 Além do botão na equipe, o operador pode agendar essa rota em localhost com header
 `X-Token`, por exemplo a cada cinco minutos; ela é idempotente. Proteja o token no
-agendador e não o exponha em logs. Nenhum deploy foi executado neste ciclo.
+agendador e não o exponha em logs. Nenhum deploy foi executado durante a construção: o deploy na VPS é do dono.
 
 ## Backup e indicadores
 

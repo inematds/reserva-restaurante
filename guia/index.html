@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Reserva Restaurante — kit de plano para reserva de mesa, WhatsApp e equipe no Telegram</title>
-<meta name="description" content="Kit de plano aberto para um sistema de reserva de mesa: especificação, 93 testes de aceitação, travas e prompts para um agente (Claude Code ou Codex) implementar no seu ambiente. O sistema ainda não está implementado.">
+<title>Reserva Restaurante — sistema de reserva de mesa com WhatsApp e equipe no Telegram</title>
+<meta name="description" content="Sistema aberto de reserva de mesa para restaurante, pronto para rodar (v0.7.0, 93 de 93 testes): chat e WhatsApp pela Evolution, equipe no Telegram, lista de espera, base própria de clientes e Docker para a VPS. Construído por agente com contrato e testes congelados.">
 <link rel="alternate" hreflang="pt-BR" href="https://inematds.github.io/reserva-restaurante/guia/">
 <link rel="alternate" hreflang="en" href="https://inematds.github.io/reserva-restaurante/guia/en/">
 <link rel="alternate" hreflang="es" href="https://inematds.github.io/reserva-restaurante/guia/es/">
@@ -125,9 +125,9 @@
   <div class="glow"></div>
   <div class="wrap">
     <div>
-      <span class="chip">Kit de plano · reserva de mesa · código aberto</span>
-      <h1>O plano completo para a <span class="amb">mesa</span> nunca ficar vazia</h1>
-      <p class="lead">Especificação, 93 testes de aceitação, travas e prompts para um agente construir, no seu ambiente, o sistema de reserva de um restaurante: chat e WhatsApp, equipe no Telegram, lista de espera e base própria de clientes. <strong>O sistema ainda não está implementado: este repositório é o plano, e você roda a implementação.</strong></p>
+      <span class="chip">Sistema pronto · v0.7.0 · reserva de mesa · código aberto</span>
+      <h1>O sistema completo para a <span class="amb">mesa</span> nunca ficar vazia</h1>
+      <p class="lead">Reserva de mesa para um restaurante, pronta para rodar no seu ambiente: chat e WhatsApp, equipe no Telegram, lista de espera e base própria de clientes. <strong>Versão 0.7.0 implementada: 93 de 93 testes passam, LIMITES OK e verificação independente aprovada (docker build + healthcheck). Falta só o que é seu: credenciais, VPS e dados reais.</strong></p>
       <div class="cta">
         <a class="btn" href="#guia">Começar o guia</a>
         <a class="btn ghost" href="https://github.com/inematds/reserva-restaurante" target="_blank" rel="noopener">Ver no GitHub</a>
@@ -139,12 +139,12 @@
 
 <section id="oque"><div class="wrap">
   <span class="chip">O que é</span>
-  <h2>Um kit para pedir ao agente: do contrato aos 93 testes verdes</h2>
-  <p class="sub">Aqui não há aplicativo pronto. Há o contrato do que o aplicativo deve fazer, a bateria de testes que prova isso e as travas que impedem o agente de trapacear. Quem constrói é o Claude Code ou o Codex, rodando na sua máquina, pela sua assinatura. O irmão <a href="https://inematds.github.io/atende-clinica/guia/" target="_blank" rel="noopener">Atende Clínica</a> foi feito exatamente assim e fechou 93 de 93 testes.</p>
+  <h2>Um sistema pronto, construído por agente e provado por 93 testes</h2>
+  <p class="sub">Aqui está o aplicativo funcionando e também o caminho que o produziu: o contrato do que ele deve fazer, a bateria de testes que prova isso e as travas que impediram o agente de trapacear. Ele foi construído pelo Claude Code e pelo Codex, pela assinatura, no método de execução longa. O irmão <a href="https://inematds.github.io/atende-clinica/guia/" target="_blank" rel="noopener">Atende Clínica</a> foi feito exatamente assim e também fechou 93 de 93 testes.</p>
   <figure style="margin:0 0 26px;border-radius:16px;overflow:hidden;border:1px solid var(--line);box-shadow:0 30px 80px -30px #000"><img src="assets/banner-grade.jpg" alt="Reserva de mesa, alocação automática, confirmação, lista de espera, WhatsApp Evolution, equipe no Telegram, LGPD e Raio-X" loading="lazy" style="width:100%;display:block"></figure>
   <div class="grid g3">
-    <div class="card"><h3>🍽️ O sistema que sai do plano</h3><p>Salões e mesas com capacidade, turnos por dia da semana, alocação da menor mesa que serve, confirmação "1 confirma / 2 cancela", no-show, lista de espera e grupo grande com aprovação da equipe. Python 3 só com biblioteca padrão e SQLite, para um restaurante por instalação.</p></div>
-    <div class="card"><h3>📦 O kit</h3><p>Especificação de 20 seções, 93 testes caixa-preta, decisões já propostas, mapa para o Raio-X, prompts para <code>/goal</code> e para o loop headless, e as travas que congelam o contrato. Um validador adversarial já passou por tudo e corrigiu 13 problemas.</p></div>
+    <div class="card"><h3>🍽️ O sistema</h3><p>Salões e mesas com capacidade, turnos por dia da semana, alocação da menor mesa que serve, confirmação "1 confirma / 2 cancela", no-show, lista de espera e grupo grande com aprovação da equipe. Python 3 só com biblioteca padrão e SQLite, para um restaurante por instalação, com Docker para a VPS.</p></div>
+    <div class="card"><h3>📦 O kit</h3><p>O código (<code>./reserva</code>, <code>src/</code>, <code>web/</code>, <code>Dockerfile</code>), a especificação de 20 seções, os 93 testes caixa-preta, as decisões aplicadas, o mapa para o Raio-X, os prompts do <code>/goal</code> e do loop headless e as travas que congelaram o contrato. Um validador adversarial revisou o plano e corrigiu 13 problemas antes da construção.</p></div>
     <div class="card"><h3>📈 As regras do Raio-X de Margem</h3><p>O contato do cliente fica com o restaurante, e não com o marketplace: a origem não aceita iFood nem Rappi, e campanha só vai a quem consentiu (LGPD). O sistema devolve <code>clientes_novos_mes</code> e <code>retorno_atual_pct</code> para o painel do <a href="https://inematds.github.io/raio-x-margem/guia/" target="_blank" rel="noopener">Raio-X de Margem</a>.</p></div>
   </div>
 </div></section>
@@ -152,7 +152,7 @@
 <section id="fluxo"><div class="wrap">
   <span class="chip">Como funciona</span>
   <h2>Do "quero uma mesa para quatro" à reserva confirmada</h2>
-  <p class="sub">Este é o fluxo do sistema planejado, o que o agente vai construir. Servidor Python sem dependências, SQLite numa pasta de dados e Docker para a VPS. Evolution e Telegram entram só por variáveis de ambiente; sem elas, a caixa de saída é simulada e nenhuma chamada de rede sai.</p>
+  <p class="sub">Este é o fluxo do sistema implementado. Servidor Python sem dependências, SQLite numa pasta de dados e Docker para a VPS. Evolution e Telegram entram só por variáveis de ambiente; sem elas, a caixa de saída é simulada e nenhuma chamada de rede sai.</p>
   <div class="flow">
     <span>Chat do site ou WhatsApp (Evolution)</span><span class="arr">→</span>
     <span>Nome, pessoas, dia, horário</span><span class="arr">→</span>
@@ -171,83 +171,83 @@
 <section id="pre"><div class="wrap">
   <span class="chip">Pré-requisitos</span>
   <h2>O que você precisa</h2>
-  <p class="sub">Para rodar o plano basta Python para os testes e um agente logado pela assinatura. Docker só entra na verificação final e no deploy; Evolution e Telegram são opcionais e seus.</p>
+  <p class="sub">Para rodar o sistema basta Python 3.10+; o pytest serve para conferir os testes. Docker entra no deploy da VPS; Evolution e Telegram são opcionais e seus. Claude Code ou Codex só se você quiser refazer ou adaptar o sistema pelo método.</p>
   <div class="grid g3">
-    <div class="card"><h3>Python 3.10+ e pytest</h3><p>Os testes usam pytest (ferramenta de desenvolvimento). A aplicação em si não terá dependências.</p><pre><span class="c"># conferir</span>
+    <div class="card"><h3>Python 3.10+ e pytest</h3><p>A aplicação não tem dependências: só biblioteca padrão. O pytest é ferramenta de desenvolvimento, para conferir os 93 testes.</p><pre><span class="c"># conferir</span>
 <span class="k">python3</span> --version
 <span class="k">python3</span> -m pip install pytest</pre></div>
-    <div class="card"><h3>Claude Code ou Codex</h3><p>Pela assinatura, sem API paga. Para o loop headless, clone o <a href="https://github.com/inematds/execucao-longa" target="_blank" rel="noopener">execucao-longa</a> em <code>~/projetos</code>.</p><pre><span class="c"># conferir</span>
-<span class="k">codex</span> --version   <span class="c"># ou: claude --version</span></pre></div>
-    <div class="card"><h3>Docker, Evolution e Telegram</h3><p>Docker faz o build final e o deploy na VPS. Uma instância Evolution e um bot do Telegram só se quiser os canais; as credenciais ficam no <code>.env</code>.</p><pre><span class="c"># conferir</span>
+    <div class="card"><h3>Docker, Evolution e Telegram</h3><p>Docker sobe o sistema na VPS com <code>docker compose</code>. Uma instância Evolution e um bot do Telegram só se quiser os canais; as credenciais ficam no <code>.env</code>.</p><pre><span class="c"># conferir</span>
 <span class="k">docker</span> --version</pre></div>
+    <div class="card"><h3>Claude Code ou Codex (opcional)</h3><p>Só para refazer ou adaptar pelo método, pela assinatura, sem API paga. Para o loop headless, clone o <a href="https://github.com/inematds/execucao-longa" target="_blank" rel="noopener">execucao-longa</a> em <code>~/projetos</code>.</p><pre><span class="c"># conferir</span>
+<span class="k">codex</span> --version   <span class="c"># ou: claude --version</span></pre></div>
   </div>
 </div></section>
 
 <section id="guia"><div class="wrap">
   <span class="chip">Guia de uso · passo a passo</span>
-  <h2>Do clone ao sistema implementado, no seu ambiente</h2>
-  <p class="sub">Os comandos abaixo são os do repositório. O ciclo: responder as decisões, congelar o contrato, rodar o agente até <code>93 passed</code> e <code>LIMITES OK</code>, e conferir com a verificação independente.</p>
+  <h2>Do clone ao sistema rodando, no seu ambiente</h2>
+  <p class="sub">O sistema está implementado: <code>./reserva</code> já vem no repositório. Os comandos abaixo são os do README. O ciclo: conferir os testes, rodar local, configurar o seu restaurante e, quando quiser, publicar na sua VPS com os seus canais.</p>
 
   <div class="step"><div class="b">1</div><div>
-    <h3>Clone o repositório</h3>
-    <p>Ainda não há <code>./reserva</code>: o repositório só tem o plano. Confira que a suíte é coletada sem erro e que nada passa ainda (faltando a implementação, os testes falham ou dão erro, e isso é o esperado).</p>
+    <h3>Clone e confira os testes</h3>
+    <p>O repositório traz o sistema pronto e os 93 testes caixa-preta. Na sua máquina, a suíte inteira deve passar.</p>
 <pre><span class="k">git clone</span> <span class="s">https://github.com/inematds/reserva-restaurante</span> && <span class="k">cd</span> reserva-restaurante
 <span class="k">python3</span> -m pytest -q --collect-only | tail -1   <span class="c"># 93 tests collected</span>
-<span class="k">python3</span> -m pytest -q | tail -1                  <span class="c"># 0 passed</span></pre>
+<span class="k">python3</span> -m pytest -q | tail -1                  <span class="c"># 93 passed</span></pre>
   </div></div>
 
   <div class="step"><div class="b">2</div><div>
-    <h3>Responda as decisões abertas</h3>
-    <p>Leia <code>docs/DECISOES-ABERTAS.md</code>: são 20 propostas padrão já aplicadas na especificação e nos testes. Responder "ok em tudo" destrava a execução. Se mudar algo marcado com ⚠, edite <code>docs/ESPECIFICACAO.md</code> e os testes antes de congelar. Para um piloto real, troque também <code>exemplos/restaurante.json</code> pelos seus salões, mesas e turnos.</p>
-<pre><span class="k">less</span> docs/DECISOES-ABERTAS.md</pre>
+    <h3>Rode local</h3>
+    <p>A primeira linha informa <code>PORTA=&lt;n&gt;</code> (<code>--porta 0</code> escolhe uma livre). O servidor escuta em <code>127.0.0.1</code>; na primeira execução cria a pasta de dados, copia <code>exemplos/restaurante.json</code> e semeia <code>reservas.sqlite3</code>. Abra <code>/</code> para conversar como cliente e <code>/equipe</code> para operar com o token. Sem Evolution e Telegram configurados, os envios ficam na caixa de saída simulada (<code>GET /api/saida</code>).</p>
+<pre><span class="k">./reserva</span> serve --porta 8080 --dados ./dados   <span class="c"># PORTA=8080</span>
+<span class="c"># abra http://127.0.0.1:8080/ e http://127.0.0.1:8080/equipe</span></pre>
   </div></div>
 
   <div class="step"><div class="b">3</div><div>
-    <h3>Congele o contrato</h3>
-    <p>Com tudo commitado, o script grava o hash de <code>tests/</code>, <code>pytest.ini</code>, da especificação e do verificador, mais o commit-base em <code>hash-congelado.txt</code>. Daí em diante, qualquer mudança nos testes é detectada.</p>
-<pre><span class="k">git add</span> -A && <span class="k">git commit</span> -m <span class="s">"contrato v1"</span>
-<span class="k">bash</span> longrun/2026-10-05-reservas-v1/congelar.sh</pre>
+    <h3>Configure o seu restaurante</h3>
+    <p>Em <code>dados/restaurante.json</code>, troque o token <code>TROQUE-ESTE-TOKEN</code> por um exclusivo e ponha nome, salões, mesas, turnos e FAQ reais. Depois da primeira execução, mesas, turnos e FAQ vivem no SQLite e são editados pela página <code>/equipe</code> ou pela API; as outras configurações do JSON são recarregadas ao reiniciar. Confirmações, aniversários e convites de retorno saem por <code>POST /api/tarefas/rodar</code> (há um botão na equipe). O sistema não cobra sinal nem Pix: política para grupos vai no FAQ.</p>
+<pre><span class="k">nano</span> dados/restaurante.json   <span class="c"># token, nome, mesas, turnos, FAQ</span></pre>
   </div></div>
 
   <div class="step"><div class="b">4</div><div>
-    <h3>Rode o agente (escolha um caminho)</h3>
-    <p><strong>a) Loop headless com o Codex (recomendado).</strong> O <code>loop.env</code> define 20 ciclos de 30 min, 8 GB por ciclo, parada após 3 ciclos sem avanço, modelo <code>gpt-6-astra</code> e <code>CODEX_ARGS="-c sandbox_workspace_write.network_access=true"</code>: sem isso o sandbox do Codex bloqueia o servidor local dos testes.</p>
-<pre><span class="k">~/projetos/execucao-longa/tools/loop-longrun.sh</span> longrun/2026-10-05-reservas-v1</pre>
-    <p><strong>b) <code>/goal</code> no Claude Code.</strong> Abra uma sessão nova do Claude Code na pasta do projeto e siga <code>longrun/2026-10-05-reservas-v1/prompt-goal-claude.md</code>: cole a condição de <code>/goal</code> (a saída precisa mostrar <code>93 passed</code> e <code>LIMITES OK</code>) e, como primeira mensagem, o bloco de <code>prompt-goal-codex.md</code> a partir de <code>RESULTADO:</code>.</p>
-<pre><span class="k">claude</span>   <span class="c"># sessão nova, dentro de reserva-restaurante</span></pre>
-    <p><strong>c) Codex TUI aberto.</strong> Cole o conteúdo de <code>longrun/2026-10-05-reservas-v1/prompt-goal-codex.md</code>.</p>
-<pre><span class="k">codex</span> -c sandbox_workspace_write.network_access=true</pre>
+    <h3>Backup e números para o Raio-X</h3>
+    <p>O backup é um ZIP com a configuração e uma cópia consistente do SQLite, mesmo com o servidor ligado; guarde com acesso restrito, porque contém dados pessoais. Para restaurar, pare o servidor antes. O comando <code>raiox</code> grava <code>clientes_novos_mes</code> e <code>retorno_atual_pct</code> no acompanhamento do Painel.</p>
+<pre><span class="k">./reserva</span> backup --dados ./dados --saida copia.bak
+<span class="k">./reserva</span> restaurar --dados ./dados --entrada copia.bak   <span class="c"># servidor parado</span>
+<span class="k">./reserva</span> raiox --dados ./dados --mes AAAA-MM --acompanhamento painel.json</pre>
   </div></div>
 
   <div class="step"><div class="b">5</div><div>
-    <h3>Acompanhe</h3>
-    <p>No loop, o <code>loop.log</code> mostra cada ciclo e <code>progress.md</code> traz uma linha por checkpoint. O código de saída do loop diz o que houve: <code>0</code> concluído (o teste final passou), <code>1</code> teto de ciclos atingido, <code>2</code> parado por 3 ciclos sem avanço, <code>3</code> outro loop já roda na pasta. Teste em conflito com a especificação vai para <code>failures.md</code>: é portão humano, e o agente não deve ajustar teste nem especificação.</p>
-<pre><span class="k">tail</span> -f longrun/2026-10-05-reservas-v1/loop.log
-<span class="k">cat</span> longrun/2026-10-05-reservas-v1/state.md</pre>
+    <h3>Deploy na VPS com Docker</h3>
+    <p>A imagem oficial do Python, sem pacotes extras. O volume <code>./dados</code> guarda SQLite e configuração, <code>./backups</code> recebe as cópias e a porta fica em <code>127.0.0.1:8080</code>: ponha um proxy reverso (Nginx ou Caddy) com HTTPS na frente, ajuste o fuso (<code>TZ</code>) ao do restaurante e não fixe <code>RESERVA_AGORA</code> em produção. O README traz o cron do backup diário e a restauração com container temporário.</p>
+<pre><span class="k">cp</span> .env.exemplo .env && <span class="k">mkdir</span> -p dados backups
+<span class="k">cp</span> exemplos/restaurante.json dados/restaurante.json   <span class="c"># edite token, mesas e horários</span>
+<span class="k">chmod</span> 600 .env dados/restaurante.json
+<span class="k">docker compose</span> up -d --build && <span class="k">docker compose</span> ps</pre>
   </div></div>
 
   <div class="step"><div class="b">6</div><div>
-    <h3>Confira com a verificação independente</h3>
-    <p>Quando o agente disser "concluído", rode os três comandos. O último o agente nunca viu: ele procura valores da fixture copiados no código, sobe um restaurante que nunca apareceu (passo de 15 min, um turno, combinação de 3 mesas, sem limite de cozinha) e faz <code>docker build</code> com healthcheck. Depois, abra <code>/</code> e <code>/equipe</code> no navegador.</p>
-<pre><span class="k">python3</span> -m pytest -q tests/                                        <span class="c"># 93 passed</span>
-<span class="k">bash</span> longrun/2026-10-05-reservas-v1/verificar-limites.sh              <span class="c"># LIMITES OK</span>
-<span class="k">python3</span> longrun/2026-10-05-reservas-v1/verificar-independente.py     <span class="c"># INDEPENDENTE OK</span></pre>
+    <h3>Ligue WhatsApp e Telegram com as suas credenciais</h3>
+    <p>Evolution: preencha <code>EVOLUTION_*</code> e <code>WEBHOOK_SEGREDO</code> e configure na instância o evento <code>MESSAGES_UPSERT</code> para <code>https://seu-dominio/webhook/evolution/&lt;segredo&gt;</code>. Telegram: preencha <code>TELEGRAM_*</code>, registre o <code>setWebhook</code> em <code>/webhook/telegram</code> com <code>secret_token</code> igual a <code>TELEGRAM_SEGREDO</code> e adicione o bot ao grupo. Agende <code>POST /api/tarefas/rodar</code> em localhost com <code>X-Token</code> (a cada cinco minutos, por exemplo). Nenhum serviço real foi chamado na construção: essa parte, o deploy e o piloto são seus.</p>
+<pre><span class="k">nano</span> .env   <span class="c"># EVOLUTION_*, TELEGRAM_*, WEBHOOK_SEGREDO, TELEGRAM_SEGREDO</span>
+<span class="k">docker compose</span> up -d</pre>
   </div></div>
 
   <div class="step"><div class="b">7</div><div>
-    <h3>Deploy na VPS e piloto</h3>
-    <p>O deploy é seu, com as suas credenciais. O próprio agente escreve o README de deploy como parte do goal: subir o <code>docker compose</code>, proxy HTTPS, webhook da Evolution (evento <code>MESSAGES_UPSERT</code>), webhook do Telegram com <code>secret_token</code> e backup diário no cron. Depois do deploy, configure um restaurante real e use o sistema por algumas semanas.</p>
-<pre><span class="k">cp</span> .env.exemplo .env && <span class="k">chmod</span> 600 .env   <span class="c"># preencha EVOLUTION_*, TELEGRAM_*, WEBHOOK_SEGREDO</span>
-<span class="k">docker compose</span> up -d --build</pre>
+    <h3>Quer refazer ou adaptar? O método continua no repo</h3>
+    <p>O sistema foi construído assim: decisões respondidas, contrato congelado (especificação e 93 testes com hash), um agente em execução longa (loop headless do Codex ou <code>/goal</code> no Claude Code) até <code>93 passed</code> e <code>LIMITES OK</code>, e uma verificação independente que o agente nunca viu: procura valores da fixture no código, sobe um restaurante nunca visto (passo de 15 min, um turno, combinação de 3 mesas) e faz <code>docker build</code> com healthcheck. Para mudar regras, edite <code>docs/DECISOES-ABERTAS.md</code>, a especificação e os testes, congele de novo e rode o mesmo loop. O passo a passo está no README e em <code>longrun/2026-10-05-reservas-v1/</code>.</p>
+<pre><span class="k">bash</span> longrun/2026-10-05-reservas-v1/congelar.sh
+<span class="k">~/projetos/execucao-longa/tools/loop-longrun.sh</span> longrun/2026-10-05-reservas-v1
+<span class="k">python3</span> longrun/2026-10-05-reservas-v1/verificar-independente.py   <span class="c"># INDEPENDENTE OK</span></pre>
   </div></div>
 </div></section>
 
 <section id="kit"><div class="wrap">
   <span class="chip">O que vem no kit</span>
   <h2>Contrato, testes e travas, com os números reais</h2>
-  <p class="sub">Tudo o que o agente precisa para construir, e tudo o que impede que ele finja ter construído.</p>
+  <p class="sub">Tudo o que o agente precisou para construir, e tudo o que impediu que ele fingisse ter construído. Continua no repositório para quem quiser conferir, refazer ou adaptar.</p>
   <div class="grid g3">
-    <div class="card"><h3>93 testes de aceitação</h3><p>Caixa-preta, por HTTP e por linha de comando, em 10 arquivos.</p><pre>test_reservas.py              15
+    <div class="card"><h3>93 testes de aceitação</h3><p>Caixa-preta, por HTTP e por linha de comando, em 10 arquivos. Todos passam na v0.7.0.</p><pre>test_reservas.py              15
 test_integracoes.py           17
 test_conversa.py              12
 test_confirmacao_espera.py    10
@@ -268,16 +268,16 @@ test_lgpd_raiox.py             3</pre></div>
 <section id="roadmap"><div class="wrap">
   <span class="chip">Roadmap</span>
   <h2>Onde está e para onde vai</h2>
-  <p class="sub">O plano está pronto e validado. A implementação ainda não existe: ela nasce quando você roda o <code>/goal</code>, pelo método <a href="https://inematds.github.io/execucao-longa/guia/" target="_blank" rel="noopener">execucao-longa</a>. O <a href="https://inematds.github.io/atende-clinica/guia/" target="_blank" rel="noopener">Atende Clínica</a> seguiu o mesmo caminho e fechou 93 de 93.</p>
+  <p class="sub">Plano e implementação estão prontos. O sistema foi construído pelo método <a href="https://inematds.github.io/execucao-longa/guia/" target="_blank" rel="noopener">execucao-longa</a> e passou na verificação independente, como o <a href="https://inematds.github.io/atende-clinica/guia/" target="_blank" rel="noopener">Atende Clínica</a>, que também fechou 93 de 93. O próximo passo é seu: o piloto num restaurante real.</p>
   <div class="phase"><div class="tag">Plano ✅</div><div class="d"><strong>Especificação, testes e travas validados</strong><span>Contrato de 20 seções, 93 testes de aceitação, decisões propostas, mapa para o Raio-X e validação adversarial concluída em 05/10/2026.</span></div></div>
-  <div class="phase"><div class="tag">Implementação</div><div class="d"><strong>Você roda o /goal</strong><span>Responder as decisões, congelar o contrato e deixar o agente trabalhar até <code>93 passed</code> e <code>LIMITES OK</code>, depois a verificação independente.</span></div></div>
-  <div class="phase"><div class="tag">Piloto</div><div class="d"><strong>Num restaurante real</strong><span>Configurar salões, mesas, turnos e FAQ verdadeiros, publicar na VPS e acompanhar clientes novos e retorno no Painel de Recuperação do Raio-X.</span></div></div>
+  <div class="phase"><div class="tag">Implementação ✅</div><div class="d"><strong>v0.7.0 construída e verificada</strong><span>Agente em execução longa até <code>93 passed</code> e <code>LIMITES OK</code>; verificação independente aprovada (restaurante nunca visto, <code>docker build</code> e healthcheck do container); chat e página da equipe validados no navegador local.</span></div></div>
+  <div class="phase"><div class="tag">Piloto</div><div class="d"><strong>Num restaurante real, com você</strong><span>Configurar salões, mesas, turnos e FAQ verdadeiros, ligar Evolution e Telegram com as suas credenciais, publicar na sua VPS e acompanhar clientes novos e retorno no Painel de Recuperação do Raio-X. Nenhum deploy nem serviço real foi executado na construção.</span></div></div>
 </div></section>
 
 <footer>
   <div class="wrap">
     <div class="pill">Python 3 · biblioteca padrão</div><div class="pill">SQLite</div><div class="pill">Docker</div><div class="pill">Evolution API</div><div class="pill">Telegram</div>
-    <p style="margin-top:18px">Reserva Restaurante · kit de plano aberto ·
+    <p style="margin-top:18px">Reserva Restaurante · sistema aberto · v0.7.0 ·
       <a href="https://github.com/inematds/reserva-restaurante">inematds/reserva-restaurante</a> ·
       <a href="https://inema.club">INEMA.CLUB</a></p>
   </div>
