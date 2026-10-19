@@ -2,6 +2,8 @@
 
 | data | o que quebrou | menor correção | prompt \| infra |
 |---|---|---|---|
+| 2026-10-19 14:14 -0300 | Páginas e entrega Docker ausentes; quatro testes restantes falhavam | Implementar chat/equipe, arquivos Docker e documentação; suíte com 93 testes passando | infra (implementação ausente) |
+| 2026-10-19 14:14 -0300 | Histórico perdia vínculo após troca de telefone; confirmação antiga ainda podia confirmar reserva remarcada | Vincular mensagens por cliente_id e invalidar confirmação na remarcação; regressão local passou incluindo isolamento LGPD | infra |
 | 2026-10-19 14:09 -0300 | Evolution/Telegram ausentes impediam respostas, reenvios e avisos | Adicionar transporte por ambiente e webhooks autenticados reutilizando conversa e operações; 89 testes passam | infra (implementação ausente) |
 | 2026-10-19 14:04 -0300 | Bloqueios/LGPD/Raio-X retornavam 404 e CLI não tinha backup/restauração | Adicionar operações locais compartilhadas, snapshot SQLite e vínculo de histórico anonimizado por id; 74 testes passam | infra (implementação ausente) |
 | 2026-10-19 13:59 -0300 | Conversa e automações ainda retornavam rota inexistente | Adicionar estado/histórico persistentes e reutilizar alocador/cancelamento; 68 testes passam | prompt (implementação parcial) |

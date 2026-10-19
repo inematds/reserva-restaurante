@@ -1,0 +1,11 @@
+.git
+.env
+.agents
+.codex
+dados
+backups
+longrun
+tests
+__pycache__
+**/__pycache__
+*.pyc

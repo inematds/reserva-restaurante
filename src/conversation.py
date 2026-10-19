@@ -10,8 +10,16 @@ def words(text):
 
 
 class Conversation:
+    def bind_history(self, db, tel, client_id):
+        # Claim only unowned messages: a recycled phone must not inherit another client.
+        for message in self.store.items(db, 'mensagens'):
+            if message['telefone'] == tel and not message.get('cliente_id'):
+                message['cliente_id'] = client_id
+                self.store.update(db, 'mensagens', message)
+
     def history(self, db, tel, direction, text):
-        self.store.insert(db, 'mensagens', {'id': uuid4().hex, 'telefone': tel,
+        client = next((c for c in self.store.items(db, 'clientes') if c['telefone'] == tel), None)
+        self.store.insert(db, 'mensagens', {'id': uuid4().hex, 'telefone': tel, 'cliente_id': client['id'] if client else None,
             'direcao': direction, 'texto': text, 'quando': self.now().isoformat(timespec='minutes')})
 
     def output(self, db, client, kind, text, reservation=None, **extra):
@@ -81,7 +89,7 @@ class Conversation:
                 now = instant(body['agora']) if 'agora' in body else self.now()
                 resent = 0
                 for item in self.store.items(db, 'saida'):
-                    if item['status'] != 'pendente' or not item['telefone']:
+                    if item['status'] != 'pendente' or not item['telefone'] or item.get('obsoleta'):
                         continue
                     client = next((c for c in self.store.items(db, 'clientes') if c['id'] == item['cliente_id']), None)
                     if item['tipo'] in ('confirmacao', 'espera', 'aniversario', 'reativacao', 'campanha') and (not client or client['nao_contatar']):
@@ -185,6 +193,7 @@ class Conversation:
                 client = dict(id=uuid4().hex, nome=text.strip(), telefone=tel, consentimento_marketing=False,
                               nao_contatar=state['stop'], aniversario=None, origem=origin, ultima_visita=None, visitas=0)
                 self.store.insert(db, 'clientes', client)
+                self.bind_history(db, tel, client['id'])
                 state['step'] = 'people'
                 return reply('Quantas pessoas?')
             if step == 'people':

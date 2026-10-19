@@ -11,3 +11,5 @@
 | 2026-10-19 14:04 -0300 | 19 testes ainda falham em integrações, Docker e páginas ausentes | Implementadas operações locais e rodada suíte completa | 74 passed / 19 failed; nenhum conflito teste/spec identificado | implementação parcial |
 
 | 2026-10-19 14:09 -0300 | 4 testes falham por páginas, Dockerfile, Compose e .env.exemplo ausentes | Implementadas integrações e rodada suíte completa | 89 passed / 4 failed; nenhum conflito teste/spec identificado | implementação parcial |
+
+| 2026-10-19 14:14 -0300 | Histórico por telefone perdia vínculo na edição; confirmação anterior permanecia válida após remarcação | Vincular histórico por cliente_id e marcar confirmação antiga obsoleta/respondida | REGRESSÕES OK: troca/reuso de telefone, anonimização isolada e confirmação nova; nenhum conflito teste/spec | infra |

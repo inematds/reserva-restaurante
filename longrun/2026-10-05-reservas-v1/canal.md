@@ -20,3 +20,7 @@ Formato: `- AAAA-MM-DD HH:MM · fato|aprendizado|glossário|armadilha · texto`
 
 - 2026-10-19 14:09 -0300 · fato · Integrações passam integralmente: 89/93 testes. src/integrations.py é mixin da Application; webhook_auth recebe headers no Handler. Telegram replies reconhecem abertura e repasses pelos message_ids persistidos. Restam 3 testes Docker e 1 páginas.
 - 2026-10-19 14:09 -0300 · armadilha · Reenvio deve preceder criação de saídas na rodada (falha nova permanece pendente). Chamadas HTTP síncronas têm timeout de 3 s; não chamar handlers que abrem transação dentro de uma transação existente.
+
+- 2026-10-19 14:15 -0300 · fato · Entrega v0.7.0 fecha os 93 testes e LIMITES OK. web/ contém chat/equipe/style e dois JS; servidor expõe allowlist de cinco caminhos. Docker/Compose/env/README concluídos, build real ainda é portão humano.
+- 2026-10-19 14:15 -0300 · armadilha · Histórico pelo telefone sozinho perde dados ao editar e mistura titulares quando o número é reutilizado. Novas mensagens recebem cliente_id; cadastro reivindica apenas histórico sem dono; LGPD preserva mensagens de outro cliente. Remarcação marca confirmação anterior obsoleta/respondida e retry a ignora.
+- 2026-10-19 14:15 -0300 · fato · Playwright disponível globalmente em /home/nmaldaner/.npm-global/lib/node_modules/playwright; Chromium local funcionou sem rede externa. Teste no navegador passou com 1360 px e 390 px, incluindo criação de mesa; detector sem apontamentos.

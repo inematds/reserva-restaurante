@@ -11,3 +11,5 @@
 | 2026-10-19 14:04 -0300 | v0.5.0 bloqueios, backup/restauração, LGPD e Raio-X HTTP/CLI | sem commit (loop externo) | 74 passed / 19 failed (67,36 s); LIMITES OK; isolamento LGPD OK | — | 0 |
 
 | 2026-10-19 14:09 -0300 | v0.6.0 Evolution/Telegram, webhooks, reenvios, atendimento e avisos | sem commit (loop externo) | 89 passed / 4 failed (18,11 s); LIMITES OK | — | 0 |
+
+| 2026-10-19 14:15 -0300 | v0.7.0 páginas, Docker/Compose/env, README; vínculo estável de histórico e confirmação após remarcação | sem commit (loop externo) | 93 passed / 0 failed (18,17 s); LIMITES OK; NAVEGADOR OK; REGRESSÕES OK | — | 0 |

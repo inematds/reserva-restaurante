@@ -128,6 +128,22 @@ def make_server(app, host, port):
         def handle_request(self):
             path = urlsplit(self.path).path
             try:
+                assets = {'/': ('index.html', 'text/html'), '/equipe': ('equipe.html', 'text/html'),
+                          '/web/style.css': ('style.css', 'text/css'),
+                          '/web/chat.js': ('chat.js', 'text/javascript'),
+                          '/web/equipe.js': ('equipe.js', 'text/javascript')}
+                if self.command == 'GET' and path in assets:
+                    filename, content_type = assets[path]
+                    payload = (ROOT / 'web' / filename).read_bytes()
+                    self.send_response(200)
+                    self.send_header('Content-Type', content_type + '; charset=utf-8')
+                    self.send_header('Content-Length', str(len(payload)))
+                    self.send_header('X-Content-Type-Options', 'nosniff')
+                    self.send_header('Cache-Control', 'no-store')
+                    self.send_header('Content-Security-Policy', "default-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'")
+                    self.end_headers()
+                    self.wfile.write(payload)
+                    return
                 app.webhook_auth(path, self.headers)
                 if path.startswith("/api/") and (self.command, path) not in PUBLIC:
                     expected = app.config.get("token", "")

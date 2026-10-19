@@ -1,21 +1,23 @@
-# Estado — atualizado 2026-10-19 14:09 -0300
+# Estado — atualizado 2026-10-19 14:15 -0300
 
 ## Funciona
-- v0.6.0: base HTTP/SQLite/auth/relógio, cadastros, clientes, horários/alocação, reservas, conversa persistente, confirmação/espera, grupos e campanhas.
-- Bloqueios, backup/restauração, anonimização LGPD e Raio-X HTTP/CLI continuam passando.
-- Evolution por ambiente: segredo antes do corpo, webhook com deduplicação persistente, texto simples/estendido, origem whatsapp, respostas em ordem e saída enviado/pendente/simulado. Tarefas reenviam pendentes anteriores e respeitam nao_contatar.
-- Telegram por ambiente: abertura/repasse com vínculo persistido dos message_ids, replies, responder/encerrar/fila/reservas/aprovar/recusar, proteção por segredo e grupo; avisos de reservas/grupos/cancelamentos.
-- Suíte completa: **89 passed / 4 failed** em 18,11 s, log `pytest-ciclo-5.log`; todos os testes de integrações passam, sem regressão observada.
-- Verificador: **LIMITES OK**, hash a177d907bfc8ce90, 93 testes, escopo preservado. Testes só contra falso local, sem API real/rede externa nem commit.
+concluído
+
+- v0.7.0: base HTTP/SQLite/auth/relógio, cadastros, clientes, horários/alocação, reservas, conversa persistente, confirmação/espera, grupos, campanhas, bloqueios, backup/restauração, LGPD, Raio-X e integrações Evolution/Telegram por ambiente.
+- Chat em `/` e equipe em `/equipe`, arquivos locais em web/. Equipe tem filtros, reservas/ações, ocupação, espera, clientes/histórico, mesas, turnos, FAQ, bloqueios, fila humana, saída, campanhas, tarefas e Raio-X. Token apenas em memória; saída limpa o painel. Conteúdo remoto renderizado com textContent.
+- Dockerfile com healthcheck stdlib, Compose com dados/backups persistentes e porta localhost, .env.exemplo inteiramente vazio. README preservado e complementado com execução, Deploy na VPS, webhooks, backup e restauração.
+- Histórico vinculado por cliente_id preserva troca de telefone sem vazar para novo titular. Remarcação invalida confirmação anterior e impede seu reenvio; nova confirmação continua devida.
+- Suíte final: **93 passed / 0 failed**, 18,17 s, `pytest-ciclo-6.log`.
+- **LIMITES OK**: hash a177d907bfc8ce90, 93 testes, escopo preservado. Nenhum teste/spec/verificador alterado, nenhuma API real/rede externa ou commit.
+- Navegador Chromium local: chat, login, dados, criação de mesa, logout e mobile 390 px sem overflow; nenhum erro JS. Detector da interface sem apontamentos. Regressão local adicional de troca/reuso de telefone, LGPD e confirmação antiga/nova: OK.
 
 ## Falta
-- Dockerfile, docker-compose.yml e .env.exemplo (3 testes); páginas web em web/ (1 teste), README com Deploy na VPS conforme seção 19.
-- Rever pendências antigas de confirmação após remarcação e vínculo do histórico ao editar telefone (fora da cobertura atual).
-- Não marcar concluído: restam quatro testes e partes do contrato.
+- Portão humano de nível 4: executar verificar-independente.py, incluindo build Docker e healthcheck real do container, e avaliar as páginas. Build não executado neste ciclo; somente contrato Docker estático verificado pela suíte.
+- Deploy e configuração real de integrações são tarefas do operador, fora deste ciclo. Nenhuma pendência conhecida nos critérios automatizados de nível 3.
 
 ## Como retomar
-1. Ler goal → state → plan → canal → fim de progress/failures. Spec inteira, conftest e fixture foram lidos neste ciclo.
-2. Application herda Integrations, Operations, Conversation e Booking. Novo src/integrations.py concentra transportes/webhooks; Handler valida segredo antes de ler JSON.
-3. Saídas tentam envio sincronamente com timeout de 3 s. Retry acontece antes de gerar novas mensagens; falha nova fica pendente até a próxima rodada. Env ausente não dispara rede.
-4. Telegram usa métodos das mesmas rotas da equipe, fora de transações aninhadas. Avisos de criação ficam após insert; cancelamentos de conversa avisam separadamente do helper genérico.
-5. Implementar entrega Docker e páginas reais, preservando README existente. Rodar suíte completa para arquivo, ler tail -n 30 e executar verificar-limites.sh. Não fazer commit.
+1. Ler goal → state → plan → canal → fim de progress/failures. Spec inteira, conftest e fixture já foram lidos neste ciclo.
+2. Critérios do ciclo estão atendidos; não reabrir implementação sem nova evidência. Próximo passo é validação independente humana, sem alterar testes/contrato.
+3. Application herda Integrations, Operations, Conversation e Booking. Handler serve somente cinco caminhos fixos em web/; não há servidor genérico de arquivos.
+4. Artefatos temporários desta verificação: /tmp/reserva-browser.cjs, /tmp/reserva-regressao.py e screenshots /tmp/reserva-*.png. Servidores de teste foram encerrados pelo PID criado.
+5. O loop externo faz o commit; não foi feito commit neste ciclo.

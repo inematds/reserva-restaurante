@@ -17,3 +17,5 @@ Sistema de reserva de mesa para um restaurante: salões/mesas, turnos, alocaçã
 When I correct you, or you catch yourself making a mistake: before continuing, add the lesson as a one-line rule under ## Lessons, so it never happens again.
 
 ## Lessons
+
+- Histórico usa cliente_id estável; telefone reutilizado não transfere mensagens de outro cliente. Remarcação invalida confirmações anteriores antes de gerar a nova.

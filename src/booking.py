@@ -180,7 +180,7 @@ class Booking:
                     digits = re.sub(r'\D', '', term)
                     return 200, {'clientes': [c for c in self.store.items(db, kind) if term in normalized(c['nome']) or (digits and digits in (c['telefone'] or ''))]}
                 if method == 'GET' and action == 'dados':
-                    return 200, {'cliente': existing, 'reservas': self.reservation_list(db, {'cliente_id': existing['id']}), 'mensagens': [{k: m[k] for k in ('direcao', 'texto', 'quando')} for m in self.store.items(db, 'mensagens') if m.get('cliente_id') == existing['id'] or (existing['telefone'] is not None and m['telefone'] == existing['telefone'])]}
+                    return 200, {'cliente': existing, 'reservas': self.reservation_list(db, {'cliente_id': existing['id']}), 'mensagens': [{k: m[k] for k in ('direcao', 'texto', 'quando')} for m in self.store.items(db, 'mensagens') if m.get('cliente_id') == existing['id'] or (not m.get('cliente_id') and existing['telefone'] is not None and m['telefone'] == existing['telefone'])]}
                 if method in ('POST', 'PUT') and action is None:
                     if method == 'POST':
                         required(body, 'nome', 'telefone')
@@ -194,9 +194,11 @@ class Booking:
                             return 200, {'id': duplicate['id']}
                         raise APIError(409, 'telefone_repetido')
                     if existing:
+                        self.bind_history(db, existing['telefone'], existing['id'])
                         self.store.update(db, kind, item)
                     else:
                         self.store.insert(db, kind, item)
+                    self.bind_history(db, item['telefone'], item['id'])
                     return (200, item) if existing else (201, {'id': item['id']})
             if kind == 'reservas':
                 if method == 'GET' and identifier is None:
@@ -221,6 +223,11 @@ class Booking:
                             allocation = self.allocate(db, body.get('inicio', existing['inicio']), body.get('pessoas', existing['pessoas']), exclude=existing['id'])
                             existing.update(allocation)
                             existing.pop('confirmacao_enviada', None)
+                            for message in self.store.items(db, 'saida'):
+                                if message['tipo'] == 'confirmacao' and message.get('reserva_id') == existing['id']:
+                                    message['respondida'] = True
+                                    message['obsoleta'] = True
+                                    self.store.update(db, 'saida', message)
                     elif action in ('aprovar', 'recusar'):
                         if existing['status'] != 'pendente':
                             raise APIError(409, 'status')

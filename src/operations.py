@@ -56,7 +56,7 @@ class Operations:
                 self.store.update(db, 'reservas', reservation)
         for kind in ('mensagens', 'saida', 'humano'):
             for item in self.store.items(db, kind):
-                if (tel is not None and item.get('telefone') == tel) or item.get('cliente_id') == client['id']:
+                if (not item.get('cliente_id') and tel is not None and item.get('telefone') == tel) or item.get('cliente_id') == client['id']:
                     item.update(telefone=None, cliente_id=client['id'], texto='')
                     if kind == 'saida':
                         item['respondida'] = True

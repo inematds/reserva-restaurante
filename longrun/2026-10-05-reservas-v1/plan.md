@@ -1,9 +1,9 @@
 # Plano
 
 ## Estratégia atual
-Integrações concluídas contra servidor falso; 89/93 testes passam. Próximo ciclo cobre entrega e interface.
+Critérios automatizados concluídos: v0.7.0, 93 passed e LIMITES OK. Não iniciar novas funcionalidades sem demanda.
 
 ## Próximos 3 passos
-1. Criar Dockerfile, docker-compose.yml e .env.exemplo conforme seção 19; acrescentar Deploy na VPS e instruções operacionais ao README existente.
-2. Implementar páginas em web/: chat público e equipe com token, reservas/ocupação/espera/cadastros/bloqueios/fila/saída; servir HTML nas rotas públicas.
-3. Rodar suíte completa e verificar-limites.sh; revisar pendências de confirmação/remarcação e histórico/telefone, registrar evidências e concluir apenas com 93 passed e LIMITES OK.
+1. Humano: executar verificar-independente.py para restaurante alternativo, build Docker e healthcheck do container (nível 4).
+2. Humano: revisar `/` e `/equipe` e configurar restaurante, fuso e credenciais somente no ambiente destinado à operação, seguindo README.
+3. Se surgir falha concreta, registrar evidência e fazer correção mínima; repetir suíte completa e limites. Deploy permanece com o operador, commit com o loop externo.

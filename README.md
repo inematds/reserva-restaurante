@@ -8,9 +8,9 @@
 
 Guia completo (landing + passo a passo): **https://inematds.github.io/reserva-restaurante/guia/**
 
-Reserva de mesa para **um restaurante**, com Python 3 e biblioteca padrão (planejado): salões e mesas com capacidade, turnos por dia da semana, alocação automática da menor mesa que serve, confirmação automática ("1 confirma / 2 cancela"), no-show, lista de espera, grupo grande com aprovação da equipe, FAQ, passagem para humano, base própria de clientes com consentimento (aniversário, convite de retorno, campanhas), chat web + WhatsApp pela Evolution API, equipe pelo Telegram e pela página `/equipe`, backup/restauração, Docker e exportação mensal para o Painel de Recuperação do Raio-X de Margem (pacote `restaurante`).
+Reserva de mesa para **um restaurante**, com Python 3 e biblioteca padrão: salões e mesas com capacidade, turnos por dia da semana, alocação automática da menor mesa que serve, confirmação automática ("1 confirma / 2 cancela"), no-show, lista de espera, grupo grande com aprovação da equipe, FAQ, passagem para humano, base própria de clientes com consentimento (aniversário, convite de retorno, campanhas), chat web + WhatsApp pela Evolution API, equipe pelo Telegram e pela página `/equipe`, backup/restauração, Docker e exportação mensal para o Painel de Recuperação do Raio-X de Margem (pacote `restaurante`).
 
-**Estado:** v0.6.0 — reservas, conversa, cadastros, bloqueios, backup, LGPD, Raio-X e integrações Evolution/Telegram implementados; 89/93 testes passam. Docker e páginas pendentes.
+**Estado:** v0.7.0 — implementação completa, incluindo chat, equipe e entrega Docker; 93/93 testes passam e LIMITES OK. Navegador local validado; build real do Docker aguarda a verificação independente.
 
 ## O que o sistema faz (resumo do contrato)
 
@@ -120,22 +120,66 @@ chegada/no-show usam as ações da seção 5 do contrato. A conversa funciona po
 aprovação/recusa e campanhas usam uma caixa de saída simulada (`GET /api/saida`).
 Execute `POST /api/tarefas/rodar` para gerar confirmações, aniversários e convites
 de retorno devidos. Estado da conversa e histórico persistem no banco.
-As páginas e os canais Evolution/Telegram ainda estão pendentes.
+Abra `http://127.0.0.1:8080/` para conversar ou `/equipe` para operar com o token.
+Evolution e Telegram usam exclusivamente as variáveis de ambiente documentadas;
+sem configuração, os envios são simulados. A equipe pode rodar tarefas na página.
+O sistema não cobra sinal/Pix: qualquer política para grupos deve constar no FAQ.
 
 ## Deploy na VPS
 
-**Pendente nesta versão:** Docker e integrações ainda precisam
-ser implementados e validados antes do deploy. A entrega seguirá a seção 19 do
-contrato: serviço `reserva` no Compose, volume `/dados`, `.env` com as variáveis
-de integração e porta publicada apenas em `127.0.0.1:8080`.
+A entrega usa a imagem oficial Python, sem instalar pacotes. No servidor com
+Docker e Compose instalados:
 
-Com essa entrega disponível, o procedimento será `docker compose up -d --build`,
-com proxy reverso HTTPS na frente. Configure a Evolution com evento
-`MESSAGES_UPSERT` e caminho `/webhook/evolution/<segredo>`; registre o webhook do
-Telegram em `/webhook/telegram` usando `setWebhook` e `secret_token`.
-O backup diário usa `./reserva backup --dados DIR --saida ARQ` no cron;
-a restauração deve ser feita com o servidor parado. Os comandos de backup e
-restauração já estão disponíveis localmente. Nenhum deploy foi executado.
+```sh
+cp .env.exemplo .env
+mkdir -p dados backups
+cp exemplos/restaurante.json dados/restaurante.json
+# Edite dados/restaurante.json: token exclusivo, nome, mesas e horários reais.
+# Preencha .env somente para os canais que deseja ativar.
+chmod 600 .env dados/restaurante.json
+docker compose up -d --build
+docker compose ps
+```
+
+O volume `./dados:/dados` preserva SQLite e configuração; `./backups:/backups`
+recebe as cópias. A porta fica publicada em `127.0.0.1:8080:8080`. Configure o
+proxy reverso da VPS (Nginx ou Caddy) com certificado HTTPS para seu domínio,
+encaminhando para `http://127.0.0.1:8080`. Preserve os headers dos webhooks.
+Ajuste o fuso do container para o horário local do restaurante (variável `TZ`
+no ambiente do serviço, conforme a região). Não fixe `RESERVA_AGORA` na produção.
+
+Evolution: preencha `EVOLUTION_URL`, `EVOLUTION_API_KEY`, `EVOLUTION_INSTANCIA`
+e `WEBHOOK_SEGREDO`. Configure na instância o evento `MESSAGES_UPSERT` e o destino
+HTTPS do seu domínio com `/webhook/evolution/<segredo>`; `<segredo>` deve ser
+exatamente `WEBHOOK_SEGREDO`.
+
+Telegram: preencha `TELEGRAM_API_URL`, `TELEGRAM_TOKEN`, `TELEGRAM_CHAT_ID`
+e `TELEGRAM_SEGREDO`. Pelo serviço do Telegram, registre `setWebhook` com o campo
+`url` apontando ao endereço HTTPS `/webhook/telegram` e `secret_token` igual a
+`TELEGRAM_SEGREDO`. Adicione o bot ao grupo configurado. As respostas aos atendimentos
+e os comandos `/fila`, `/reservas`, `/responder`, `/encerrar`, `/aprovar` e `/recusar`
+operam a mesma base da página da equipe. Essas configurações externas são feitas
+pelo operador; nenhum serviço real foi chamado durante a implementação.
+
+Backup diário: adapte `/caminho/reserva-restaurante` no cron do host:
+
+```cron
+15 3 * * * cd /caminho/reserva-restaurante && docker compose exec -T reserva ./reserva backup --dados /dados --saida /backups/diario-$(date +\%F).zip
+```
+
+Copie os backups para armazenamento seguro fora da VPS e aplique retenção.
+Para restaurar, primeiro pare o serviço; depois use um container temporário:
+
+```sh
+docker compose stop reserva
+docker compose run --rm --no-deps reserva ./reserva restaurar --dados /dados --entrada /backups/diario-AAAA-MM-DD.zip
+docker compose up -d reserva
+```
+
+Confirmações, aniversários, reativação e reenvios dependem de `POST /api/tarefas/rodar`.
+Além do botão na equipe, o operador pode agendar essa rota em localhost com header
+`X-Token`, por exemplo a cada cinco minutos; ela é idempotente. Proteja o token no
+agendador e não o exponha em logs. Nenhum deploy foi executado neste ciclo.
 
 ## Backup e indicadores
 
