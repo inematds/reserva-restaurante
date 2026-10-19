@@ -1,26 +1,24 @@
-# Estado — atualizado 2026-10-19 13:59 -0300
+# Estado — atualizado 2026-10-19 14:04 -0300
 
 ## Funciona
-- v0.4.0: base HTTP/SQLite/auth/relógio, cadastros, clientes, horários/alocação e reservas mantidos sem regressão na suíte.
-- Conversa persistente por telefone: nome/pessoas/dia/horário, datas relativas, opções inválidas, consulta e cancelamento ordenado, FAQ imediato, grupo grande e entrada na lista de espera.
-- Histórico de entrada/saída inclui mensagens anteriores ao cadastro. PARAR persiste; fila humana abre por pedido ou segunda incompreensão, silencia o bot e permite responder/encerrar pela API local.
-- Caixa de saída simulada persistente; confirmação idempotente e resposta 1/2; remarcação renova confirmação; cancelamento compartilhado pela API/chat oferece espera ao primeiro elegível, com nova alocação ao aceitar.
-- Aprovação/recusa de grupo grande, aniversário anual, reativação por última visita e campanhas com consentimento.
-- Suíte completa: **68 passed / 25 failed** em 65,24 s. Todas as suítes de conversa, confirmação/espera e grupo/base própria passam. Log: `pytest-ciclo-3.log`.
-- Checagem local adicional: CONVERSA PERSISTENTE E HISTÓRICO OK (reabertura do banco no passo nome, histórico anterior ao cadastro e silêncio durante atendimento).
-- Verificador: **LIMITES OK**, hash a177d907bfc8ce90, 93 testes, escopo preservado. Nenhuma API real/rede externa; nenhum commit.
+- v0.5.0: base HTTP/SQLite/auth/relógio, cadastros, clientes, horários/alocação, reservas e conversa persistente.
+- Confirmação/espera, aprovação/recusa, aniversários, reativação, campanhas e fila humana local com saída simulada.
+- Bloqueios de restaurante, salão e mesa, com conflitos sem cancelamento automático; DELETE libera disponibilidade.
+- Backup CLI consistente via SQLite backup + configuração em ZIP; restauração com servidor parado.
+- LGPD: anonimização preserva id e visitas, limpa textos/observações, cancela esperas próprias antes de oferecer vagas, cancela reservas futuras pelo caminho normal e remove estado do telefone antigo. Históricos anonimizados associados por cliente_id para não misturar clientes sem telefone.
+- Raio-X HTTP/CLI: coorte da primeira visita, retorno em até 60 dias, presença/no-show e mesa-minutos; CLI mescla sobre mês anterior/base e substitui mês sem duplicar.
+- Suíte completa: **74 passed / 19 failed** em 67,36 s; log `pytest-ciclo-4.log`. Nenhuma regressão observada. Checagem local adicional de dois históricos anonimizados isolados e telefone antigo desconhecido: OK.
+- Verificador: **LIMITES OK**, hash a177d907bfc8ce90, 93 testes, escopo preservado. Sem API real/rede externa ou commit.
 
 ## Falta
-- Rotas de bloqueios e comandos de backup/restauração.
-- Exclusão/anonimização LGPD e Raio-X HTTP/CLI; consulta de dados já inclui histórico.
-- Evolution e Telegram, reenvio real de pendentes e notificações à equipe; hoje toda saída é simulada e reenviadas = 0.
-- Docker, Compose, .env.exemplo, páginas web e finalização das instruções operacionais do README.
-- Rever pendências antigas de confirmação após remarcação antes de disparar nova confirmação; verificar vínculo do histórico quando telefone é editado e futura anonimização. Não são cobertos pela suíte atual.
-- Não marcar concluído: restam 25 testes e partes do contrato.
+- Evolution/Telegram, reenvio de pendentes, webhooks e avisos à equipe (15 testes de integrações ainda falham).
+- Dockerfile, Compose e .env.exemplo (3 testes); páginas web (1 teste), finalizar README operacional.
+- Rever pendências de confirmação após remarcação e vínculo do histórico ao editar telefone (fora da cobertura atual).
+- Não marcar concluído: restam 19 testes e partes do contrato.
 
 ## Como retomar
-1. Ler goal → state → plan → canal → fim de progress/failures. Spec inteira, conftest e fixture lidos neste ciclo.
-2. `Application` herda `Conversation` e `Booking`; `src/conversation.py` concentra conversa, saída, tarefas, fila humana e espera. `Store.transaction()` protege cada operação completa.
-3. `cancel(db, reservation)` é o caminho compartilhado para cancelamento e oferta de espera; usar também na exclusão LGPD. `output()` grava caixa de saída e histórico; integrar envio por ambiente nesse ponto.
-4. Estado em cadastros por tipo: conversas (id = telefone), mensagens, saida, humano, espera. Tarefas guardam marcadores nas reservas/clientes. Histórico é associado por telefone; anonimização precisa apagar textos e desvincular estado antigo.
-5. Rodar `python3 -m pytest -q tests/` com saída em arquivo e ler apenas `tail -n 30`; executar `bash longrun/2026-10-05-reservas-v1/verificar-limites.sh`.
+1. Ler goal → state → plan → canal → fim de progress/failures. Spec inteira, conftest e fixture foram lidos neste ciclo.
+2. `Application` herda Operations, Conversation e Booking. `src/operations.py` concentra bloqueios, anonimização e indicadores; CLI em `src/cli.py`.
+3. `output()` deve integrar transporte por ambiente; `cancel()` já oferece espera. As operações estão sob Store.transaction(). Integrações só contra falso local dos testes.
+4. Histórico atual por telefone; registros anonimizados recebem cliente_id. Não comparar telefone nulo na consulta de dados. Backup inclui banco e restaurante.json; restauração exige processo parado.
+5. Rodar suíte completa com saída em arquivo e ler apenas tail -n 30; executar verificar-limites.sh. Não fazer commit.

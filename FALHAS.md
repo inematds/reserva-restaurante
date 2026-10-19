@@ -2,6 +2,7 @@
 
 | data | o que quebrou | menor correção | prompt \| infra |
 |---|---|---|---|
+| 2026-10-19 14:04 -0300 | Bloqueios/LGPD/Raio-X retornavam 404 e CLI não tinha backup/restauração | Adicionar operações locais compartilhadas, snapshot SQLite e vínculo de histórico anonimizado por id; 74 testes passam | infra (implementação ausente) |
 | 2026-10-19 13:59 -0300 | Conversa e automações ainda retornavam rota inexistente | Adicionar estado/histórico persistentes e reutilizar alocador/cancelamento; 68 testes passam | prompt (implementação parcial) |
 | 2026-10-19 13:54 -0300 | Horários e reservas respondiam 404 e bloqueavam os fluxos dependentes | Implementar clientes e alocador transacional compartilhado; 38 testes passam | infra (implementação ausente) |
 | 2026-10-05 | validação: `Servidor` subido fora de `try/finally` em 5 testes (`test_estado_persiste_ao_reiniciar`, `test_confirmacao_sobrevive_a_reinicio`, `test_reativacao_apos_60_dias_uma_por_visita`, `test_semente_so_na_primeira_vez`, `test_backup_e_restaurar`, `montar_mes`) — asserção falhando antes do `parar()` deixava `reserva serve` órfão (aconteceu 14 h no atende-clinica) | `conftest.py`: lista `SERVIDORES` + fixture `autouse` que para todos no teardown | infra |

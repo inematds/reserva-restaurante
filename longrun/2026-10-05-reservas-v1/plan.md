@@ -1,9 +1,9 @@
 # Plano
 
 ## Estratégia atual
-Conversa e automações locais implementadas; 68/93 testes passam. Completar operações locais antes dos transportes externos. Reutilizar cancelamento e saída compartilhados.
+Operações locais implementadas e verificadas; 74/93 testes passam. Próximo ciclo deve implementar transportes por ambiente e testar somente com servidor falso.
 
 ## Próximos 3 passos
-1. Bloqueios e backup/restauração; depois exclusão LGPD (cancelamento normal, ofertas, anonimização de mensagens e estado) e Raio-X HTTP/CLI.
-2. Evolution e Telegram exclusivamente pelos ambientes da spec e servidores falsos: envio/retry, webhooks, deduplicação, fila humana e avisos. Rever invalidação de pendências na remarcação.
-3. Docker/Compose/.env.exemplo e README operacional, depois páginas em web/. Rodar suíte completa e limites; concluir apenas com 93 passed e LIMITES OK.
+1. Evolution: webhook com segredo/deduplicação, origem whatsapp, envio de respostas e saída, retry de pendentes; revisar pendência de confirmação após remarcação.
+2. Telegram: abertura/repasse da fila humana, replies/comandos, proteção do webhook e avisos de reservas/grupos/cancelamentos; rodar suíte completa.
+3. Docker/Compose/.env.exemplo, README operacional e páginas web; testar suíte e limites, concluir apenas com 93 passed e LIMITES OK.

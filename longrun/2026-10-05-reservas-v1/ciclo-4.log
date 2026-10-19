@@ -1,0 +1,2521 @@
+OpenAI Codex v0.163.0
+--------
+workdir: /home/nmaldaner/projetos/reserva-restaurante
+model: gpt-6-astra
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR] (network access enabled)
+reasoning effort: medium
+reasoning summaries: none
+session id: 01a1551c-52ce-7390-ba69-bec2cb56db6a
+--------
+user
+Você está num ciclo de uma execução longa no repo /home/nmaldaner/projetos/reserva-restaurante.
+
+RESULTADO: `./reserva` (Python 3, só biblioteca padrão; código em `src/` e páginas em `web/`) implementa docs/ESPECIFICACAO.md por inteiro — reserva de mesa para um restaurante com WhatsApp (Evolution), equipe no Telegram e em /equipe, base própria de clientes, cadastros, backup, Raio-X e Docker.
+
+ANTES DE AGIR: leia longrun/2026-10-05-reservas-v1/goal.md → state.md → plan.md → canal.md → últimas linhas de progress.md e failures.md. Na primeira vez, leia docs/ESPECIFICACAO.md inteiro, tests/conftest.py e tests/fixtures/restaurante.json.
+
+NESTE CICLO: escolha a próxima ação útil (comece pela base: `./reserva serve` imprimindo `PORTA=<n>`, SQLite em --dados, auth, relógio RESERVA_AGORA; depois horários/alocação → reservas → conversa → confirmação/espera → grupo grande e base própria → cadastros/bloqueios/backup → LGPD/raiox → Evolution → Telegram → Docker/README → páginas), implemente, rode `python3 -m pytest -q tests/` (leva até ~1 min). Leia só o fim da saída (`| tail -n 30`); saída longa vai para arquivo.
+
+AO TERMINAR O CICLO (obrigatório):
+- reescreva state.md (Funciona / Falta / Como retomar) e plan.md (próximos 3 passos);
+- acrescente 1 linha em progress.md: data-hora, o que mudou, resultado do pytest (N passed / N failed);
+- se algo deu errado, 1 linha em failures.md: erro → tentativa → resultado;
+- decisões de design em decisions.md; fatos e armadilhas novos em canal.md (só acrescentar);
+- quando `python3 -m pytest -q tests/` passar inteiro E `bash longrun/2026-10-05-reservas-v1/verificar-limites.sh` imprimir LIMITES OK, escreva "concluído" na primeira linha de "## Funciona" do state.md.
+
+SE UM TESTE CONTRADIZ A ESPECIFICAÇÃO: não altere o teste nem a spec. Registre em failures.md (teste, trecho da spec, o conflito) e siga com os outros itens; isso é portão humano.
+
+INTEGRAÇÕES: Evolution e Telegram só pelas variáveis de ambiente da spec; teste só contra o servidor falso dos testes. Nunca chame api.telegram.org nem uma Evolution real, nunca escreva URL externa no código. `.env.exemplo` com valores vazios.
+
+README: acrescente ao `README.md` existente as seções da implementação (executar localmente e `Deploy na VPS`, seção 19 da spec) e atualize a linha de "Estado"; NÃO apague a seção "Como rodar no seu ambiente" nem a estrutura — o README é também o manual deste longrun.
+
+RESTRIÇÕES: não altere tests/, pytest.ini, docs/, goal.md, hash-congelado.txt, congelar.sh, verificar-*, loop.env, prompt.md. Só biblioteca padrão do Python 3 (`python3`, não `python`). Nenhuma API, nenhuma rede externa, nenhuma chave. Servidor só em 127.0.0.1 (o `0.0.0.0` existe só no CMD do Dockerfile). Não use `pkill -f`; mate só o PID que você subiu. Não copie valores da fixture (nomes, telefones, datas, ids de mesa) para o código: a lógica tem que valer para qualquer restaurante.json. Não faça commit (o loop externo faz).
+
+2026-10-19T17:01:22.442374Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when AuthRequired(AuthRequiredError { www_authenticate_header: "Bearer error=\"invalid_token\", resource_metadata=\"https://mcp.magnific.com/.well-known/oauth-protected-resource\", scope=\"openid profile email mcp:custom-audience\"" })
+2026-10-19T17:01:22.890654Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when AuthRequired(AuthRequiredError { www_authenticate_header: "Bearer error=\"invalid_token\", resource_metadata=\"https://mcp.magnific.com/.well-known/oauth-protected-resource\", scope=\"openid profile email mcp:custom-audience\"" })
+2026-10-19T17:01:23.255392Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when AuthRequired(AuthRequiredError { www_authenticate_header: "Bearer resource_metadata=\"https://ai.metricool.com/.well-known/oauth-protected-resource\"" })
+codex
+Vou ler o estado e os critérios do longrun, escolher a próxima pendência e verificá-la com os testes e o verificador de limites. Ao final, atualizarei os registros do ciclo, sem commit.
+
+exec
+/bin/bash -lc "pwd; rg --files -g 'AGENTS.md' -g 'CLAUDE.md' -g 'context/**' -g 'tasks/current.md' -g 'handoffs/latest.md' -g 'longrun/2026-10-05-reservas-v1/**'" in /home/nmaldaner/projetos/reserva-restaurante
+ succeeded in 0ms:
+/home/nmaldaner/projetos/reserva-restaurante
+CLAUDE.md
+longrun/2026-10-05-reservas-v1/.loop.lock
+longrun/2026-10-05-reservas-v1/loop.log
+longrun/2026-10-05-reservas-v1/failures.md
+longrun/2026-10-05-reservas-v1/loop.env
+longrun/2026-10-05-reservas-v1/ciclo-1.log
+longrun/2026-10-05-reservas-v1/ciclo-3.log
+longrun/2026-10-05-reservas-v1/verificar-independente.py
+longrun/2026-10-05-reservas-v1/pytest-ciclo-1.log
+longrun/2026-10-05-reservas-v1/verificar-limites.sh
+longrun/2026-10-05-reservas-v1/prompt-goal-claude.md
+longrun/2026-10-05-reservas-v1/congelar.sh
+longrun/2026-10-05-reservas-v1/hash-congelado.txt
+longrun/2026-10-05-reservas-v1/progress.md
+longrun/2026-10-05-reservas-v1/pytest-ciclo-2.log
+longrun/2026-10-05-reservas-v1/pytest-ciclo-3.log
+longrun/2026-10-05-reservas-v1/ciclo-4.log
+longrun/2026-10-05-reservas-v1/goal.md
+longrun/2026-10-05-reservas-v1/teste-final.log
+longrun/2026-10-05-reservas-v1/ciclo-2.log
+longrun/2026-10-05-reservas-v1/canal.md
+longrun/2026-10-05-reservas-v1/state.md
+longrun/2026-10-05-reservas-v1/prompt-goal-codex.md
+longrun/2026-10-05-reservas-v1/decisions.md
+longrun/2026-10-05-reservas-v1/plan.md
+longrun/2026-10-05-reservas-v1/prompt.md
+longrun/2026-10-05-reservas-v1/__pycache__/verificar-independente.cpython-312.pyc
+
+exec
+/bin/bash -lc 'cat longrun/2026-10-05-reservas-v1/goal.md longrun/2026-10-05-reservas-v1/state.md longrun/2026-10-05-reservas-v1/plan.md longrun/2026-10-05-reservas-v1/canal.md; tail -n 12 longrun/2026-10-05-reservas-v1/progress.md longrun/2026-10-05-reservas-v1/failures.md' in /home/nmaldaner/projetos/reserva-restaurante
+ succeeded in 0ms:
+# Goal — reservas-v1
+
+- **Início:** 2026-10-05 (planejado; a execução começa após `congelar.sh`) · **Agente:** `codex exec` (gpt-6-astra, assinatura) em loop headless — `tools/loop-longrun.sh` · alternativa: `/goal` no Codex TUI ou no Claude Code
+- **Tetos:** 20 ciclos × 30 min (≤ 10 h) · memória 8G por ciclo · estagnação 3 ciclos
+
+## Resultado
+`./reserva` sobe um sistema de reserva de mesa para um restaurante — salões/mesas, turnos, grade de horários, alocação automática, limite da cozinha, bloqueios, confirmação, no-show, lista de espera, grupo grande com aprovação, conversa (FAQ, reservar, consultar, cancelar, humano, PARAR), base própria de clientes (origem, aniversário, reativação, campanhas), cadastros, backup, WhatsApp pela Evolution API, equipe pelo Telegram e por `/equipe`, exportação para o Painel do Raio-X e entrega em Docker para VPS —, conforme `docs/ESPECIFICACAO.md`.
+
+## Especificação
+**`docs/ESPECIFICACAO.md`** (contrato completo, congelado). Contexto: `docs/MAPA-RAIO-X.md`, `docs/DECISOES-ABERTAS.md`. Fora do escopo: seção 12 da especificação.
+
+## Critérios de pronto (verificáveis)
+
+**Função**
+- [ ] `python3 -m pytest -q tests/` → **93 passed**, 0 failed, 0 errors, 0 skipped
+
+**Regressão**
+- [ ] a mesma suíte inteira no teste final (o loop só fecha se todas passam juntas; teste que passava e voltou a falhar impede o fecho)
+- [ ] `./reserva serve` reiniciado com o mesmo `--dados` mantém o estado (coberto por `test_estado_persiste_ao_reiniciar`, `test_confirmacao_sobrevive_a_reinicio`, `test_semente_so_na_primeira_vez`)
+
+**Limite**
+- [ ] `bash longrun/2026-10-05-reservas-v1/verificar-limites.sh` → `LIMITES OK` (hash do contrato = `hash-congelado.txt`, nº de testes coletados = 93, só arquivos do escopo — `reserva`, `src/`, `web/`, `exemplos/`, `README.md`, `VERSION`, `Dockerfile`, `docker-compose.yml`, `.env.exemplo`, `.dockerignore`, `.gitignore`, `CLAUDE.md`, `FALHAS.md`, esta pasta —, sem SDK/dependência externa, sem URL externa, sem chave de API, sem `0.0.0.0` no código)
+
+**Teste rápido por ciclo**: `python3 -m pytest -q tests/`
+**Teste completo no final**: `python3 -m pytest -q tests/ && bash longrun/2026-10-05-reservas-v1/verificar-limites.sh`
+
+**Depois do "concluído" (humano, nível 4):** `python3 longrun/2026-10-05-reservas-v1/verificar-independente.py` → `INDEPENDENTE OK` (sem valores da fixture no código + restaurante nunca visto, argumentos todos explícitos + `docker build` e healthcheck do container) e abrir `/` e `/equipe` no navegador.
+
+## Restrições
+- só pela assinatura; nenhuma API, nenhuma rede externa, nenhuma dependência fora da biblioteca padrão do Python (decisão 2 de `docs/DECISOES-ABERTAS.md`)
+- não mexer em: `tests/`, `pytest.ini`, `docs/` (inclusive `ESPECIFICACAO.md`), `goal.md`, `hash-congelado.txt`, `congelar.sh`, `verificar-*.{sh,py}`, `loop.env`, `prompt.md`
+- servidor só em `127.0.0.1`; ao testar à mão, porta 0 e matar só o PID que subiu
+- no loop headless não fazer commit (o loop faz); no /goal interativo, commit local a cada checkpoint; nunca criar repo remoto nem fazer push
+
+## Portões humanos (parar e perguntar)
+- teste que contradiz a especificação (registrar em `failures.md` com o trecho exato e parar — não "ajustar" o teste)
+- qualquer chamada a API real (Evolution, Telegram, LLM, Pix) — durante a execução só os servidores falsos locais dos testes; dependência externa
+- deploy na VPS (é do humano, com as credenciais dele)
+- mudança de contrato, criar repo, push, publicar
+# Estado — atualizado 2026-10-19 13:59 -0300
+
+## Funciona
+- v0.4.0: base HTTP/SQLite/auth/relógio, cadastros, clientes, horários/alocação e reservas mantidos sem regressão na suíte.
+- Conversa persistente por telefone: nome/pessoas/dia/horário, datas relativas, opções inválidas, consulta e cancelamento ordenado, FAQ imediato, grupo grande e entrada na lista de espera.
+- Histórico de entrada/saída inclui mensagens anteriores ao cadastro. PARAR persiste; fila humana abre por pedido ou segunda incompreensão, silencia o bot e permite responder/encerrar pela API local.
+- Caixa de saída simulada persistente; confirmação idempotente e resposta 1/2; remarcação renova confirmação; cancelamento compartilhado pela API/chat oferece espera ao primeiro elegível, com nova alocação ao aceitar.
+- Aprovação/recusa de grupo grande, aniversário anual, reativação por última visita e campanhas com consentimento.
+- Suíte completa: **68 passed / 25 failed** em 65,24 s. Todas as suítes de conversa, confirmação/espera e grupo/base própria passam. Log: `pytest-ciclo-3.log`.
+- Checagem local adicional: CONVERSA PERSISTENTE E HISTÓRICO OK (reabertura do banco no passo nome, histórico anterior ao cadastro e silêncio durante atendimento).
+- Verificador: **LIMITES OK**, hash a177d907bfc8ce90, 93 testes, escopo preservado. Nenhuma API real/rede externa; nenhum commit.
+
+## Falta
+- Rotas de bloqueios e comandos de backup/restauração.
+- Exclusão/anonimização LGPD e Raio-X HTTP/CLI; consulta de dados já inclui histórico.
+- Evolution e Telegram, reenvio real de pendentes e notificações à equipe; hoje toda saída é simulada e reenviadas = 0.
+- Docker, Compose, .env.exemplo, páginas web e finalização das instruções operacionais do README.
+- Rever pendências antigas de confirmação após remarcação antes de disparar nova confirmação; verificar vínculo do histórico quando telefone é editado e futura anonimização. Não são cobertos pela suíte atual.
+- Não marcar concluído: restam 25 testes e partes do contrato.
+
+## Como retomar
+1. Ler goal → state → plan → canal → fim de progress/failures. Spec inteira, conftest e fixture lidos neste ciclo.
+2. `Application` herda `Conversation` e `Booking`; `src/conversation.py` concentra conversa, saída, tarefas, fila humana e espera. `Store.transaction()` protege cada operação completa.
+3. `cancel(db, reservation)` é o caminho compartilhado para cancelamento e oferta de espera; usar também na exclusão LGPD. `output()` grava caixa de saída e histórico; integrar envio por ambiente nesse ponto.
+4. Estado em cadastros por tipo: conversas (id = telefone), mensagens, saida, humano, espera. Tarefas guardam marcadores nas reservas/clientes. Histórico é associado por telefone; anonimização precisa apagar textos e desvincular estado antigo.
+5. Rodar `python3 -m pytest -q tests/` com saída em arquivo e ler apenas `tail -n 30`; executar `bash longrun/2026-10-05-reservas-v1/verificar-limites.sh`.
+# Plano
+
+## Estratégia atual
+Conversa e automações locais implementadas; 68/93 testes passam. Completar operações locais antes dos transportes externos. Reutilizar cancelamento e saída compartilhados.
+
+## Próximos 3 passos
+1. Bloqueios e backup/restauração; depois exclusão LGPD (cancelamento normal, ofertas, anonimização de mensagens e estado) e Raio-X HTTP/CLI.
+2. Evolution e Telegram exclusivamente pelos ambientes da spec e servidores falsos: envio/retry, webhooks, deduplicação, fila humana e avisos. Rever invalidação de pendências na remarcação.
+3. Docker/Compose/.env.exemplo e README operacional, depois páginas em web/. Rodar suíte completa e limites; concluir apenas com 93 passed e LIMITES OK.
+# Canal — reservas-v1 (só acrescentar; nunca reescrever)
+
+Conhecimento do projeto que a compactação perde: fatos descobertos, aprendizados, glossário, armadilhas, onde estão as coisas.
+Não é estado da tarefa (isso vai em state/plan/progress). Preencha cedo — o hook avisa na faixa 1 (~50% do contexto).
+
+Formato: `- AAAA-MM-DD HH:MM · fato|aprendizado|glossário|armadilha · texto`
+
+
+- 2026-10-19 13:50 -0300 · fato · Spec inteira, conftest e fixture lidos. Base criada; 6/93 testes passam. Não há clientes nem reservas ainda.
+- 2026-10-19 13:50 -0300 · armadilha · Semente única deve usar marcador persistente: esvaziar FAQ não autoriza importar a lista do JSON outra vez. Config geral é recarregada a cada início.
+- 2026-10-19 13:50 -0300 · fato · Testes locais de HTTP e servidor falso funcionam neste ambiente; nenhuma rede externa foi chamada. Logs longos ficam nesta pasta; ler apenas últimas 30 linhas.
+
+- 2026-10-19 13:54 -0300 · fato · Todos os testes de horários/reservas passam; total 38/93. O servidor agora repassa query string ao dispatch. Booking/APIError ficam em src/booking.py, evitando import circular.
+- 2026-10-19 13:54 -0300 · armadilha · Cancelamento ainda não dispara espera e dados do cliente ainda não incluem mensagens; integrar esses efeitos antes de considerar as rotas completas. Alocador já lê bloqueios do armazenamento, mas ainda falta API de bloqueios. No-show continua ativo; remarcação ignora a própria reserva em mesas e cozinha.
+
+- 2026-10-19 13:59 -0300 · fato · Conversa/confirmação/espera/grupo/base própria passam integralmente; total 68/93. Conversation é mixin de Application, com saída simulada e histórico por telefone. Store suporta novos tipos sem migração.
+- 2026-10-19 13:59 -0300 · armadilha · Testes de integrações aguardam avisos ausentes e levam a suíte a 65 s. Ainda não há transporte: reenviadas=0. Fila humana local silencia bot; mensagens recebidas ficam no histórico, mas repasse Telegram falta. LGPD deve limpar conversas e textos antigos além de cancelar pelo helper cancel().
+==> longrun/2026-10-05-reservas-v1/progress.md <==
+# Progresso (só acrescentar)
+
+| data/hora | checkpoint | commit | critério atingido? | tokens in/cached/out | compactações |
+|---|---|---|---|---|---|
+| 2026-10-19 13:50 -0300 | Base HTTP/SQLite/auth/relógio e CRUD de cadastros; README e v0.2.0 | sem commit (loop externo) | 6 passed / 87 failed; LIMITES OK; BASE OK | — | 0 |
+
+| 2026-10-19 13:54 -0300 | v0.3.0 clientes, horários/alocação, reservas, chegada e ocupação | sem commit (loop externo) | 38 passed / 55 failed (30,81 s); LIMITES OK | — | 0 |
+
+| 2026-10-19 13:59 -0300 | v0.4.0 conversa/histórico, fila humana local, saída simulada, confirmação/espera e grupos/campanhas | sem commit (loop externo) | 68 passed / 25 failed (65,24 s); LIMITES OK; persistência local OK | — | 0 |
+
+==> longrun/2026-10-05-reservas-v1/failures.md <==
+# Falhas (só acrescentar; ao fim, a menor correção vira linha no FALHAS.md do projeto)
+
+| data | o que quebrou | tentativa | resultado | prompt \| infra |
+|---|---|---|---|---|
+| 2026-10-19 13:50 -0300 | Suíte: 87 falhas em funcionalidades ainda ausentes | Implementada e verificada a base e cadastros | 6 passed / 87 failed; seguir clientes/horários/reservas; nenhum conflito com spec identificado | implementação parcial |
+
+| 2026-10-19 13:54 -0300 | 55 testes ainda falham em funcionalidades ausentes (conversa/saída, bloqueios/backup, LGPD/Raio-X, canais, páginas e Docker) | Implementados clientes e motor de reservas; suíte completa executada | 38 passed / 55 failed; nenhum conflito teste/spec identificado | implementação parcial |
+
+| 2026-10-19 13:59 -0300 | 25 testes falham em partes ausentes (bloqueios/backup, LGPD/Raio-X, canais, páginas e Docker) | Implementadas conversa e automações locais; executada suíte completa | 68 passed / 25 failed; nenhum conflito teste/spec identificado | implementação parcial |
+
+exec
+/bin/bash -lc 'cat CLAUDE.md; for f in context/overview.md context/current-state.md tasks/current.md handoffs/latest.md; do if test -f "$f"; then cat "$f"; fi; done; cat docs/ESPECIFICACAO.md' in /home/nmaldaner/projetos/reserva-restaurante
+ succeeded in 0ms:
+# CLAUDE.md — reserva-restaurante
+
+Sistema de reserva de mesa para um restaurante: salões/mesas, turnos, alocação automática, confirmação, no-show, lista de espera, grupo grande com aprovação, FAQ, fila humana, base própria de clientes (aniversário, reativação, campanhas com consentimento) e exportação para o Painel do Raio-X de Margem (pacote `restaurante`).
+
+- Repo local (sem remoto ainda). Autor de commit: `inematds <inematds@gmail.com>` (config local).
+- **Contrato:** `docs/ESPECIFICACAO.md`. Testes caixa-preta em `tests/` (pytest sobe `./reserva serve --porta 0`). Contrato e testes são **protegidos** durante a execução longa — só humano altera, e aí recongela o hash no `goal.md`.
+- Decisões: `docs/DECISOES-ABERTAS.md`. Relação com o Raio-X: `docs/MAPA-RAIO-X.md`.
+- Execução longa: `longrun/2026-10-05-reservas-v1/` (método em `~/projetos/execucao-longa`). Como rodar: `README.md`.
+- Molde: `~/projetos/atende-clinica` (mesma pilha, mesmos canais, mesmo conftest).
+- `python3` (não existe `python` neste host). Sem dependência externa no v1.
+- Nenhuma API (WhatsApp/Meta, LLM pago, Pix/PSP, OpenRouter, Groq) sem autorização explícita. Sem rede externa no código; integrações só por variáveis de ambiente.
+- Servidor de teste: só `127.0.0.1`, porta 0; matar só o PID que subiu (nunca `pkill -f`).
+- Versão em `VERSION` (semver do CLAUDE global: minor carrega o patch).
+
+## Self-learning
+
+When I correct you, or you catch yourself making a mistake: before continuing, add the lesson as a one-line rule under ## Lessons, so it never happens again.
+
+## Lessons
+# Especificação v1 — reserva-restaurante (contrato congelado)
+
+> Este arquivo é **protegido** durante a execução longa: o agente implementa contra ele e não o altera.
+> Os testes em `tests/` verificam exatamente o que está aqui. Mudança de contrato = humano edita, recongela o hash e reinicia o longrun.
+
+## 0. O que é
+
+Sistema de **reserva de mesa** para **um restaurante** com salão: salões e mesas com capacidade, turnos por dia da semana, grade de horários, alocação automática da menor mesa que serve, confirmação automática, no-show, lista de espera, aprovação humana de grupo grande, FAQ, passagem para humano, **base própria de clientes** com consentimento (aniversário e convite de retorno), página da equipe, exportação de números para o **Painel de Recuperação do Raio-X de Margem** (pacote `restaurante`).
+
+Canais: **chat web**, **WhatsApp pela Evolution API** (seção 17) e caixa de saída **simulada** quando a Evolution não está configurada. Equipe interna atende pelo **Telegram** (seção 18) e pela página `/equipe`. Cadastros (seção 14), bloqueios (seção 15), backup (seção 16), entrega em **Docker** para VPS (seção 19).
+
+**Não é** sistema de pedido/delivery nem de pagamento (seção 12).
+
+## 1. Execução
+
+- Ponto de entrada: arquivo executável `./reserva` na raiz do repo.
+- `./reserva serve --porta N --dados DIR [--host H]`
+  - `--porta 0` = porta livre escolhida pelo sistema. A **primeira linha** do stdout é `PORTA=<n>` (com flush), impressa quando o servidor já aceita conexões.
+  - Escuta em `--host` (padrão `127.0.0.1`; no Docker, `0.0.0.0` passado pelo comando do container — nunca escrito no código).
+  - `DIR/restaurante.json` = configuração (seção 2). Se não existir, copiar `exemplos/restaurante.json`.
+  - Todo o estado persiste em `DIR/` (ex.: SQLite). **Cria `DIR` se não existir** (no container, `/dados` pode não ter volume montado). Reiniciar com o mesmo `DIR` mantém tudo.
+- **Relógio:** variável de ambiente `RESERVA_AGORA` (`AAAA-MM-DDTHH:MM`, hora local do restaurante, sem fuso) fixa o "agora" do processo. Sem ela, usa o relógio real. Datas/horas no contrato são sempre `AAAA-MM-DDTHH:MM` local; datas soltas, `AAAA-MM-DD`.
+- `./reserva raiox --dados DIR --mes AAAA-MM --acompanhamento ARQ` (seção 10).
+- `./reserva backup` / `./reserva restaurar` (seção 16).
+- Integrações externas **só** por variáveis de ambiente (seções 17–18). Sem elas, nenhuma chamada de rede sai do processo. Nenhuma URL externa, chave ou token escrito no código.
+
+## 2. `restaurante.json`
+
+```json
+{
+  "nome": "Cantina do Bairro",
+  "token": "segredo",                    // exigido no header X-Token das rotas da equipe [E]
+  "passo_min": 30,                       // grade de horários
+  "antecedencia_min_horas": 1,           // não oferece/aceita início antes de agora + isto
+  "janela_dias": 30,                     // até quantos dias à frente aceita reserva
+  "confirmacao_horas": 24,               // pede confirmação quando a reserva começa em até 24 h
+  "grupo_grande_a_partir": 8,            // pessoas >= isto → aprovação humana (seção 9)
+  "limite_pessoas_por_horario": 20,      // soma de pessoas das reservas ativas com o mesmo início; null = sem limite
+  "reativacao_dias": 60,                 // convite de retorno quando a última visita completa X dias
+  "feriados": ["2026-10-15"],            // dias fechados (sem turno)
+  "duracao": [                           // duração da reserva pelo nº de pessoas: 1ª regra com pessoas <= ate; ate null = qualquer
+    {"ate": 2, "min": 90}, {"ate": 6, "min": 120}, {"ate": null, "min": 180}
+  ],
+  "saloes": [ {"id": "interno", "nome": "Salão interno"}, {"id": "varanda", "nome": "Varanda"} ],
+  "combinacoes": [ {"id": "m3m4", "mesas": ["m3", "m4"], "min": 7, "max": 8} ],
+  "turnos": [ {"id": "almoco", "nome": "Almoço", "dias": ["ter","qua","qui","sex","sab","dom"], "inicio": "11:30", "fim": "15:00"} ],
+  "mesas": [ {"id": "m1", "salao": "interno", "min": 1, "max": 2} ],
+  "faq": [ {"id": "pet", "perguntas": ["aceitam pet"], "resposta": "Sim, na varanda."} ]
+}
+```
+
+Dias da semana: `seg ter qua qui sex sab dom`. `duracao` é avaliada na ordem escrita; a lista termina obrigatoriamente com `ate: null`. As `mesas` de uma combinação são **do mesmo salão** (a combinação pertence a esse salão); o `salao` de uma reserva é o salão da(s) mesa(s) alocada(s). A fixture dos testes está em `tests/fixtures/restaurante.json`; o exemplo em `exemplos/restaurante.json` é igual, com token `TROQUE-ESTE-TOKEN`.
+
+## 3. Regras de horário e alocação
+
+**Duração** de uma reserva de `pessoas` = `min` da primeira regra de `duracao` com `pessoas <= ate` (`ate: null` casa qualquer).
+
+**Horário candidato** para uma data: para cada turno ativo que tem o dia da semana em `dias`, os instantes `turno.inicio + k × passo_min` (k ≥ 0) tais que `[inicio, inicio + duracao)` cabe inteiro em `[turno.inicio, turno.fim)` (isto é, `inicio + duracao <= turno.fim`). Turnos ativos do mesmo dia não se sobrepõem (seção 14).
+
+**Inválido (422)** se: não é horário candidato (fora da grade, não cabe no turno, dia sem turno); dia em `feriados`; `inicio < agora + antecedencia_min_horas`; `data(inicio) > data(agora) + janela_dias` (o dia `data(agora) + janela_dias` ainda vale); `pessoas < 1`; `mesa` pedida não serve o grupo (`pessoas < min` ou `pessoas > max`) ou está inativa; há bloqueio do restaurante inteiro cobrindo qualquer instante de `[inicio, fim)` (seção 15).
+
+**Mesa serve** um pedido se: está ativa; `min <= pessoas <= max`; pertence ao `salao` pedido (quando informado); não está sob bloqueio de mesa/salão que sobreponha `[inicio, fim)`; e está **livre**: nenhuma reserva **ativa** que a ocupe sobrepõe `[inicio, fim)` (intervalos semiabertos: sobrepõe se `inicio < outro.fim` e `fim > outro.inicio`).
+
+**Escolha automática** (sem `mesa` informada):
+1. entre as mesas que servem, a de **menor `max`**; empate → a que vem **primeiro na ordem do cadastro** (ordem de `mesas` no JSON, depois ordem de criação pela API);
+2. **só se nenhuma mesa única serve**, entre as `combinacoes` com `min <= pessoas <= max` cujas mesas estão **todas** ativas, no salão pedido (quando informado), sem bloqueio e livres: a de menor `max`; empate → ordem da lista. A reserva ocupa **todas** as mesas da combinação.
+3. nada serve → **409** `{"erro": "sem_mesa"}`.
+
+**Limite da cozinha:** com `limite_pessoas_por_horario` não nulo, a soma de `pessoas` das reservas ativas com o **mesmo `inicio`** mais o pedido não pode passar do limite; senão **409** `{"erro": "limite_cozinha"}` (verificado depois de achar mesa; também filtra `/api/horarios`).
+
+**Mesa informada** (`mesa` no corpo): usa só ela (ou a combinação cujo `id` for informado em `mesa`); ocupada → 409 `sem_mesa`; não serve/inativa → 422.
+
+**Status.** Reserva **ativa** = `reservada`, `confirmada`, `pendente`, `chegou` ou `no_show` (ocupa mesas, conta no limite da cozinha e na ocupação). `cancelada` e `recusada` liberam as mesas.
+
+`GET /api/horarios` lista só horários candidatos válidos em que a escolha automática encontraria mesa **e** o limite da cozinha permite; ordem por `inicio`.
+
+**Concorrência:** dois pedidos simultâneos pela mesma mesa/horário: exatamente um vence (201), o outro recebe 409.
+
+## 4. Autenticação
+
+Rotas marcadas **[E]** (equipe) exigem header `X-Token` igual a `restaurante.json.token`; sem ele ou errado → **401**, e essa checagem vem **antes** de qualquer outra (corpo vazio ou inválido sem token → 401, não 422/404). Rotas públicas: `/`, `/equipe` (página; os dados vêm de rotas [E]), `/api/saude`, `GET /api/turnos`, `GET /api/saloes`, `/api/horarios`, `/api/mensagens`. Webhooks têm segredo próprio (seções 17 e 18).
+
+## 5. API HTTP (JSON, UTF-8)
+
+Toda resposta com corpo JSON (2xx e erros) sai com header `Content-Type: application/json` (os testes só decodificam JSON quando o header diz `json`); `204` sem corpo.
+
+| Método e rota | Corpo | Resposta |
+|---|---|---|
+| `GET /api/saude` | — | 200 `{"ok": true, "versao": "<conteúdo de VERSION>"}` |
+| `GET /api/saloes` | — | 200 `{"saloes": [{id, nome}]}` na ordem do JSON |
+| `GET /api/turnos` | — | 200 `{"turnos": [{id, nome, dias, inicio, fim, ativo}]}` só os ativos, ordem do cadastro |
+| `GET /api/horarios?data=AAAA-MM-DD&pessoas=N[&salao=S]` | — | 200 `{"horarios": [{"inicio", "turno"}]}` ordenado por `inicio`; `pessoas` ausente, não inteiro ou `< 1` → 422; `salao` inexistente → 404; data sem turno, feriado, fora da janela ou passada → 200 com lista vazia |
+| `POST /api/clientes` [E] | `{nome, telefone, consentimento_marketing?: bool, aniversario?: "MM-DD", origem?}` | 201 `{id}`; telefone já cadastrado → 200 com o mesmo `{id}` (demais campos não mudam); telefone inválido ou `aniversario` inválido → 400 (`aniversario` válido = exatamente `MM-DD`, mês `01`–`12`, dia existente nesse mês — `02-29` aceito; `13-01`, `7/10`, `2026-10-07` → 400); `origem` fora da lista (seção 9) → 422 `{"erro": "origem_invalida"}` |
+| `GET /api/clientes?busca=T` [E] | — | 200 `{"clientes": [{id, nome, telefone, consentimento_marketing, nao_contatar, aniversario, origem, ultima_visita, visitas}]}`; `busca` casa parte do nome (sem acento, sem caixa) ou dígitos do telefone; sem `busca` = todos, ordem de criação |
+| `PUT /api/clientes/{id}` [E] | `{nome?, telefone?, consentimento_marketing?, nao_contatar?, aniversario?, origem?}` | 200 com o cliente; telefone inválido/aniversário inválido → 400; telefone de outro cliente → 409; origem inválida → 422; inexistente → 404 |
+| `GET /api/clientes/{id}/dados` [E] | — | 200 `{cliente, reservas, mensagens}` (seção 11) |
+| `DELETE /api/clientes/{id}` [E] | — | 204; anonimiza (seção 11). O registro **continua existindo** com o mesmo `id`: `GET /api/clientes/{id}/dados` depois disso devolve 200 com os dados anonimizados |
+| `POST /api/reservas` [E] | `{cliente_id, inicio, pessoas, salao?, mesa?, observacao?}` | 201 `{id, status, inicio, fim, pessoas, turno, salao, mesas: [ids], cliente_id, observacao}`; `status` = `pendente` se `pessoas >= grupo_grande_a_partir`, senão `reservada`; 409/422 conforme seção 3; cliente, salão ou mesa inexistente → 404 |
+| `GET /api/reservas?data=AAAA-MM-DD[&turno=T][&salao=S]` [E] | — | 200 `{"reservas": [{id, cliente_id, nome, telefone, pessoas, inicio, fim, turno, salao, mesas, status, observacao}]}` ordenado por `inicio`, depois `id`; inclui canceladas/recusadas (filtrar pelo `status`) |
+| `GET /api/reservas?de=AAAA-MM-DD&ate=AAAA-MM-DD[&turno=T][&salao=S]` [E] | — | mesma lista, pontas inclusivas |
+| `POST /api/reservas/{id}/cancelar` [E] | — | 200 `{status: "cancelada"}`; dispara a lista de espera (seção 7); só de `reservada`, `confirmada` ou `pendente`, senão 409 `{"erro": "status"}` |
+| `POST /api/reservas/{id}/remarcar` [E] | `{inicio?, pessoas?}` (ao menos um) | 200 com a reserva realocada (mesmo `id`; mesas podem mudar; as mesas da própria reserva contam como livres e as `pessoas` dela **não** entram na soma do limite da cozinha); `status` vira `reservada` (ou `pendente` se as novas `pessoas >= grupo_grande_a_partir`) e a confirmação volta a ser devida; mesmas regras 409/422; só de `reservada`, `confirmada` ou `pendente`, senão 409 |
+| `POST /api/reservas/{id}/chegada` [E] | `{compareceu: bool}` | 200 `{status: "chegou" \| "no_show"}`; só de `reservada` ou `confirmada`, senão 409; `chegou` atualiza `ultima_visita`/`visitas` do cliente (seção 9); não depende do relógio |
+| `POST /api/reservas/{id}/aprovar` [E] | — | 200 `{status: "reservada"}`; só de `pendente`, senão 409; envia mensagem `tipo: "aprovacao"` ao cliente (seção 9) |
+| `POST /api/reservas/{id}/recusar` [E] | — | 200 `{status: "recusada"}`; só de `pendente`, senão 409; libera as mesas (**não** dispara a lista de espera); envia `tipo: "recusa"` |
+| `GET /api/ocupacao?data=AAAA-MM-DD[&salao=S]` [E] | — | 200 `{"data", "horarios": [{inicio, turno, mesas_total, mesas_ocupadas, pessoas}]}`: um item por instante da grade de cada turno ativo do dia (`turno.inicio + k × passo_min < turno.fim`), ordem por `inicio`. `mesas_total` = mesas ativas (do salão, se informado); `mesas_ocupadas` = dessas, as ocupadas por reserva ativa com `reserva.inicio <= instante < reserva.fim`; `pessoas` = soma de `pessoas` dessas reservas (cada reserva conta uma vez). Feriado/dia sem turno → lista vazia |
+| `POST /api/espera` [E] | `{cliente_id, data, turno, pessoas}` | 201 `{id}`; turno inexistente/inativo → 404; `pessoas < 1` → 422 |
+| `GET /api/espera?data=AAAA-MM-DD` [E] | — | 200 `{"espera": [{id, cliente_id, nome, telefone, data, turno, pessoas, status}]}` ordem de criação; `status` ∈ `pendente, ofertada, atendida, cancelada` |
+| `POST /api/tarefas/rodar` [E] | `{agora?}` (padrão = relógio do processo) | 200 `{"enviadas": n, "reenviadas": n}` (seção 8); idempotente: rodar de novo no mesmo instante → `enviadas: 0` |
+| `GET /api/saida` [E] | — | 200 `{"mensagens": [{id, tipo, telefone, cliente_id, texto, reserva_id, status, quando}]}` em ordem de criação. `tipo` ∈ `confirmacao, espera, aprovacao, recusa, aniversario, reativacao, campanha, humano`; `reserva_id` = id da reserva em `confirmacao`, `aprovacao` e `recusa`, `null` nos demais tipos; `status` ∈ `simulado, enviado, pendente` (seção 17) |
+| `POST /api/mensagens` | `{telefone, texto}` | 200 `{"respostas": [texto, ...]}` (seção 6) |
+| `GET /api/atendimento-humano` [E] | — | 200 `{"fila": [{id, telefone, nome, motivo, status}]}` só os `aberto`, ordem de abertura |
+| `POST /api/atendimento-humano/{id}/responder` [E] / `.../encerrar` [E] | `{texto}` / — | 200 (seção 18) |
+| `POST /api/campanhas` [E] | `{texto}` | 200 `{"enviadas": n}`; texto vazio (só espaços) → 422 (seção 9) |
+| `GET /api/raiox?mes=AAAA-MM` [E] | — | 200 (seção 10) |
+
+Cadastros (mesas, turnos, FAQ) e bloqueios: seções 14 e 15.
+
+**Ids inexistentes:** qualquer rota com `{id}` no caminho (`/api/reservas/{id}/...`, `/api/clientes/{id}...`, `/api/mesas/{id}`, `/api/turnos/{id}`, `/api/faq/{id}`, `/api/bloqueios/{id}`, `/api/atendimento-humano/{id}/...`) e qualquer referência por id no corpo (`cliente_id`, `salao`, `mesa`, `turno`) a algo que não existe → **404**, antes das validações de 409/422. Corpo que não é JSON ou sem os campos obrigatórios → **422**.
+
+**Telefone:** aceita com ou sem `+55`, espaços, parênteses e hífen; normaliza para `+55DDNNNNNNNNN` (DDD + 8 ou 9 dígitos). Fora disso → inválido. Todas as respostas usam o telefone normalizado.
+
+**Rotas síncronas:** `POST /api/mensagens`, `tarefas/rodar`, `campanhas`, `cancelar` (oferta da lista de espera), `aprovar`, `recusar`, `responder`, e `DELETE /api/clientes/{id}` só devolvem a resposta HTTP depois de criar as mensagens de saída e tentar os envios (o `status` em `/api/saida` já está definido). Respostas ao webhook da Evolution e avisos ao Telegram podem ser assíncronos.
+
+## 6. Conversa (`POST /api/mensagens`)
+
+O texto é normalizado (minúsculas, sem acento, sem pontuação; `amanhã` vira `amanha`) antes de decidir. Ordem de decisão:
+
+1. **Parar** — texto igual a `parar`, `sair` ou `pare`: cliente fica `nao_contatar`; resposta contém `não vai mais receber`. Mensagens automáticas (`confirmacao`, `espera`, `aniversario`, `reativacao`, `campanha`) não vão mais para esse telefone; respostas a pedidos dele (`aprovacao`, `recusa`, `humano`) continuam.
+2. **Humano** — contém `atendente`, `humano` ou `falar com alguem`: fila humana; resposta contém `atendente`.
+3. **Fluxo em andamento** (reserva, cancelamento ou lista de espera, abaixo) consome a mensagem.
+4. **Resposta a pendência:** se a última mensagem da **caixa de saída** (`/api/saida`, seção 5 — não conta resposta do bot na conversa) para o telefone foi `confirmacao` (sem resposta ainda): `1`/`sim`/`confirmo` → status `confirmada`, resposta contém `confirmad`; `2`/`cancelar`/`nao` → `cancelada` (dispara espera), resposta contém `cancelad`. Se foi `espera` (sem resposta): `1`/`sim` → cria a reserva no horário ofertado se ainda couber (resposta contém `reservad`), senão resposta contém `ocupad`; a espera vira `atendida` no primeiro caso. Qualquer outro texto não consome a pendência.
+5. **Consultar/cancelar** — contém `minha reserva`, `minhas reservas` ou `cancelar`: lista as reservas **futuras ativas** (`inicio > agora`, exceto `chegou`/`no_show`) do telefone, **em ordem de `inicio`**, uma linha `N) DD/MM HH:MM — P pessoas` cada (o `N` escolhido depois se refere a essa ordem). Sem reservas → resposta contém `não encontrei`. Com `cancelar`: uma só → cancela na hora (resposta contém `cancelad`, `DD/MM`); várias → lista e a próxima mensagem com o número cancela (fluxo de cancelamento; `0` ou `cancelar` sai sem cancelar).
+6. **Reservar** — contém `reservar` ou `reserva`: inicia o fluxo de reserva.
+7. **FAQ** — palavras significativas (≥ 3 letras, fora de artigos/preposições/pronomes comuns) de alguma pergunta do FAQ: se ≥ 60 % delas aparecem no texto, responde **exatamente** a `resposta` daquele item (só ela, uma mensagem). Mais de um item casa → o de maior %; empate → o primeiro do FAQ.
+8. **Não entendi** — resposta contém `não entendi` e oferece `atendente`. Na **segunda** seguida sem entender, entra na fila humana automaticamente.
+
+**Fluxo de reserva pelo chat** (estado por telefone, persistido; em cada passo a resposta faz a pergunta do passo):
+- telefone sem cliente → pergunta o nome (resposta contém `nome`); a próxima mensagem vira o nome e o cliente é criado (`consentimento_marketing: false`, `origem: "chat"`, ou `"whatsapp"` quando vem pela Evolution). Telefone com cliente → pula este passo (a resposta **não** contém `nome`);
+- pergunta **quantas pessoas** (resposta contém `pessoas`); aceita inteiro ≥ 1, senão repete;
+- pergunta **o dia** (resposta contém `dia`); aceita `hoje`, `amanha`, `DD/MM` ou `DD/MM/AAAA`. `DD/MM` = a próxima ocorrência a partir de hoje (hoje incluso). Dia inválido, passado, sem turno, feriado ou fora da janela → resposta contém `não` e `dia`, repete;
+- lista os horários livres do dia para o grupo (regra da seção 3, a partir de `agora + antecedencia_min_horas`), **até 8**, em ordem, uma linha `N) HH:MM (<nome do turno>)` cada; o número escolhido cria a reserva; resposta contém `reservad`, `DD/MM`, `HH:MM` e `<P> pessoas`. Se o status for `pendente` (grupo grande), a resposta contém `aguardando` e `equipe`;
+- dia com turno mas **sem horário livre** para o grupo → resposta contém `lista de espera` e oferece `1` (sim) / `2` (não). `1`: se o dia tem mais de um turno, pergunta qual, numerado `N) <nome do turno>` na ordem do cadastro; cria o pedido de espera (`data`, `turno`, `pessoas`) e a resposta contém `lista de espera`. `2` → sai do fluxo;
+- número inválido em qualquer passo → repete as opções. `cancelar` dentro do fluxo → sai do fluxo (resposta contém `cancelad` e **não** cancela reserva nenhuma).
+- O bot **nunca** inventa preço, cardápio ou disponibilidade: fora do FAQ e do fluxo, cai na regra 8.
+
+## 7. Lista de espera
+
+Ao cancelar uma reserva (pela API, pela conversa ou pela exclusão LGPD), o primeiro pedido de espera `pendente` (ordem de criação) com a **mesma `data`** e o **mesmo `turno`** da reserva cancelada, cujo cliente não esteja `nao_contatar` e cujas `pessoas` a escolha automática consegue alocar no `inicio` liberado (seção 3, inclusive limite da cozinha), recebe mensagem `tipo: "espera"` contendo `HH:MM` do horário e `1`. O pedido fica `ofertada` com esse `inicio` guardado (não recebe outra oferta). Recusa de grupo grande e `no_show` não disparam a lista.
+
+## 8. Confirmação, aniversário e reativação (`POST /api/tarefas/rodar`)
+
+- **Confirmação:** toda reserva `reservada` com `agora < inicio <= agora + confirmacao_horas` que ainda não recebeu confirmação (desde a última criação/remarcação) → mensagem `tipo: "confirmacao"` com `reserva_id`. Texto contém `DD/MM`, `HH:MM`, `<P> pessoas`, `1` (confirmar) e `2` (cancelar). **Não contém valor em R$.** Reservas `pendente` não recebem confirmação (esperam aprovação).
+- **Aniversário:** cliente com `aniversario` igual a `MM-DD` do dia de `agora`, `consentimento_marketing: true`, não `nao_contatar` → mensagem `tipo: "aniversario"` contendo o primeiro nome do cliente, **uma vez por ano** (ano de `agora`).
+- **Reativação:** cliente com `consentimento_marketing: true`, não `nao_contatar`, `ultima_visita` não nula e `data(agora) >= ultima_visita + reativacao_dias` → mensagem `tipo: "reativacao"` contendo o nome do restaurante. **Uma por visita**: não se repete enquanto `ultima_visita` não mudar.
+- `enviadas` = mensagens criadas nesta rodada; `reenviadas` = `pendente` que viraram `enviado` (seção 17). Cliente `nao_contatar` nunca recebe estes tipos. Confirmação e oferta de espera **não** dependem de `consentimento_marketing` (execução do que o próprio cliente pediu); aniversário, reativação e campanha **dependem**.
+
+## 9. Grupo grande, base própria e campanhas
+
+- **Grupo grande:** reserva com `pessoas >= grupo_grande_a_partir` nasce `pendente` (ocupa as mesas), avisa a equipe (seção 18) e espera `aprovar`/`recusar`. Aprovada → `reservada` + mensagem `tipo: "aprovacao"` ao cliente contendo `confirmad`, `DD/MM`, `HH:MM`. Recusada → `recusada` (mesas liberadas) + mensagem `tipo: "recusa"` contendo `não foi possível`. Sinal/Pix para grupo grande é **política escrita** (FAQ/README), sem cobrança no sistema (seção 12).
+- **Origem do cliente:** `origem` ∈ `salao, whatsapp, chat, telefone, site, indicacao, equipe, outro`; padrão `equipe` na API, `chat` no chat web, `whatsapp` pela Evolution. Qualquer outro valor (ex.: `ifood`, `marketplace`, `rappi`) → 422 `origem_invalida`: **contato que chegou por marketplace não entra na base** (contrato iFood cl. 3.3.1 — `raio-x-margem/docs/TERMOS.md`). A base é só de canais do próprio restaurante.
+- **Visitas:** `chegou` grava `ultima_visita` = data (`AAAA-MM-DD`) do `inicio` da reserva, se maior que a atual, e `visitas` = nº de reservas `chegou` do cliente.
+- **Campanhas:** `POST /api/campanhas {texto}` cria `tipo: "campanha"` com o texto para cada cliente com `consentimento_marketing: true`, sem `nao_contatar` e com telefone (LGPD art. 7º, I — consentimento). Devolve `{"enviadas": n}`. Não há trava de conselho (restaurante não tem publicidade regulada por conselho profissional).
+
+## 10. Exportação para o Raio-X (Painel de Recuperação)
+
+`GET /api/raiox?mes=AAAA-MM` → `{"pacote": "restaurante", "mes": "AAAA-MM", "valores": {...}}`, percentuais arredondados a 1 casa (`round` half-even do Python):
+
+- `clientes_novos_mes` = clientes cujo **primeiro** `chegou` cai no mês (inteiro; a data de um `chegou` é sempre a data do `inicio` da reserva, não o momento em que a equipe marcou a chegada) — **id real** do pacote `setores/restaurante.js`;
+- `retorno_atual_pct` = da coorte acima, % com um **segundo** `chegou` até 60 dias (inclusive) depois do primeiro, pelas datas de `inicio` (0 se a coorte for vazia) — **id real** do pacote ("desses, quantos voltam em 60 dias");
+- `reservas_atendidas_mes` = reservas `chegou` com `inicio` no mês (inteiro);
+- `no_show_pct` = `no_show ÷ (chegou + no_show) × 100` das reservas com `inicio` no mês (0 se não houver);
+- `ocupacao_pct` = mesa-minutos reservados ÷ mesa-minutos disponíveis × 100, onde reservados = soma, nas reservas ativas com `inicio` no mês, de `nº de mesas ocupadas × duracao`, e disponíveis = soma, por dia do mês que não é feriado, de `mesas ativas × soma das durações dos turnos ativos do dia` (bloqueios **não** são descontados).
+
+Os três últimos não são entradas do pacote: o painel só lê as entradas de cada vazamento e ignora o resto; eles ficam no arquivo para a equipe. O número de `retorno_atual_pct` de um mês só fecha 60 dias depois — rodar a exportação de novo atualiza.
+
+`./reserva raiox --dados DIR --mes M --acompanhamento ARQ`: lê `ARQ` (formato do `raio-x-margem/app/painel-motor.js`: `{tipo: "acompanhamento", pacote, cliente, base: {data, valores}, meses: [{mes, valores, obs}]}`), insere ou substitui o mês `M` com `valores` = os da rota acima **mesclados** sobre os valores do mês anterior (ou da base) e `obs: "reserva-restaurante"`, e grava de volta. Campos que o sistema não mede (ex.: `ticket_medio`, `fat_marketplace`) ficam como estavam. Sai com código 0.
+
+## 11. LGPD
+
+- `GET /api/clientes/{id}/dados` devolve tudo o que há do cliente: `cliente` `{id, nome, telefone, consentimento_marketing, nao_contatar, aniversario, origem, ultima_visita, visitas}`, `reservas` (mesmo formato da listagem) e `mensagens` = tudo o que entrou e saiu pelo telefone dele, cada uma `{direcao: "entrada" | "saida", texto, quando}`: `entrada` = textos recebidos (chat web ou Evolution); `saida` = as respostas do bot na conversa (inclusive FAQ) **e** as mensagens da caixa de saída (seção 5) para esse telefone. Mensagens trocadas antes do cadastro (telefone desconhecido) passam a pertencer ao cliente quando ele é criado com esse telefone.
+- `DELETE /api/clientes/{id}`: nome vira `removido`, telefone, aniversário vira `null`, reservas futuras ativas (`reservada`, `confirmada`, `pendente`) viram `cancelada` pelo caminho normal (dispara espera), `chegou`/`no_show` ficam, textos de mensagens dele viram `""`, pedidos de espera dele viram `cancelada`. Depois disso, mensagens ao telefone antigo são tratadas como de telefone desconhecido. Números agregados do `/api/raiox` continuam contando as visitas passadas.
+
+## 12. Fora do v1 (não implementar; portão humano ou próxima versão)
+
+Pedido/delivery e cardápio com carrinho, pagamento (sinal por Pix, PSP, cobrança de no-show), WhatsApp Cloud API oficial (v1 usa a Evolution), SMS/e-mail, deploy na VPS (é do humano: README explica), mapa gráfico de mesas (v1 é tabela por horário), reservas recorrentes, vários restaurantes no mesmo servidor, login por usuário, LLM nas respostas (pode entrar depois atrás de uma opção desligada; os testes nunca a usam), interface EN/ES, integração com marketplaces (iFood etc.).
+
+## 13. Páginas
+
+- `GET /` → HTML do chat do cliente, com elemento `id="chat"`, que usa `/api/mensagens`.
+- `GET /equipe` → HTML da equipe com elementos `id="reservas"`, `id="ocupacao"`, `id="fila-humano"`, `id="espera"` e `id="mesas"`; pede o token e usa as rotas [E] (reservas do dia por turno e salão, mapa de ocupação, chegada/no-show, aprovar/recusar, cadastros de mesas, turnos, FAQ, bloqueios, fila humana com responder/encerrar, caixa de saída).
+
+## 14. Cadastros [E]
+
+`restaurante.json` é lido a cada início para `nome, token, passo_min, antecedencia_min_horas, janela_dias, confirmacao_horas, grupo_grande_a_partir, limite_pessoas_por_horario, reativacao_dias, feriados, duracao, saloes, combinacoes`. Já `mesas`, `turnos` e `faq` só **semeiam** o banco na primeira vez (banco vazio); depois o banco é a fonte e se edita pela API.
+
+| Método e rota | Corpo | Resposta |
+|---|---|---|
+| `GET /api/mesas` | — | 200 `{"mesas": [{id, salao, min, max, ativa}]}` ordem do cadastro (inclui inativas) |
+| `POST /api/mesas` | `{id, salao, min, max}` | 201; `id` repetido → 409; salão inexistente → 404 (regra geral da seção 5); `min < 1` ou `max < min` → 422 |
+| `PUT /api/mesas/{id}` | campos parciais (`salao, min, max`) | 200 com a mesa; mesa inexistente → 404; mesmas validações (salão inexistente → 404, `min`/`max` → 422) |
+| `DELETE /api/mesas/{id}` | — | 200 `{"ativa": false}`. Inativa não serve reserva nova, some de `mesas_total` e inutiliza combinações que a incluem; as reservas já feitas continuam |
+| `POST /api/turnos` | `{id, nome, dias, inicio, fim}` | 201; `id` repetido → 409; `dias` fora de `seg..dom`, `inicio >= fim` ou sobreposição com turno ativo no mesmo dia → 422 (sobreposição com a mesma regra semiaberta da seção 3: `[11:30, 15:00)` e `[15:00, 17:00)` **não** se sobrepõem) |
+| `PUT /api/turnos/{id}` / `DELETE /api/turnos/{id}` | parcial / — | 200 / 200 `{"ativo": false}` (horários do turno somem na hora; reservas já feitas continuam) |
+| `GET /api/faq` | — | 200 `{"faq": [{id, perguntas, resposta}]}` |
+| `POST /api/faq` | `{perguntas: [..], resposta}` | 201 `{id}`; o bot passa a usar na hora |
+| `DELETE /api/faq/{id}` | — | 204; o bot para de usar na hora |
+
+## 15. Bloqueios [E]
+
+`POST /api/bloqueios {inicio, fim, motivo, salao?, mesa?}` → 201 `{id, conflitos: [ids de reservas ativas que sobrepõem o bloqueio nas mesas afetadas]}` (não cancela nada sozinho). Sem `salao` e sem `mesa` = **restaurante inteiro** (evento fechado): horários que sobrepõem `[inicio, fim)` somem de `/api/horarios` e a reserva neles dá **422**. Com `salao` ou `mesa`: as mesas afetadas ficam indisponíveis no período (como ocupadas); se nenhuma outra serve → **409** `sem_mesa`. `salao`/`mesa` inexistente → 404. `GET /api/bloqueios` → 200 `{"bloqueios": [{id, inicio, fim, motivo, salao, mesa}]}` ordenado por `inicio`. `DELETE /api/bloqueios/{id}` → 204 e libera.
+
+## 16. Banco de dados
+
+- `./reserva backup --dados DIR --saida ARQ` → grava em `ARQ` uma cópia consistente de todo o estado (pode rodar com o servidor ligado). Código 0.
+- `./reserva restaurar --dados DIR --entrada ARQ` → com o servidor parado, substitui o estado de `DIR` pelo do backup. Código 0. Ao subir de novo, tudo volta como estava no momento do backup.
+
+## 17. WhatsApp pela Evolution API
+
+Variáveis: `EVOLUTION_URL` (ex.: `http://evolution:8080` — este exemplo fica **só nesta spec e no README**: no código e no `.env.exemplo` nenhuma URL além de `127.0.0.1`/`localhost`, senão o `verificar-limites.sh` e o teste do `.env.exemplo` acusam), `EVOLUTION_API_KEY`, `EVOLUTION_INSTANCIA`, `WEBHOOK_SEGREDO`. Sem `EVOLUTION_URL` → canal simulado (só caixa de saída, `status: "simulado"`).
+
+**Entrada** — `POST /webhook/evolution/{WEBHOOK_SEGREDO}` (segredo errado → 404). Formato da Evolution v2:
+```json
+{"event": "messages.upsert", "instance": "restaurante",
+ "data": {"key": {"remoteJid": "5541999990001@s.whatsapp.net", "fromMe": false, "id": "ABC123"},
+          "pushName": "Maria", "message": {"conversation": "oi"}, "messageType": "conversation"}}
+```
+- Sempre responde 200. Ignora: `event` diferente de `messages.upsert`, `fromMe: true`, `remoteJid` de grupo (`@g.us`), `key.id` já processado (a Evolution reenvia).
+- Texto = `message.conversation` ou `message.extendedTextMessage.text`. Sem texto (áudio, imagem...) → responde `Por enquanto só consigo ler mensagens de texto.`
+- Telefone = dígitos do `remoteJid` antes do `@`, normalizado como na seção 5. Passa pela mesma conversa da seção 6 (o mesmo cliente, o mesmo estado).
+- Cada resposta da conversa vai por `POST {EVOLUTION_URL}/message/sendText/{EVOLUTION_INSTANCIA}` com header `apikey: {EVOLUTION_API_KEY}` e corpo `{"number": "<dígitos com 55>", "text": "<texto>"}`, na ordem.
+
+**Saída** (confirmação, espera, aprovação, recusa, aniversário, reativação, campanha, humano): com a Evolution configurada, cada mensagem da caixa de saída é enviada do mesmo jeito. Em `/api/saida` cada mensagem tem `status`: `enviado` (2xx), `pendente` (erro HTTP ou de conexão) ou `simulado`. `POST /api/tarefas/rodar` reenvia as `pendente` e devolve `"reenviadas": n` (as que viraram `enviado`).
+
+## 18. Atendimento interno pelo Telegram
+
+Variáveis: `TELEGRAM_API_URL`, `TELEGRAM_TOKEN`, `TELEGRAM_CHAT_ID` (grupo da equipe), `TELEGRAM_SEGREDO`. Sem elas, nada vai ao Telegram (o resto funciona igual). Envio: `POST {TELEGRAM_API_URL}/bot{TELEGRAM_TOKEN}/sendMessage` com `{"chat_id", "text"[, "reply_to_message_id"]}`; a resposta do Telegram traz `result.message_id`.
+
+**Atendimento humano** (`/api/atendimento-humano` → `{"fila": [{id, telefone, nome, motivo, status}]}` só com os `aberto`):
+- Ao abrir (pedido de atendente, 2º "não entendi"): manda ao grupo um texto com `#<id>`, telefone, nome (se houver), motivo e a última mensagem do cliente. Guarda o `message_id`.
+- Enquanto o atendimento do telefone estiver `aberto`, o bot **não responde** sozinho (`respostas: []`); cada mensagem do cliente vai ao grupo como `#<id> <nome ou telefone>: <texto>`, em resposta (`reply_to_message_id`) à mensagem de abertura.
+- `POST /webhook/telegram` exige header `X-Telegram-Bot-Api-Secret-Token: {TELEGRAM_SEGREDO}` (senão 401). Só aceita updates de `message.chat.id == TELEGRAM_CHAT_ID`; os outros são ignorados (200, sem efeito).
+- Mensagem da equipe que é resposta (`reply_to_message.message_id`) a uma mensagem do atendimento `#id` → o texto vai ao cliente (caixa de saída `tipo: "humano"`, e pela Evolution se configurada).
+- Comandos: `/responder <id> <texto>` (o mesmo, sem precisar responder em cima); `/encerrar <id>` → status `encerrado`, o bot volta a responder aquele telefone; `/fila` → lista dos abertos (cada um com `#id`); `/reservas [AAAA-MM-DD]` (padrão: hoje pelo relógio) → reservas ativas do dia, ordem de `inicio`, uma linha `HH:MM <nome> — <P> pessoas — <mesas unidas por +> (<status>)` cada; `/aprovar <id>` e `/recusar <id>` → o mesmo que as rotas da seção 5 (o bot confirma no grupo com `#<id>`).
+- Pela página [E]: `POST /api/atendimento-humano/{id}/responder {texto}` e `POST /api/atendimento-humano/{id}/encerrar` fazem o mesmo.
+- **Avisos à equipe:** reserva `reservada` feita pelo chat/WhatsApp → `Nova reserva: DD/MM HH:MM <nome> — <P> pessoas`; reserva `pendente` criada por qualquer canal → `Grupo grande #<id>: DD/MM HH:MM <nome> — <P> pessoas` (e **não** o aviso de nova reserva); cancelamento pelo chat/WhatsApp (inclusive pela resposta `2`) → texto começando com `Cancelada:` e com `DD/MM HH:MM`.
+
+## 19. Docker / VPS
+
+- `Dockerfile` (imagem oficial `python:3-slim` ou similar, **sem `pip install`**) que roda `./reserva serve --host 0.0.0.0 --porta 8080 --dados /dados`, com `HEALTHCHECK` em `/api/saude` (a imagem não tem `curl`: usar `python3 -c` com `urllib`). O container precisa subir **sem volume** em `/dados` (a verificação independente faz `docker run` sem `-v`): o `serve` cria a pasta (seção 1).
+- `docker-compose.yml` com o serviço `reserva`: `build: .`, `restart: unless-stopped`, `env_file: .env`, volume para `/dados`, porta publicada só em `127.0.0.1:8080` (na VPS fica atrás de proxy reverso com HTTPS).
+- `.env.exemplo` com todas as variáveis das seções 17 e 18, **valores vazios** (`VARIAVEL=` e nada depois do `=`; nenhum segredo, nenhuma URL, e a palavra `http` não aparece em linha nenhuma — nem em comentário).
+- `README.md` com a seção **Deploy na VPS**: subir o compose, proxy HTTPS, configurar o webhook da Evolution para `/webhook/evolution/<segredo>` (evento `MESSAGES_UPSERT`), registrar o webhook do Telegram com `setWebhook` + `secret_token`, e o backup diário (`./reserva backup` no cron).
+
+exec
+/bin/bash -lc 'cat tests/conftest.py tests/fixtures/restaurante.json; rg --files src tests; cat reserva' in /home/nmaldaner/projetos/reserva-restaurante
+ succeeded in 0ms:
+"""Testes de aceitação caixa-preta do reserva-restaurante (contrato: docs/ESPECIFICACAO.md).
+
+Sobem `./reserva serve --porta 0 --dados <tmp>` com relógio fixo e falam só HTTP/CLI,
+então valem para qualquer linguagem de implementação.
+"""
+import json
+import os
+import pathlib
+import shutil
+import signal
+import subprocess
+import threading
+import unicodedata
+import urllib.error
+import urllib.request
+
+import pytest
+
+RAIZ = pathlib.Path(__file__).resolve().parent.parent
+FIXTURE = pathlib.Path(__file__).resolve().parent / "fixtures" / "restaurante.json"
+TOKEN = "segredo-teste"
+AGORA = "2026-10-06T10:00"  # terça-feira; almoço 11:30–15:00 e jantar 19:00–23:00 na fixture
+
+
+def norm(s):
+    """Minúsculas e sem acento, para comparar trechos de resposta."""
+    return "".join(c for c in unicodedata.normalize("NFD", s.lower()) if unicodedata.category(c) != "Mn")
+
+
+class Cliente:
+    def __init__(self, base):
+        self.base = base
+
+    def req(self, metodo, rota, corpo=None, token=TOKEN):
+        dados = None if corpo is None else json.dumps(corpo).encode()
+        r = urllib.request.Request(self.base + rota, data=dados, method=metodo)
+        if dados is not None:
+            r.add_header("Content-Type", "application/json")
+        if token:
+            r.add_header("X-Token", token)
+        try:
+            with urllib.request.urlopen(r, timeout=10) as resp:
+                texto = resp.read().decode()
+                return resp.status, (json.loads(texto) if texto and "json" in resp.headers.get("Content-Type", "") else texto)
+        except urllib.error.HTTPError as e:
+            texto = e.read().decode()
+            try:
+                return e.code, json.loads(texto)
+            except ValueError:
+                return e.code, texto
+
+    def get(self, rota, **kw):
+        return self.req("GET", rota, **kw)
+
+    def post(self, rota, corpo=None, **kw):
+        return self.req("POST", rota, {} if corpo is None else corpo, **kw)
+
+    def put(self, rota, corpo, **kw):
+        return self.req("PUT", rota, corpo, **kw)
+
+    def delete(self, rota, **kw):
+        return self.req("DELETE", rota, **kw)
+
+    # atalhos (usam padrões da fixture; no verificar-independente passar tudo explícito)
+    def cliente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/clientes", corpo)
+        assert st in (200, 201), (st, r)
+        return r["id"]
+
+    def reserva(self, cliente_id, inicio, pessoas=2, salao=None, mesa=None, **extra):
+        corpo = {"cliente_id": cliente_id, "inicio": inicio, "pessoas": pessoas, **extra}
+        if salao:
+            corpo["salao"] = salao
+        if mesa:
+            corpo["mesa"] = mesa
+        return self.post("/api/reservas", corpo)
+
+    def horarios(self, data, pessoas=2, salao=None):
+        rota = f"/api/horarios?data={data}&pessoas={pessoas}" + (f"&salao={salao}" if salao else "")
+        st, r = self.get(rota, token=None)
+        assert st == 200, (st, r)
+        return [h["inicio"] for h in r["horarios"]]
+
+    def msg(self, telefone, texto):
+        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
+        assert st == 200, (st, r)
+        return "\n".join(r["respostas"])
+
+    def saida(self, tipo=None):
+        st, r = self.get("/api/saida")
+        assert st == 200, (st, r)
+        return [m for m in r["mensagens"] if tipo is None or m["tipo"] == tipo]
+
+    def reservas(self, data, **filtros):
+        rota = f"/api/reservas?data={data}" + "".join(f"&{k}={v}" for k, v in filtros.items())
+        st, r = self.get(rota)
+        assert st == 200, (st, r)
+        return r["reservas"]
+
+    def por_id(self, data, reserva_id):
+        return next(x for x in self.reservas(data) if x["id"] == reserva_id)
+
+
+SERVIDORES = []
+
+
+@pytest.fixture(autouse=True)
+def _parar_servidores():
+    """Derruba todo servidor subido no teste, mesmo quando uma asserção falha antes do parar() explícito
+    (em 05/10 um `serve` ficou órfão 14 h no projeto irmão por isso)."""
+    yield
+    while SERVIDORES:
+        SERVIDORES.pop().parar()
+
+
+class Servidor:
+    def __init__(self, dados, agora=AGORA, env=None):
+        SERVIDORES.append(self)  # o teardown autouse para todos; parar() é idempotente
+        self.dados = dados
+        self.agora = agora
+        self.env = env or {}
+        self.proc = None
+
+    def subir(self):
+        exe = RAIZ / "reserva"
+        if not exe.exists():
+            pytest.fail("./reserva não existe (ponto de entrada da seção 1 da especificação)")
+        env = {k: v for k, v in os.environ.items()
+               if not k.startswith(("EVOLUTION_", "TELEGRAM_", "WEBHOOK_", "RESERVA_"))}
+        env.update(RESERVA_AGORA=self.agora, **self.env)
+        self.proc = subprocess.Popen(
+            [str(exe), "serve", "--porta", "0", "--dados", str(self.dados)],
+            cwd=RAIZ, env=env, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True,
+        )
+        linha = {}
+
+        def ler():
+            linha["v"] = self.proc.stdout.readline()
+
+        t = threading.Thread(target=ler, daemon=True)
+        t.start()
+        t.join(15)
+        primeira = (linha.get("v") or "").strip()
+        if not primeira.startswith("PORTA="):
+            self.parar()
+            pytest.fail(f"servidor não imprimiu PORTA=<n> na 1ª linha (veio {primeira!r})")
+        # drena o resto do stdout para o processo não travar com o pipe cheio
+        threading.Thread(target=lambda: [None for _ in self.proc.stdout], daemon=True).start()
+        return Cliente(f"http://127.0.0.1:{int(primeira.split('=', 1)[1])}")
+
+    def parar(self):
+        if self.proc and self.proc.poll() is None:
+            self.proc.send_signal(signal.SIGTERM)
+            try:
+                self.proc.wait(5)
+            except subprocess.TimeoutExpired:
+                self.proc.kill()
+                self.proc.wait(5)
+
+
+@pytest.fixture
+def dados(tmp_path):
+    d = tmp_path / "dados"
+    d.mkdir()
+    shutil.copy(FIXTURE, d / "restaurante.json")
+    return d
+
+
+@pytest.fixture
+def servidor(dados):
+    s = Servidor(dados)
+    yield s
+    s.parar()
+
+
+@pytest.fixture
+def api(servidor):
+    return servidor.subir()
+
+
+def com_config(dados, **mudancas):
+    """Altera chaves do restaurante.json antes de subir (ex.: limite_pessoas_por_horario=None)."""
+    cfg = json.loads((dados / "restaurante.json").read_text())
+    cfg.update(mudancas)
+    (dados / "restaurante.json").write_text(json.dumps(cfg, ensure_ascii=False))
+
+
+class Externo:
+    """Servidor falso local que faz o papel da Evolution API e da API do Telegram. Grava cada pedido."""
+
+    def __init__(self):
+        import http.server
+        self.pedidos = []
+        self.falhas = 0          # quantos próximos pedidos devolvem 500
+        self.prox_msg = 1000
+        self.trava = threading.Lock()
+        externo = self
+
+        class H(http.server.BaseHTTPRequestHandler):
+            def do_POST(self):
+                corpo = self.rfile.read(int(self.headers.get("Content-Length") or 0))
+                try:
+                    dados = json.loads(corpo or b"{}")
+                except ValueError:
+                    dados = {}
+                pedido = {"rota": self.path, "headers": {k.lower(): v for k, v in self.headers.items()}, "json": dados}
+                with externo.trava:
+                    if externo.falhas > 0:
+                        externo.falhas -= 1
+                        pedido["status"] = 500
+                        externo.pedidos.append(pedido)
+                        self.send_response(500)
+                        self.send_header("Content-Length", "0")
+                        self.end_headers()
+                        return
+                    externo.prox_msg += 1
+                    pedido["status"], pedido["message_id"] = 200, externo.prox_msg
+                    externo.pedidos.append(pedido)
+                resp = {"ok": True, "result": {"message_id": pedido["message_id"]}, "key": {"id": f"X{pedido['message_id']}"}}
+                b = json.dumps(resp).encode()
+                self.send_response(201 if "/message/" in self.path else 200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(b)))
+                self.end_headers()
+                self.wfile.write(b)
+
+            def log_message(self, *a):
+                pass
+
+        self.srv = http.server.ThreadingHTTPServer(("127.0.0.1", 0), H)
+        self.url = f"http://127.0.0.1:{self.srv.server_address[1]}"
+        threading.Thread(target=self.srv.serve_forever, daemon=True).start()
+
+    def whats(self, ok=True):
+        return [p for p in self.pedidos if p["rota"] == "/message/sendText/restaurante" and (not ok or p["status"] == 200)]
+
+    def telegram(self):
+        return [p for p in self.pedidos if p["rota"] == "/botTOKEN123/sendMessage" and p["status"] == 200]
+
+    def fechar(self):
+        self.srv.shutdown()
+        self.srv.server_close()
+
+
+SEGREDO_WH = "wh-segredo"
+CHAT_EQUIPE = -100777
+SEGREDO_TG = "tg-segredo"
+
+
+def env_integracoes(externo):
+    return {
+        "EVOLUTION_URL": externo.url, "EVOLUTION_API_KEY": "chave-evo", "EVOLUTION_INSTANCIA": "restaurante",
+        "WEBHOOK_SEGREDO": SEGREDO_WH,
+        "TELEGRAM_API_URL": externo.url, "TELEGRAM_TOKEN": "TOKEN123", "TELEGRAM_CHAT_ID": str(CHAT_EQUIPE),
+        "TELEGRAM_SEGREDO": SEGREDO_TG,
+    }
+
+
+@pytest.fixture
+def externo():
+    e = Externo()
+    yield e
+    e.fechar()
+
+
+@pytest.fixture
+def api_int(dados, externo):
+    """Servidor com Evolution e Telegram apontando para o falso local."""
+    s = Servidor(dados, env=env_integracoes(externo))
+    yield s.subir()
+    s.parar()
+
+
+def esperar(cond, segundos=5):
+    import time
+    fim = time.time() + segundos
+    while time.time() < fim:
+        if cond():
+            return True
+        time.sleep(0.05)
+    return cond()
+{
+  "nome": "Cantina Teste",
+  "token": "segredo-teste",
+  "passo_min": 30,
+  "antecedencia_min_horas": 1,
+  "janela_dias": 30,
+  "confirmacao_horas": 24,
+  "grupo_grande_a_partir": 8,
+  "limite_pessoas_por_horario": 20,
+  "reativacao_dias": 60,
+  "feriados": ["2026-10-15"],
+  "duracao": [
+    {"ate": 2, "min": 90},
+    {"ate": 6, "min": 120},
+    {"ate": null, "min": 180}
+  ],
+  "saloes": [
+    {"id": "interno", "nome": "Salão interno"},
+    {"id": "varanda", "nome": "Varanda"}
+  ],
+  "combinacoes": [
+    {"id": "m3m4", "mesas": ["m3", "m4"], "min": 7, "max": 8}
+  ],
+  "turnos": [
+    {"id": "almoco", "nome": "Almoço", "dias": ["ter", "qua", "qui", "sex", "sab", "dom"], "inicio": "11:30", "fim": "15:00"},
+    {"id": "jantar", "nome": "Jantar", "dias": ["ter", "qua", "qui", "sex", "sab"], "inicio": "19:00", "fim": "23:00"}
+  ],
+  "mesas": [
+    {"id": "m1", "salao": "interno", "min": 1, "max": 2},
+    {"id": "m2", "salao": "interno", "min": 1, "max": 2},
+    {"id": "m3", "salao": "interno", "min": 3, "max": 4},
+    {"id": "m4", "salao": "interno", "min": 3, "max": 4},
+    {"id": "m5", "salao": "interno", "min": 5, "max": 6},
+    {"id": "v1", "salao": "varanda", "min": 1, "max": 4},
+    {"id": "v2", "salao": "varanda", "min": 1, "max": 4}
+  ],
+  "faq": [
+    {"id": "estacionamento", "perguntas": ["tem estacionamento"], "resposta": "Temos estacionamento próprio na lateral, grátis para clientes."},
+    {"id": "pet", "perguntas": ["aceitam pet", "posso levar cachorro"], "resposta": "Sim, pets são bem-vindos na varanda."},
+    {"id": "cardapio", "perguntas": ["qual o cardápio", "tem opção vegetariana"], "resposta": "O cardápio completo está no balcão e no nosso perfil; temos opções vegetarianas e sem glúten."},
+    {"id": "acessibilidade", "perguntas": ["tem acessibilidade", "acesso para cadeirante"], "resposta": "Entrada com rampa e banheiro acessível no salão interno."}
+  ]
+}
+src/storage.py
+src/cli.py
+src/__init__.py
+src/server.py
+src/conversation.py
+src/booking.py
+tests/conftest.py
+tests/test_grupo_canal.py
+tests/test_conversa.py
+tests/test_confirmacao_espera.py
+tests/test_horarios.py
+tests/test_docker.py
+tests/test_reservas.py
+tests/test_lgpd_raiox.py
+tests/test_basico.py
+tests/test_cadastros.py
+tests/test_integracoes.py
+tests/fixtures/restaurante.json
+#!/usr/bin/env python3
+from src.cli import main
+
+if __name__ == "__main__":
+    main()
+
+exec
+/bin/bash -lc "sed -n '130,255p' docs/ESPECIFICACAO.md; cat src/storage.py src/cli.py" in /home/nmaldaner/projetos/reserva-restaurante
+ succeeded in 0ms:
+2. **Humano** — contém `atendente`, `humano` ou `falar com alguem`: fila humana; resposta contém `atendente`.
+3. **Fluxo em andamento** (reserva, cancelamento ou lista de espera, abaixo) consome a mensagem.
+4. **Resposta a pendência:** se a última mensagem da **caixa de saída** (`/api/saida`, seção 5 — não conta resposta do bot na conversa) para o telefone foi `confirmacao` (sem resposta ainda): `1`/`sim`/`confirmo` → status `confirmada`, resposta contém `confirmad`; `2`/`cancelar`/`nao` → `cancelada` (dispara espera), resposta contém `cancelad`. Se foi `espera` (sem resposta): `1`/`sim` → cria a reserva no horário ofertado se ainda couber (resposta contém `reservad`), senão resposta contém `ocupad`; a espera vira `atendida` no primeiro caso. Qualquer outro texto não consome a pendência.
+5. **Consultar/cancelar** — contém `minha reserva`, `minhas reservas` ou `cancelar`: lista as reservas **futuras ativas** (`inicio > agora`, exceto `chegou`/`no_show`) do telefone, **em ordem de `inicio`**, uma linha `N) DD/MM HH:MM — P pessoas` cada (o `N` escolhido depois se refere a essa ordem). Sem reservas → resposta contém `não encontrei`. Com `cancelar`: uma só → cancela na hora (resposta contém `cancelad`, `DD/MM`); várias → lista e a próxima mensagem com o número cancela (fluxo de cancelamento; `0` ou `cancelar` sai sem cancelar).
+6. **Reservar** — contém `reservar` ou `reserva`: inicia o fluxo de reserva.
+7. **FAQ** — palavras significativas (≥ 3 letras, fora de artigos/preposições/pronomes comuns) de alguma pergunta do FAQ: se ≥ 60 % delas aparecem no texto, responde **exatamente** a `resposta` daquele item (só ela, uma mensagem). Mais de um item casa → o de maior %; empate → o primeiro do FAQ.
+8. **Não entendi** — resposta contém `não entendi` e oferece `atendente`. Na **segunda** seguida sem entender, entra na fila humana automaticamente.
+
+**Fluxo de reserva pelo chat** (estado por telefone, persistido; em cada passo a resposta faz a pergunta do passo):
+- telefone sem cliente → pergunta o nome (resposta contém `nome`); a próxima mensagem vira o nome e o cliente é criado (`consentimento_marketing: false`, `origem: "chat"`, ou `"whatsapp"` quando vem pela Evolution). Telefone com cliente → pula este passo (a resposta **não** contém `nome`);
+- pergunta **quantas pessoas** (resposta contém `pessoas`); aceita inteiro ≥ 1, senão repete;
+- pergunta **o dia** (resposta contém `dia`); aceita `hoje`, `amanha`, `DD/MM` ou `DD/MM/AAAA`. `DD/MM` = a próxima ocorrência a partir de hoje (hoje incluso). Dia inválido, passado, sem turno, feriado ou fora da janela → resposta contém `não` e `dia`, repete;
+- lista os horários livres do dia para o grupo (regra da seção 3, a partir de `agora + antecedencia_min_horas`), **até 8**, em ordem, uma linha `N) HH:MM (<nome do turno>)` cada; o número escolhido cria a reserva; resposta contém `reservad`, `DD/MM`, `HH:MM` e `<P> pessoas`. Se o status for `pendente` (grupo grande), a resposta contém `aguardando` e `equipe`;
+- dia com turno mas **sem horário livre** para o grupo → resposta contém `lista de espera` e oferece `1` (sim) / `2` (não). `1`: se o dia tem mais de um turno, pergunta qual, numerado `N) <nome do turno>` na ordem do cadastro; cria o pedido de espera (`data`, `turno`, `pessoas`) e a resposta contém `lista de espera`. `2` → sai do fluxo;
+- número inválido em qualquer passo → repete as opções. `cancelar` dentro do fluxo → sai do fluxo (resposta contém `cancelad` e **não** cancela reserva nenhuma).
+- O bot **nunca** inventa preço, cardápio ou disponibilidade: fora do FAQ e do fluxo, cai na regra 8.
+
+## 7. Lista de espera
+
+Ao cancelar uma reserva (pela API, pela conversa ou pela exclusão LGPD), o primeiro pedido de espera `pendente` (ordem de criação) com a **mesma `data`** e o **mesmo `turno`** da reserva cancelada, cujo cliente não esteja `nao_contatar` e cujas `pessoas` a escolha automática consegue alocar no `inicio` liberado (seção 3, inclusive limite da cozinha), recebe mensagem `tipo: "espera"` contendo `HH:MM` do horário e `1`. O pedido fica `ofertada` com esse `inicio` guardado (não recebe outra oferta). Recusa de grupo grande e `no_show` não disparam a lista.
+
+## 8. Confirmação, aniversário e reativação (`POST /api/tarefas/rodar`)
+
+- **Confirmação:** toda reserva `reservada` com `agora < inicio <= agora + confirmacao_horas` que ainda não recebeu confirmação (desde a última criação/remarcação) → mensagem `tipo: "confirmacao"` com `reserva_id`. Texto contém `DD/MM`, `HH:MM`, `<P> pessoas`, `1` (confirmar) e `2` (cancelar). **Não contém valor em R$.** Reservas `pendente` não recebem confirmação (esperam aprovação).
+- **Aniversário:** cliente com `aniversario` igual a `MM-DD` do dia de `agora`, `consentimento_marketing: true`, não `nao_contatar` → mensagem `tipo: "aniversario"` contendo o primeiro nome do cliente, **uma vez por ano** (ano de `agora`).
+- **Reativação:** cliente com `consentimento_marketing: true`, não `nao_contatar`, `ultima_visita` não nula e `data(agora) >= ultima_visita + reativacao_dias` → mensagem `tipo: "reativacao"` contendo o nome do restaurante. **Uma por visita**: não se repete enquanto `ultima_visita` não mudar.
+- `enviadas` = mensagens criadas nesta rodada; `reenviadas` = `pendente` que viraram `enviado` (seção 17). Cliente `nao_contatar` nunca recebe estes tipos. Confirmação e oferta de espera **não** dependem de `consentimento_marketing` (execução do que o próprio cliente pediu); aniversário, reativação e campanha **dependem**.
+
+## 9. Grupo grande, base própria e campanhas
+
+- **Grupo grande:** reserva com `pessoas >= grupo_grande_a_partir` nasce `pendente` (ocupa as mesas), avisa a equipe (seção 18) e espera `aprovar`/`recusar`. Aprovada → `reservada` + mensagem `tipo: "aprovacao"` ao cliente contendo `confirmad`, `DD/MM`, `HH:MM`. Recusada → `recusada` (mesas liberadas) + mensagem `tipo: "recusa"` contendo `não foi possível`. Sinal/Pix para grupo grande é **política escrita** (FAQ/README), sem cobrança no sistema (seção 12).
+- **Origem do cliente:** `origem` ∈ `salao, whatsapp, chat, telefone, site, indicacao, equipe, outro`; padrão `equipe` na API, `chat` no chat web, `whatsapp` pela Evolution. Qualquer outro valor (ex.: `ifood`, `marketplace`, `rappi`) → 422 `origem_invalida`: **contato que chegou por marketplace não entra na base** (contrato iFood cl. 3.3.1 — `raio-x-margem/docs/TERMOS.md`). A base é só de canais do próprio restaurante.
+- **Visitas:** `chegou` grava `ultima_visita` = data (`AAAA-MM-DD`) do `inicio` da reserva, se maior que a atual, e `visitas` = nº de reservas `chegou` do cliente.
+- **Campanhas:** `POST /api/campanhas {texto}` cria `tipo: "campanha"` com o texto para cada cliente com `consentimento_marketing: true`, sem `nao_contatar` e com telefone (LGPD art. 7º, I — consentimento). Devolve `{"enviadas": n}`. Não há trava de conselho (restaurante não tem publicidade regulada por conselho profissional).
+
+## 10. Exportação para o Raio-X (Painel de Recuperação)
+
+`GET /api/raiox?mes=AAAA-MM` → `{"pacote": "restaurante", "mes": "AAAA-MM", "valores": {...}}`, percentuais arredondados a 1 casa (`round` half-even do Python):
+
+- `clientes_novos_mes` = clientes cujo **primeiro** `chegou` cai no mês (inteiro; a data de um `chegou` é sempre a data do `inicio` da reserva, não o momento em que a equipe marcou a chegada) — **id real** do pacote `setores/restaurante.js`;
+- `retorno_atual_pct` = da coorte acima, % com um **segundo** `chegou` até 60 dias (inclusive) depois do primeiro, pelas datas de `inicio` (0 se a coorte for vazia) — **id real** do pacote ("desses, quantos voltam em 60 dias");
+- `reservas_atendidas_mes` = reservas `chegou` com `inicio` no mês (inteiro);
+- `no_show_pct` = `no_show ÷ (chegou + no_show) × 100` das reservas com `inicio` no mês (0 se não houver);
+- `ocupacao_pct` = mesa-minutos reservados ÷ mesa-minutos disponíveis × 100, onde reservados = soma, nas reservas ativas com `inicio` no mês, de `nº de mesas ocupadas × duracao`, e disponíveis = soma, por dia do mês que não é feriado, de `mesas ativas × soma das durações dos turnos ativos do dia` (bloqueios **não** são descontados).
+
+Os três últimos não são entradas do pacote: o painel só lê as entradas de cada vazamento e ignora o resto; eles ficam no arquivo para a equipe. O número de `retorno_atual_pct` de um mês só fecha 60 dias depois — rodar a exportação de novo atualiza.
+
+`./reserva raiox --dados DIR --mes M --acompanhamento ARQ`: lê `ARQ` (formato do `raio-x-margem/app/painel-motor.js`: `{tipo: "acompanhamento", pacote, cliente, base: {data, valores}, meses: [{mes, valores, obs}]}`), insere ou substitui o mês `M` com `valores` = os da rota acima **mesclados** sobre os valores do mês anterior (ou da base) e `obs: "reserva-restaurante"`, e grava de volta. Campos que o sistema não mede (ex.: `ticket_medio`, `fat_marketplace`) ficam como estavam. Sai com código 0.
+
+## 11. LGPD
+
+- `GET /api/clientes/{id}/dados` devolve tudo o que há do cliente: `cliente` `{id, nome, telefone, consentimento_marketing, nao_contatar, aniversario, origem, ultima_visita, visitas}`, `reservas` (mesmo formato da listagem) e `mensagens` = tudo o que entrou e saiu pelo telefone dele, cada uma `{direcao: "entrada" | "saida", texto, quando}`: `entrada` = textos recebidos (chat web ou Evolution); `saida` = as respostas do bot na conversa (inclusive FAQ) **e** as mensagens da caixa de saída (seção 5) para esse telefone. Mensagens trocadas antes do cadastro (telefone desconhecido) passam a pertencer ao cliente quando ele é criado com esse telefone.
+- `DELETE /api/clientes/{id}`: nome vira `removido`, telefone, aniversário vira `null`, reservas futuras ativas (`reservada`, `confirmada`, `pendente`) viram `cancelada` pelo caminho normal (dispara espera), `chegou`/`no_show` ficam, textos de mensagens dele viram `""`, pedidos de espera dele viram `cancelada`. Depois disso, mensagens ao telefone antigo são tratadas como de telefone desconhecido. Números agregados do `/api/raiox` continuam contando as visitas passadas.
+
+## 12. Fora do v1 (não implementar; portão humano ou próxima versão)
+
+Pedido/delivery e cardápio com carrinho, pagamento (sinal por Pix, PSP, cobrança de no-show), WhatsApp Cloud API oficial (v1 usa a Evolution), SMS/e-mail, deploy na VPS (é do humano: README explica), mapa gráfico de mesas (v1 é tabela por horário), reservas recorrentes, vários restaurantes no mesmo servidor, login por usuário, LLM nas respostas (pode entrar depois atrás de uma opção desligada; os testes nunca a usam), interface EN/ES, integração com marketplaces (iFood etc.).
+
+## 13. Páginas
+
+- `GET /` → HTML do chat do cliente, com elemento `id="chat"`, que usa `/api/mensagens`.
+- `GET /equipe` → HTML da equipe com elementos `id="reservas"`, `id="ocupacao"`, `id="fila-humano"`, `id="espera"` e `id="mesas"`; pede o token e usa as rotas [E] (reservas do dia por turno e salão, mapa de ocupação, chegada/no-show, aprovar/recusar, cadastros de mesas, turnos, FAQ, bloqueios, fila humana com responder/encerrar, caixa de saída).
+
+## 14. Cadastros [E]
+
+`restaurante.json` é lido a cada início para `nome, token, passo_min, antecedencia_min_horas, janela_dias, confirmacao_horas, grupo_grande_a_partir, limite_pessoas_por_horario, reativacao_dias, feriados, duracao, saloes, combinacoes`. Já `mesas`, `turnos` e `faq` só **semeiam** o banco na primeira vez (banco vazio); depois o banco é a fonte e se edita pela API.
+
+| Método e rota | Corpo | Resposta |
+|---|---|---|
+| `GET /api/mesas` | — | 200 `{"mesas": [{id, salao, min, max, ativa}]}` ordem do cadastro (inclui inativas) |
+| `POST /api/mesas` | `{id, salao, min, max}` | 201; `id` repetido → 409; salão inexistente → 404 (regra geral da seção 5); `min < 1` ou `max < min` → 422 |
+| `PUT /api/mesas/{id}` | campos parciais (`salao, min, max`) | 200 com a mesa; mesa inexistente → 404; mesmas validações (salão inexistente → 404, `min`/`max` → 422) |
+| `DELETE /api/mesas/{id}` | — | 200 `{"ativa": false}`. Inativa não serve reserva nova, some de `mesas_total` e inutiliza combinações que a incluem; as reservas já feitas continuam |
+| `POST /api/turnos` | `{id, nome, dias, inicio, fim}` | 201; `id` repetido → 409; `dias` fora de `seg..dom`, `inicio >= fim` ou sobreposição com turno ativo no mesmo dia → 422 (sobreposição com a mesma regra semiaberta da seção 3: `[11:30, 15:00)` e `[15:00, 17:00)` **não** se sobrepõem) |
+| `PUT /api/turnos/{id}` / `DELETE /api/turnos/{id}` | parcial / — | 200 / 200 `{"ativo": false}` (horários do turno somem na hora; reservas já feitas continuam) |
+| `GET /api/faq` | — | 200 `{"faq": [{id, perguntas, resposta}]}` |
+| `POST /api/faq` | `{perguntas: [..], resposta}` | 201 `{id}`; o bot passa a usar na hora |
+| `DELETE /api/faq/{id}` | — | 204; o bot para de usar na hora |
+
+## 15. Bloqueios [E]
+
+`POST /api/bloqueios {inicio, fim, motivo, salao?, mesa?}` → 201 `{id, conflitos: [ids de reservas ativas que sobrepõem o bloqueio nas mesas afetadas]}` (não cancela nada sozinho). Sem `salao` e sem `mesa` = **restaurante inteiro** (evento fechado): horários que sobrepõem `[inicio, fim)` somem de `/api/horarios` e a reserva neles dá **422**. Com `salao` ou `mesa`: as mesas afetadas ficam indisponíveis no período (como ocupadas); se nenhuma outra serve → **409** `sem_mesa`. `salao`/`mesa` inexistente → 404. `GET /api/bloqueios` → 200 `{"bloqueios": [{id, inicio, fim, motivo, salao, mesa}]}` ordenado por `inicio`. `DELETE /api/bloqueios/{id}` → 204 e libera.
+
+## 16. Banco de dados
+
+- `./reserva backup --dados DIR --saida ARQ` → grava em `ARQ` uma cópia consistente de todo o estado (pode rodar com o servidor ligado). Código 0.
+- `./reserva restaurar --dados DIR --entrada ARQ` → com o servidor parado, substitui o estado de `DIR` pelo do backup. Código 0. Ao subir de novo, tudo volta como estava no momento do backup.
+
+## 17. WhatsApp pela Evolution API
+
+Variáveis: `EVOLUTION_URL` (ex.: `http://evolution:8080` — este exemplo fica **só nesta spec e no README**: no código e no `.env.exemplo` nenhuma URL além de `127.0.0.1`/`localhost`, senão o `verificar-limites.sh` e o teste do `.env.exemplo` acusam), `EVOLUTION_API_KEY`, `EVOLUTION_INSTANCIA`, `WEBHOOK_SEGREDO`. Sem `EVOLUTION_URL` → canal simulado (só caixa de saída, `status: "simulado"`).
+
+**Entrada** — `POST /webhook/evolution/{WEBHOOK_SEGREDO}` (segredo errado → 404). Formato da Evolution v2:
+```json
+{"event": "messages.upsert", "instance": "restaurante",
+ "data": {"key": {"remoteJid": "5541999990001@s.whatsapp.net", "fromMe": false, "id": "ABC123"},
+          "pushName": "Maria", "message": {"conversation": "oi"}, "messageType": "conversation"}}
+```
+- Sempre responde 200. Ignora: `event` diferente de `messages.upsert`, `fromMe: true`, `remoteJid` de grupo (`@g.us`), `key.id` já processado (a Evolution reenvia).
+- Texto = `message.conversation` ou `message.extendedTextMessage.text`. Sem texto (áudio, imagem...) → responde `Por enquanto só consigo ler mensagens de texto.`
+- Telefone = dígitos do `remoteJid` antes do `@`, normalizado como na seção 5. Passa pela mesma conversa da seção 6 (o mesmo cliente, o mesmo estado).
+- Cada resposta da conversa vai por `POST {EVOLUTION_URL}/message/sendText/{EVOLUTION_INSTANCIA}` com header `apikey: {EVOLUTION_API_KEY}` e corpo `{"number": "<dígitos com 55>", "text": "<texto>"}`, na ordem.
+
+**Saída** (confirmação, espera, aprovação, recusa, aniversário, reativação, campanha, humano): com a Evolution configurada, cada mensagem da caixa de saída é enviada do mesmo jeito. Em `/api/saida` cada mensagem tem `status`: `enviado` (2xx), `pendente` (erro HTTP ou de conexão) ou `simulado`. `POST /api/tarefas/rodar` reenvia as `pendente` e devolve `"reenviadas": n` (as que viraram `enviado`).
+
+## 18. Atendimento interno pelo Telegram
+
+Variáveis: `TELEGRAM_API_URL`, `TELEGRAM_TOKEN`, `TELEGRAM_CHAT_ID` (grupo da equipe), `TELEGRAM_SEGREDO`. Sem elas, nada vai ao Telegram (o resto funciona igual). Envio: `POST {TELEGRAM_API_URL}/bot{TELEGRAM_TOKEN}/sendMessage` com `{"chat_id", "text"[, "reply_to_message_id"]}`; a resposta do Telegram traz `result.message_id`.
+
+**Atendimento humano** (`/api/atendimento-humano` → `{"fila": [{id, telefone, nome, motivo, status}]}` só com os `aberto`):
+- Ao abrir (pedido de atendente, 2º "não entendi"): manda ao grupo um texto com `#<id>`, telefone, nome (se houver), motivo e a última mensagem do cliente. Guarda o `message_id`.
+- Enquanto o atendimento do telefone estiver `aberto`, o bot **não responde** sozinho (`respostas: []`); cada mensagem do cliente vai ao grupo como `#<id> <nome ou telefone>: <texto>`, em resposta (`reply_to_message_id`) à mensagem de abertura.
+- `POST /webhook/telegram` exige header `X-Telegram-Bot-Api-Secret-Token: {TELEGRAM_SEGREDO}` (senão 401). Só aceita updates de `message.chat.id == TELEGRAM_CHAT_ID`; os outros são ignorados (200, sem efeito).
+- Mensagem da equipe que é resposta (`reply_to_message.message_id`) a uma mensagem do atendimento `#id` → o texto vai ao cliente (caixa de saída `tipo: "humano"`, e pela Evolution se configurada).
+- Comandos: `/responder <id> <texto>` (o mesmo, sem precisar responder em cima); `/encerrar <id>` → status `encerrado`, o bot volta a responder aquele telefone; `/fila` → lista dos abertos (cada um com `#id`); `/reservas [AAAA-MM-DD]` (padrão: hoje pelo relógio) → reservas ativas do dia, ordem de `inicio`, uma linha `HH:MM <nome> — <P> pessoas — <mesas unidas por +> (<status>)` cada; `/aprovar <id>` e `/recusar <id>` → o mesmo que as rotas da seção 5 (o bot confirma no grupo com `#<id>`).
+- Pela página [E]: `POST /api/atendimento-humano/{id}/responder {texto}` e `POST /api/atendimento-humano/{id}/encerrar` fazem o mesmo.
+- **Avisos à equipe:** reserva `reservada` feita pelo chat/WhatsApp → `Nova reserva: DD/MM HH:MM <nome> — <P> pessoas`; reserva `pendente` criada por qualquer canal → `Grupo grande #<id>: DD/MM HH:MM <nome> — <P> pessoas` (e **não** o aviso de nova reserva); cancelamento pelo chat/WhatsApp (inclusive pela resposta `2`) → texto começando com `Cancelada:` e com `DD/MM HH:MM`.
+
+## 19. Docker / VPS
+
+- `Dockerfile` (imagem oficial `python:3-slim` ou similar, **sem `pip install`**) que roda `./reserva serve --host 0.0.0.0 --porta 8080 --dados /dados`, com `HEALTHCHECK` em `/api/saude` (a imagem não tem `curl`: usar `python3 -c` com `urllib`). O container precisa subir **sem volume** em `/dados` (a verificação independente faz `docker run` sem `-v`): o `serve` cria a pasta (seção 1).
+- `docker-compose.yml` com o serviço `reserva`: `build: .`, `restart: unless-stopped`, `env_file: .env`, volume para `/dados`, porta publicada só em `127.0.0.1:8080` (na VPS fica atrás de proxy reverso com HTTPS).
+- `.env.exemplo` com todas as variáveis das seções 17 e 18, **valores vazios** (`VARIAVEL=` e nada depois do `=`; nenhum segredo, nenhuma URL, e a palavra `http` não aparece em linha nenhuma — nem em comentário).
+- `README.md` com a seção **Deploy na VPS**: subir o compose, proxy HTTPS, configurar o webhook da Evolution para `/webhook/evolution/<segredo>` (evento `MESSAGES_UPSERT`), registrar o webhook do Telegram com `setWebhook` + `secret_token`, e o backup diário (`./reserva backup` no cron).
+"""Persistência dos cadastros; cada operação usa sua própria conexão."""
+from contextlib import contextmanager
+import json
+from pathlib import Path
+import shutil
+import sqlite3
+
+ROOT = Path(__file__).resolve().parent.parent
+
+
+class Store:
+    def __init__(self, directory):
+        self.directory = Path(directory)
+        self.directory.mkdir(parents=True, exist_ok=True)
+        config = self.directory / "restaurante.json"
+        if not config.exists():
+            shutil.copyfile(ROOT / "exemplos/restaurante.json", config)
+        self.config = json.loads(config.read_text(encoding="utf-8"))
+        self.path = self.directory / "reservas.sqlite3"
+        with self.transaction() as db:
+            db.execute("CREATE TABLE IF NOT EXISTS metadata (chave TEXT PRIMARY KEY, valor TEXT)")
+            db.execute("""CREATE TABLE IF NOT EXISTS cadastros (
+                ordem INTEGER PRIMARY KEY AUTOINCREMENT,
+                tipo TEXT NOT NULL, id TEXT NOT NULL, dados TEXT NOT NULL,
+                UNIQUE(tipo, id))""")
+            if not db.execute("SELECT 1 FROM metadata WHERE chave='semeado'").fetchone():
+                for kind in ("mesas", "turnos", "faq"):
+                    for item in self.config.get(kind, []):
+                        item = dict(item)
+                        if kind == "mesas":
+                            item.setdefault("ativa", True)
+                        if kind == "turnos":
+                            item.setdefault("ativo", True)
+                        self.insert(db, kind, item)
+                db.execute("INSERT INTO metadata VALUES ('semeado', '1')")
+
+    @contextmanager
+    def transaction(self):
+        db = sqlite3.connect(self.path, timeout=30)
+        try:
+            db.execute("BEGIN IMMEDIATE")
+            yield db
+            db.commit()
+        except Exception:
+            db.rollback()
+            raise
+        finally:
+            db.close()
+
+    @staticmethod
+    def items(db, kind):
+        return [json.loads(row[0]) for row in db.execute(
+            "SELECT dados FROM cadastros WHERE tipo=? ORDER BY ordem", (kind,))]
+
+    @staticmethod
+    def insert(db, kind, item):
+        db.execute("INSERT INTO cadastros(tipo,id,dados) VALUES (?,?,?)",
+                   (kind, item["id"], json.dumps(item, ensure_ascii=False)))
+
+    @staticmethod
+    def update(db, kind, item):
+        db.execute("UPDATE cadastros SET dados=? WHERE tipo=? AND id=?",
+                   (json.dumps(item, ensure_ascii=False), kind, item["id"]))
+import argparse
+
+from .server import Application, make_server
+from .storage import Store
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Reservas de mesa para um restaurante")
+    commands = parser.add_subparsers(dest="command", required=True)
+    serve = commands.add_parser("serve", help="Iniciar o servidor HTTP")
+    serve.add_argument("--porta", type=int, default=8080)
+    serve.add_argument("--dados", required=True)
+    serve.add_argument("--host", default="127.0.0.1")
+    args = parser.parse_args()
+    app = Application(Store(args.dados))
+    with make_server(app, args.host, args.porta) as server:
+        print(f"PORTA={server.server_address[1]}", flush=True)
+        try:
+            server.serve_forever()
+        except KeyboardInterrupt:
+            pass
+
+exec
+/bin/bash -lc 'cat src/server.py' in /home/nmaldaner/projetos/reserva-restaurante
+ succeeded in 0ms:
+"""HTTP JSON e autenticação central; regras de cadastros persistentes."""
+from datetime import datetime
+import hmac
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+import json
+import os
+import re
+from urllib.parse import urlsplit, parse_qs
+from uuid import uuid4
+
+from .storage import ROOT
+
+
+from .booking import APIError, Booking
+
+
+from .conversation import Conversation
+
+
+class Application(Conversation, Booking):
+    def __init__(self, store):
+        self.store = store
+        self.config = store.config
+        fixed = os.environ.get("RESERVA_AGORA")
+        self.fixed_now = datetime.strptime(fixed, "%Y-%m-%dT%H:%M") if fixed else None
+
+    def now(self):
+        return self.fixed_now or datetime.now().replace(second=0, microsecond=0)
+
+    def dispatch(self, method, path, body, query=None):
+        if path.split("/")[2:3] and path.split("/")[2] in ("mensagens", "saida", "espera", "tarefas", "campanhas", "atendimento-humano"):
+            return self.conversation_dispatch(method, path, body, query or {})
+        if path.split("/")[1:2] == ["api"] and path.split("/")[2:3] and path.split("/")[2] in ("clientes", "reservas", "horarios", "ocupacao"):
+            return self.booking_dispatch(method, path, body, query or {})
+        if method == "GET" and path == "/api/saude":
+            return 200, {"ok": True, "versao": (ROOT / "VERSION").read_text().strip()}
+        if method == "GET" and path == "/api/saloes":
+            return 200, {"saloes": self.config["saloes"]}
+        parts = path.strip("/").split("/")
+        if len(parts) not in (2, 3) or parts[0] != "api" or parts[1] not in ("mesas", "turnos", "faq"):
+            raise APIError(404, "rota_inexistente")
+        kind = parts[1]
+        identifier = parts[2] if len(parts) == 3 else None
+        with self.store.transaction() as db:
+            items = self.store.items(db, kind)
+            existing = next((item for item in items if item["id"] == identifier), None)
+            if identifier is not None and existing is None:
+                raise APIError(404, "nao_encontrado")
+            if method == "GET" and identifier is None:
+                if kind == "turnos":
+                    items = [item for item in items if item["ativo"]]
+                return 200, {kind: items}
+            if method == "DELETE" and identifier is not None:
+                if kind == "faq":
+                    db.execute("DELETE FROM cadastros WHERE tipo=? AND id=?", (kind, identifier))
+                    return 204, None
+                flag = "ativa" if kind == "mesas" else "ativo"
+                existing[flag] = False
+                self.store.update(db, kind, existing)
+                return 200, {flag: False}
+            if (method == "POST" and identifier is None) or (method == "PUT" and identifier is not None and kind != "faq"):
+                fields = {"mesas": ("id", "salao", "min", "max"),
+                          "turnos": ("id", "nome", "dias", "inicio", "fim"),
+                          "faq": ("perguntas", "resposta")}[kind]
+                if method == "POST" and any(key not in body for key in fields):
+                    raise APIError(422, "campos_obrigatorios")
+                item = dict(existing or {})
+                item.update({key: body[key] for key in fields if key != "id" and key in body})
+                if existing is None:
+                    item["id"] = body.get("id") if kind != "faq" else uuid4().hex
+                    if not isinstance(item["id"], str) or not item["id"]:
+                        raise APIError(422, "id_invalido")
+                    if any(other["id"] == item["id"] for other in items):
+                        raise APIError(409, "id_repetido")
+                    if kind != "faq":
+                        item["ativa" if kind == "mesas" else "ativo"] = True
+                self.validate(kind, item, items)
+                if existing is None:
+                    self.store.insert(db, kind, item)
+                else:
+                    self.store.update(db, kind, item)
+                return (201 if existing is None else 200), item
+        raise APIError(404, "rota_inexistente")
+
+    def validate(self, kind, item, items):
+        if kind == "mesas":
+            if item["salao"] not in [s["id"] for s in self.config["saloes"]]:
+                raise APIError(404, "salao_inexistente")
+            if any(type(item[key]) is not int for key in ("min", "max")) or not 1 <= item["min"] <= item["max"]:
+                raise APIError(422, "capacidade_invalida")
+        if kind == "turnos":
+            days = item["dias"]
+            if not isinstance(days, list) or not days or any(day not in ("seg", "ter", "qua", "qui", "sex", "sab", "dom") for day in days):
+                raise APIError(422, "dias_invalidos")
+            for key in ("inicio", "fim"):
+                if not isinstance(item[key], str) or not re.fullmatch(r"(?:[01]\d|2[0-3]):[0-5]\d", item[key]):
+                    raise APIError(422, "horario_invalido")
+            if item["inicio"] >= item["fim"]:
+                raise APIError(422, "intervalo_invalido")
+            if item["ativo"] and any(other["id"] != item["id"] and other["ativo"] and
+                    set(days).intersection(other["dias"]) and item["inicio"] < other["fim"] and
+                    item["fim"] > other["inicio"] for other in items):
+                raise APIError(422, "turnos_sobrepostos")
+        if kind == "faq":
+            if not isinstance(item["perguntas"], list) or not item["perguntas"] or not all(isinstance(q, str) and q.strip() for q in item["perguntas"]) or not isinstance(item["resposta"], str) or not item["resposta"].strip():
+                raise APIError(422, "faq_invalido")
+
+
+PUBLIC = {("GET", "/"), ("GET", "/equipe"), ("GET", "/api/saude"),
+          ("GET", "/api/saloes"), ("GET", "/api/turnos"),
+          ("GET", "/api/horarios"), ("POST", "/api/mensagens")}
+
+
+def make_server(app, host, port):
+    class Handler(BaseHTTPRequestHandler):
+        def handle_request(self):
+            path = urlsplit(self.path).path
+            try:
+                if path.startswith("/api/") and (self.command, path) not in PUBLIC:
+                    expected = app.config.get("token", "")
+                    supplied = self.headers.get("X-Token", "")
+                    if not expected or not hmac.compare_digest(supplied.encode(), expected.encode()):
+                        raise APIError(401, "nao_autorizado")
+                body = {}
+                if self.command in ("POST", "PUT"):
+                    try:
+                        length = int(self.headers.get("Content-Length", "0"))
+                        if not 0 <= length <= 1024 * 1024:
+                            raise ValueError()
+                        body = json.loads(self.rfile.read(length))
+                        if not isinstance(body, dict):
+                            raise ValueError()
+                    except (ValueError, UnicodeError):
+                        raise APIError(422, "json_invalido")
+                status, result = app.dispatch(self.command, path, body, {k: v[-1] for k, v in parse_qs(urlsplit(self.path).query).items()})
+            except APIError as error:
+                status, result = error.status, {"erro": error.message}
+            payload = b"" if status == 204 else json.dumps(result, ensure_ascii=False).encode("utf-8")
+            self.send_response(status)
+            if status != 204:
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Content-Length", str(len(payload)))
+            self.end_headers()
+            self.wfile.write(payload)
+
+        do_GET = do_POST = do_PUT = do_DELETE = handle_request
+
+        def log_message(self, *args):
+            pass
+
+    return ThreadingHTTPServer((host, port), Handler)
+
+exec
+/bin/bash -lc 'cat tests/test_lgpd_raiox.py tests/test_cadastros.py; cat src/booking.py' in /home/nmaldaner/projetos/reserva-restaurante
+ succeeded in 0ms:
+"""Seções 10 e 11: direitos do titular (LGPD) e exportação para o Painel de Recuperação do Raio-X (pacote restaurante)."""
+import json
+import subprocess
+
+from conftest import RAIZ, Servidor, norm
+
+# Mesa-minutos disponíveis em out/2026: 7 mesas × [dias ter–sab com almoço (210) + jantar (240) = 450 min
+# → ter 4 + qua 4 + qui 4 (5 menos o feriado 15/10) + sex 5 + sab 5 = 22 dias × 450 = 9.900;
+# domingos: 4 × 210 = 840] = 7 × 10.740 = 75.180
+DISPONIVEL_OUT = 75180
+
+
+def test_dados_e_exclusao(api):
+    tel = "41999990001"
+    cid = api.cliente("Maria Silva", tel, marketing=True, aniversario="05-02")
+    p2 = api.cliente("José", "41999990002")
+    _, a = api.reserva(cid, "2026-10-07T12:00", 2)
+    _, b = api.reserva(cid, "2026-10-08T12:00", 2)
+    api.post(f"/api/reservas/{b['id']}/chegada", {"compareceu": True})
+    api.post("/api/espera", {"cliente_id": p2, "data": "2026-10-07", "turno": "almoco", "pessoas": 2})
+    api.msg(tel, "tem estacionamento")
+    st, d = api.get(f"/api/clientes/{cid}/dados")
+    assert st == 200
+    assert d["cliente"]["nome"] == "Maria Silva" and d["cliente"]["telefone"] == "+5541999990001"
+    assert d["cliente"]["aniversario"] == "05-02" and d["cliente"]["visitas"] == 1
+    assert {x["id"] for x in d["reservas"]} == {a["id"], b["id"]}
+    assert {"entrada", "saida"} <= {m["direcao"] for m in d["mensagens"]}
+    assert any("estacionamento" in m["texto"] for m in d["mensagens"])
+
+    assert api.delete(f"/api/clientes/{cid}")[0] == 204
+    st, d = api.get(f"/api/clientes/{cid}/dados")
+    assert d["cliente"]["nome"] == "removido" and d["cliente"]["telefone"] is None and d["cliente"]["aniversario"] is None
+    assert {x["id"]: x["status"] for x in d["reservas"]} == {a["id"]: "cancelada", b["id"]: "chegou"}
+    assert d["mensagens"] and all(m["texto"] == "" for m in d["mensagens"])
+    assert [m["telefone"] for m in api.saida("espera")] == ["+5541999990002"]   # o cancelamento disparou a espera
+    st, r = api.get("/api/raiox?mes=2026-10")
+    assert r["valores"]["reservas_atendidas_mes"] == 1
+    assert api.post("/api/campanhas", {"texto": "oi"})[1]["enviadas"] == 0
+    assert "nome" in norm(api.msg(tel, "quero reservar"))   # telefone virou desconhecido
+
+
+def montar_mes(dados):
+    """Setembro: uma visita (coorte de set). Outubro: o cenário medido."""
+    s = Servidor(dados, agora="2026-09-01T10:00")   # terça
+    api = s.subir()
+    p9 = api.cliente("Nove", "41900000009")
+    st, a = api.reserva(p9, "2026-09-08T12:00", 2)   # terça 08/09
+    assert st == 201, a
+    api.post(f"/api/reservas/{a['id']}/chegada", {"compareceu": True})
+    s.parar()
+
+    s = Servidor(dados)  # agora = 06/10/2026 10:00
+    api = s.subir()
+    p1, p2, p3, p4, p5 = (api.cliente(n, f"4190000000{i}") for i, n in enumerate(["Um", "Dois", "Tres", "Quatro", "Cinco"], 1))
+
+    def marca(cid, inicio, pessoas, compareceu=None):
+        st, a = api.reserva(cid, inicio, pessoas)
+        assert st == 201, (inicio, a)
+        if compareceu is not None:
+            api.post(f"/api/reservas/{a['id']}/chegada", {"compareceu": compareceu})
+        return a
+
+    marca(p1, "2026-10-07T12:00", 2, True)      # m1, 90 min; novo
+    marca(p1, "2026-10-20T12:00", 2, True)      # m1, 90 min; volta em 13 dias
+    marca(p2, "2026-10-07T12:00", 4, True)      # m3, 120 min; novo, não volta
+    marca(p3, "2026-10-07T12:00", 2, False)     # m2, 90 min; no-show (ativa, não é cliente novo)
+    marca(p4, "2026-10-08T19:00", 7)            # m3+m4, 2 × 180 min; reservada (ativa)
+    c = marca(p5, "2026-10-08T12:00", 2)        # cancelada: não conta
+    api.post(f"/api/reservas/{c['id']}/cancelar")
+    marca(p9, "2026-10-10T12:00", 2, True)      # sáb; m1, 90 min; 2ª visita (32 dias após 08/09)
+    return s, api
+
+
+def test_raiox_numeros_do_mes(dados):
+    s, api = montar_mes(dados)
+    try:
+        st, r = api.get("/api/raiox?mes=2026-10")
+        assert st == 200 and r["pacote"] == "restaurante" and r["mes"] == "2026-10"
+        v = r["valores"]
+        assert v["reservas_atendidas_mes"] == 4          # p1 ×2, p2, p9
+        assert v["no_show_pct"] == 20.0                  # 1 ÷ (4 + 1)
+        assert v["clientes_novos_mes"] == 2              # p1, p2 (p9 é de setembro; p3 nunca chegou)
+        assert v["retorno_atual_pct"] == 50.0            # p1 voltou em 13 dias; p2 não
+        # reservados: 90 + 90 + 120 + 90 + 2×180 + 90 = 840 mesa-minutos
+        assert abs(v["ocupacao_pct"] - 840 / DISPONIVEL_OUT * 100) <= 0.06
+        st, setembro = api.get("/api/raiox?mes=2026-09")
+        assert setembro["valores"]["reservas_atendidas_mes"] == 1 and setembro["valores"]["clientes_novos_mes"] == 1
+        assert setembro["valores"]["retorno_atual_pct"] == 100.0 and setembro["valores"]["no_show_pct"] == 0
+        st, vazio = api.get("/api/raiox?mes=2026-08")
+        assert {k: vazio["valores"][k] for k in ("reservas_atendidas_mes", "clientes_novos_mes", "retorno_atual_pct", "no_show_pct")} == \
+            {"reservas_atendidas_mes": 0, "clientes_novos_mes": 0, "retorno_atual_pct": 0, "no_show_pct": 0}
+    finally:
+        s.parar()
+
+
+def test_cli_grava_mes_no_acompanhamento_do_painel(dados, tmp_path):
+    s, _ = montar_mes(dados)
+    s.parar()
+    arq = tmp_path / "acompanhamento.json"
+    arq.write_text(json.dumps({
+        "tipo": "acompanhamento", "pacote": "restaurante", "cliente": "Cantina Teste",
+        "base": {"data": "2026-09-01", "valores": {"retorno_atual_pct": 20, "ticket_medio": 50, "clientes_novos_mes": 400}},
+        "meses": [],
+    }))
+    cmd = [str(RAIZ / "reserva"), "raiox", "--dados", str(dados), "--mes", "2026-10", "--acompanhamento", str(arq)]
+    for _ in range(2):  # rodar duas vezes substitui o mês, não duplica
+        assert subprocess.run(cmd, cwd=RAIZ, capture_output=True, timeout=30).returncode == 0
+    acomp = json.loads(arq.read_text())
+    assert acomp["tipo"] == "acompanhamento" and acomp["base"]["valores"]["retorno_atual_pct"] == 20
+    [m] = acomp["meses"]
+    assert m["mes"] == "2026-10" and m["obs"] == "reserva-restaurante"
+    assert m["valores"]["ticket_medio"] == 50            # mesclado da base
+    assert m["valores"]["retorno_atual_pct"] == 50.0     # medido
+    assert m["valores"]["clientes_novos_mes"] == 2
+"""Seções 14, 15 e 16: mesas, turnos, FAQ, bloqueios, semente e banco de dados."""
+import subprocess
+
+from conftest import RAIZ, Servidor
+
+D = "2026-10-07"
+
+
+def test_mesa_nova_validacoes_e_menor_max_vence(api):
+    st, r = api.post("/api/mesas", {"id": "m6", "salao": "interno", "min": 1, "max": 3})
+    assert st == 201, r
+    m6 = next(m for m in api.get("/api/mesas")[1]["mesas"] if m["id"] == "m6")
+    assert m6["ativa"] is True and m6["salao"] == "interno"
+    assert api.post("/api/mesas", {"id": "m6", "salao": "interno", "min": 1, "max": 2})[0] == 409
+    assert api.post("/api/mesas", {"id": "m7", "salao": "xyz", "min": 1, "max": 2})[0] == 404   # salão inexistente (regra geral, seção 5)
+    assert api.post("/api/mesas", {"id": "m7", "salao": "interno", "min": 0, "max": 2})[0] == 422
+    assert api.post("/api/mesas", {"id": "m7", "salao": "interno", "min": 3, "max": 2})[0] == 422
+    assert api.put("/api/mesas/naoexiste", {"max": 4})[0] == 404
+    cid = api.cliente()
+    assert api.reserva(cid, f"{D}T12:00", 3)[1]["mesas"] == ["m6"]      # max 3 < 4 de m3
+    assert api.put("/api/mesas/m6", {"max": 4})[1]["max"] == 4
+    assert api.reserva(cid, f"{D}T19:00", 3)[1]["mesas"] == ["m3"]      # empate em max 4 → ordem do cadastro
+
+
+def test_desativar_mesa(api):
+    cid = api.cliente()
+    _, a = api.reserva(cid, f"{D}T12:00", 5)                            # m5
+    st, r = api.delete("/api/mesas/m5")
+    assert st == 200 and r["ativa"] is False
+    st, r = api.reserva(cid, f"{D}T19:00", 5)
+    assert (st, r["erro"]) == (409, "sem_mesa")                          # combinação tem min 7
+    assert api.reserva(cid, f"{D}T19:00", 7)[1]["mesas"] == ["m3", "m4"]
+    assert api.reserva(cid, f"{D}T12:00", 2, mesa="m5")[0] == 422
+    assert [x["id"] for x in api.reservas(D) if x["status"] == "reservada"] and api.por_id(D, a["id"])["mesas"] == ["m5"]
+    assert api.get(f"/api/ocupacao?data={D}")[1]["horarios"][0]["mesas_total"] == 6
+    assert next(m for m in api.get("/api/mesas")[1]["mesas"] if m["id"] == "m5")["ativa"] is False
+
+
+def test_turno_novo_e_validacoes(api):
+    st, r = api.post("/api/turnos", {"id": "seg_almoco", "nome": "Almoço de segunda", "dias": ["seg"],
+                                      "inicio": "11:30", "fim": "14:00"})
+    assert st == 201, r
+    st, r = api.get("/api/horarios?data=2026-10-12&pessoas=2", token=None)   # segunda 12/10
+    assert [(h["inicio"][11:], h["turno"]) for h in r["horarios"]] == \
+        [("11:30", "seg_almoco"), ("12:00", "seg_almoco"), ("12:30", "seg_almoco")]   # 12:30 + 90 = 14:00
+    assert api.post("/api/turnos", {"id": "seg_almoco", "nome": "X", "dias": ["seg"], "inicio": "16:00", "fim": "17:00"})[0] == 409
+    assert api.post("/api/turnos", {"id": "t1", "nome": "X", "dias": ["xyz"], "inicio": "16:00", "fim": "17:00"})[0] == 422
+    assert api.post("/api/turnos", {"id": "t2", "nome": "X", "dias": ["seg"], "inicio": "17:00", "fim": "17:00"})[0] == 422
+    assert api.post("/api/turnos", {"id": "t3", "nome": "X", "dias": ["ter"], "inicio": "14:00", "fim": "16:00"})[0] == 422  # sobrepõe almoço
+    st, r = api.post("/api/turnos", {"id": "tarde", "nome": "Tarde", "dias": ["ter"], "inicio": "15:00", "fim": "17:00"})
+    assert st == 201                                                         # encosta, não sobrepõe
+    h = api.horarios("2026-10-13", 2)                                        # terça 13/10
+    assert "2026-10-13T15:00" in h and "2026-10-13T15:30" in h and "2026-10-13T16:00" not in h
+
+
+def test_desativar_turno(api):
+    cid = api.cliente()
+    _, a = api.reserva(cid, f"{D}T19:00", 2)
+    st, r = api.delete("/api/turnos/jantar")
+    assert st == 200 and r["ativo"] is False
+    assert [x[11:] for x in api.horarios(D, 2)] == ["11:30", "12:00", "12:30", "13:00", "13:30"]
+    assert [t["id"] for t in api.get("/api/turnos", token=None)[1]["turnos"]] == ["almoco"]
+    assert api.por_id(D, a["id"])["status"] == "reservada"
+    assert api.reserva(cid, f"{D}T20:00", 2)[0] == 422
+    assert api.post("/api/espera", {"cliente_id": cid, "data": D, "turno": "jantar", "pessoas": 2})[0] == 404
+
+
+def test_faq_crud_vale_na_hora(api):
+    st, r = api.post("/api/faq", {"perguntas": ["tem rodízio", "fazem rodizio"], "resposta": "Rodízio só aos domingos."})
+    assert st == 201
+    assert api.msg("41988887777", "vocês fazem rodízio?") == "Rodízio só aos domingos."
+    assert api.delete(f"/api/faq/{r['id']}")[0] == 204
+    assert api.msg("41988887777", "vocês fazem rodízio?") != "Rodízio só aos domingos."
+    ids = [f["id"] for f in api.get("/api/faq")[1]["faq"]]
+    assert "pet" in ids and r["id"] not in ids
+
+
+def test_bloqueio_do_restaurante_inteiro(api):
+    cid = api.cliente()
+    _, a = api.reserva(cid, "2026-10-08T12:00", 2)
+    st, r = api.post("/api/bloqueios", {"inicio": "2026-10-08T00:00", "fim": "2026-10-09T00:00", "motivo": "evento fechado"})
+    assert st == 201 and r["conflitos"] == [a["id"]]
+    assert api.horarios("2026-10-08", 2) == []
+    assert api.reserva(cid, "2026-10-08T19:00", 2)[0] == 422
+    assert api.reserva(cid, "2026-10-09T12:00", 2)[0] == 201
+    st, lista = api.get("/api/bloqueios")
+    assert [(b["motivo"], b["salao"], b["mesa"]) for b in lista["bloqueios"]] == [("evento fechado", None, None)]
+    assert api.delete(f"/api/bloqueios/{r['id']}")[0] == 204
+    assert len(api.horarios("2026-10-08", 2)) == 11                       # m2 serve mesmo com a em m1
+
+
+def test_bloqueio_de_mesa_e_de_salao(api):
+    cid = api.cliente()
+    st, r = api.post("/api/bloqueios", {"inicio": "2026-10-08T00:00", "fim": "2026-10-09T00:00", "motivo": "conserto", "mesa": "m5"})
+    assert st == 201 and r["conflitos"] == []
+    st, r = api.reserva(cid, "2026-10-08T12:00", 5)
+    assert (st, r["erro"]) == (409, "sem_mesa")
+    assert api.reserva(cid, "2026-10-09T12:00", 5)[1]["mesas"] == ["m5"]
+    assert api.horarios("2026-10-08", 5) == []
+    st, r = api.post("/api/bloqueios", {"inicio": "2026-10-08T00:00", "fim": "2026-10-09T00:00", "motivo": "chuva", "salao": "varanda"})
+    assert st == 201
+    assert api.horarios("2026-10-08", 2, salao="varanda") == []
+    assert api.reserva(cid, "2026-10-08T12:00", 2)[1]["mesas"] == ["m1"]
+    assert api.post("/api/bloqueios", {"inicio": "2026-10-08T00:00", "fim": "2026-10-09T00:00", "motivo": "x", "salao": "xyz"})[0] == 404
+    assert api.post("/api/bloqueios", {"inicio": "2026-10-08T00:00", "fim": "2026-10-09T00:00", "motivo": "x", "mesa": "xyz"})[0] == 404
+
+
+def test_semente_so_na_primeira_vez(dados):
+    s = Servidor(dados)
+    api = s.subir()
+    api.post("/api/mesas", {"id": "m6", "salao": "varanda", "min": 1, "max": 2})
+    api.delete("/api/faq/pet")
+    s.parar()
+    s2 = Servidor(dados)
+    try:
+        api2 = s2.subir()
+        assert [m["id"] for m in api2.get("/api/mesas")[1]["mesas"]] == ["m1", "m2", "m3", "m4", "m5", "v1", "v2", "m6"]
+        assert "pet" not in [f["id"] for f in api2.get("/api/faq")[1]["faq"]]
+    finally:
+        s2.parar()
+
+
+def test_backup_e_restaurar(dados, tmp_path):
+    s = Servidor(dados)
+    api = s.subir()
+    cid = api.cliente("Guardada", "41999990009")
+    api.reserva(cid, f"{D}T12:00", 2)
+    arq = tmp_path / "copia.bak"
+    r = subprocess.run([str(RAIZ / "reserva"), "backup", "--dados", str(dados), "--saida", str(arq)],
+                       cwd=RAIZ, capture_output=True, timeout=30)
+    assert r.returncode == 0 and arq.exists() and arq.stat().st_size > 0
+    api.delete(f"/api/clientes/{cid}")
+    api.cliente("Depois do backup", "41999990010")
+    s.parar()
+    r = subprocess.run([str(RAIZ / "reserva"), "restaurar", "--dados", str(dados), "--entrada", str(arq)],
+                       cwd=RAIZ, capture_output=True, timeout=30)
+    assert r.returncode == 0
+    s2 = Servidor(dados)
+    try:
+        api2 = s2.subir()
+        assert [c["nome"] for c in api2.get("/api/clientes")[1]["clientes"]] == ["Guardada"]
+        assert [x["status"] for x in api2.reservas(D)] == ["reservada"]
+    finally:
+        s2.parar()
+"""Clientes e alocação transacional, independentes do canal de atendimento."""
+from datetime import datetime, timedelta
+import re
+import unicodedata
+from uuid import uuid4
+
+
+class APIError(Exception):
+    def __init__(self, status, message):
+        self.status, self.message = status, message
+
+
+def normalized(text):
+    return ''.join(c for c in unicodedata.normalize('NFD', text.lower()) if unicodedata.category(c) != 'Mn')
+
+
+def phone(value):
+    if not isinstance(value, str) or re.search(r'[^0-9+()\s-]', value):
+        raise APIError(400, 'telefone_invalido')
+    digits = re.sub(r'\D', '', value)
+    if len(digits) in (12, 13) and digits.startswith('55'):
+        digits = digits[2:]
+    if len(digits) not in (10, 11):
+        raise APIError(400, 'telefone_invalido')
+    return '+55' + digits
+
+
+def required(body, *keys):
+    if any(key not in body for key in keys):
+        raise APIError(422, 'campos_obrigatorios')
+
+
+def instant(value):
+    try:
+        if not isinstance(value, str) or not re.fullmatch(r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}', value):
+            raise ValueError()
+        return datetime.strptime(value, '%Y-%m-%dT%H:%M')
+    except ValueError:
+        raise APIError(422, 'horario_invalido')
+
+
+ACTIVE = {'reservada', 'confirmada', 'pendente', 'chegou', 'no_show'}
+
+
+class Booking:
+    def find(self, db, kind, identifier):
+        item = next((i for i in self.store.items(db, kind) if str(i['id']) == str(identifier)), None)
+        if item is None:
+            raise APIError(404, 'nao_encontrado')
+        return item
+
+    def validate_client(self, item):
+        item['telefone'] = phone(item['telefone'])
+        birthday = item.get('aniversario')
+        if birthday is not None:
+            try:
+                if not isinstance(birthday, str) or not re.fullmatch(r'\d{2}-\d{2}', birthday):
+                    raise ValueError()
+                datetime.strptime('2000-' + birthday, '%Y-%m-%d')
+            except ValueError:
+                raise APIError(400, 'aniversario_invalido')
+        if item['origem'] not in ('salao', 'whatsapp', 'chat', 'telefone', 'site', 'indicacao', 'equipe', 'outro'):
+            raise APIError(422, 'origem_invalida')
+
+    def check_room(self, room):
+        if room is not None and room not in [s['id'] for s in self.config['saloes']]:
+            raise APIError(404, 'salao_inexistente')
+
+    def grid(self, db, day, duration=0):
+        try:
+            date = datetime.strptime(day, '%Y-%m-%d')
+        except (ValueError, TypeError):
+            raise APIError(422, 'data_invalida')
+        if day in self.config.get('feriados', []):
+            return []
+        weekday = ('seg', 'ter', 'qua', 'qui', 'sex', 'sab', 'dom')[date.weekday()]
+        result = []
+        for shift in self.store.items(db, 'turnos'):
+            if not shift['ativo'] or weekday not in shift['dias']:
+                continue
+            start, end = (instant(day + 'T' + shift[k]) for k in ('inicio', 'fim'))
+            while start < end and start + timedelta(minutes=duration) <= end:
+                result.append({'inicio': start.isoformat(timespec='minutes'), 'turno': shift['id']})
+                start += timedelta(minutes=self.config['passo_min'])
+        return sorted(result, key=lambda h: h['inicio'])
+
+    def allocate(self, db, start, people, room=None, table=None, exclude=None):
+        self.check_room(room)
+        tables = self.store.items(db, 'mesas')
+        combinations = self.config.get('combinacoes', [])
+        chosen = None
+        if table is not None:
+            chosen = next((t for t in tables + combinations if t['id'] == table), None)
+            if chosen is None:
+                raise APIError(404, 'mesa_inexistente')
+        if type(people) is not int or people < 1:
+            raise APIError(422, 'pessoas_invalidas')
+        begin = instant(start)
+        duration = next(r['min'] for r in self.config['duracao'] if r['ate'] is None or people <= r['ate'])
+        end = (begin + timedelta(minutes=duration)).isoformat(timespec='minutes')
+        candidates = self.grid(db, start[:10], duration)
+        shift = next((h['turno'] for h in candidates if h['inicio'] == start), None)
+        if shift is None or begin < self.now() + timedelta(hours=self.config['antecedencia_min_horas']) or begin.date() > self.now().date() + timedelta(days=self.config['janela_dias']):
+            raise APIError(422, 'horario_invalido')
+        active = [r for r in self.store.items(db, 'reservas') if r['status'] in ACTIVE and r['id'] != exclude]
+        occupied = {t for r in active if start < r['fim'] and end > r['inicio'] for t in r['mesas']}
+        blocks = [b for b in self.store.items(db, 'bloqueios') if start < b['fim'] and end > b['inicio']]
+        if any(not b.get('mesa') and not b.get('salao') for b in blocks):
+            raise APIError(422, 'restaurante_bloqueado')
+        def members(candidate):
+            ids = candidate.get('mesas', [candidate['id']])
+            return [t for t in tables if t['id'] in ids]
+        def suitable(candidate):
+            group = members(candidate)
+            return (candidate['min'] <= people <= candidate['max'] and
+                    len(group) == len(candidate.get('mesas', [candidate['id']])) and bool(group) and
+                    all(t['ativa'] and (room is None or t['salao'] == room) for t in group))
+        def free(candidate):
+            return all(t['id'] not in occupied and not any(b.get('mesa') == t['id'] or
+                       (not b.get('mesa') and b.get('salao') == t['salao']) for b in blocks) for t in members(candidate))
+        if chosen is not None and not suitable(chosen):
+            raise APIError(422, 'mesa_invalida')
+        choices = [chosen] if chosen is not None else sorted(tables, key=lambda t: t['max']) + sorted(combinations, key=lambda t: t['max'])
+        selected = next((c for c in choices if suitable(c) and free(c)), None)
+        if selected is None:
+            raise APIError(409, 'sem_mesa')
+        limit = self.config.get('limite_pessoas_por_horario')
+        if limit is not None and sum(r['pessoas'] for r in active if r['inicio'] == start) + people > limit:
+            raise APIError(409, 'limite_cozinha')
+        return {'inicio': start, 'fim': end, 'pessoas': people, 'turno': shift,
+                'salao': members(selected)[0]['salao'], 'mesas': selected.get('mesas', [selected['id']]),
+                'status': 'pendente' if people >= self.config['grupo_grande_a_partir'] else 'reservada'}
+
+    def slots(self, db, query):
+        self.check_room(query.get('salao'))
+        try:
+            people = int(query.get('pessoas', ''))
+            if people < 1:
+                raise ValueError()
+        except (ValueError, TypeError):
+            raise APIError(422, 'pessoas_invalidas')
+        result = []
+        for h in self.grid(db, query.get('data')):
+            try:
+                self.allocate(db, h['inicio'], people, query.get('salao'))
+                result.append(h)
+            except APIError as error:
+                if error.status not in (409, 422):
+                    raise
+        return result
+
+    def reservation_list(self, db, query):
+        clients = {c['id']: c for c in self.store.items(db, 'clientes')}
+        result = []
+        for r in self.store.items(db, 'reservas'):
+            day = r['inicio'][:10]
+            if query.get('data', day) != day or day < query.get('de', day) or day > query.get('ate', day):
+                continue
+            if any(query.get(k, r[k]) != r[k] for k in ('turno', 'salao', 'cliente_id')):
+                continue
+            client = clients[r['cliente_id']]
+            result.append({**r, 'nome': client['nome'], 'telefone': client['telefone']})
+        return sorted(result, key=lambda r: (r['inicio'], r['id']))
+
+    def booking_dispatch(self, method, path, body, query):
+        parts = path.strip('/').split('/')
+        kind = parts[1]
+        identifier = parts[2] if len(parts) > 2 else None
+        action = parts[3] if len(parts) > 3 else None
+        with self.store.transaction() as db:
+            existing = self.find(db, kind, identifier) if identifier is not None else None
+            if kind == 'horarios' and method == 'GET':
+                return 200, {'horarios': self.slots(db, query)}
+            if kind == 'clientes':
+                if method == 'GET' and identifier is None:
+                    term = normalized(query.get('busca', ''))
+                    digits = re.sub(r'\D', '', term)
+                    return 200, {'clientes': [c for c in self.store.items(db, kind) if term in normalized(c['nome']) or (digits and digits in (c['telefone'] or ''))]}
+                if method == 'GET' and action == 'dados':
+                    return 200, {'cliente': existing, 'reservas': self.reservation_list(db, {'cliente_id': existing['id']}), 'mensagens': [{k: m[k] for k in ('direcao', 'texto', 'quando')} for m in self.store.items(db, 'mensagens') if m['telefone'] == existing['telefone']]}
+                if method in ('POST', 'PUT') and action is None:
+                    if method == 'POST':
+                        required(body, 'nome', 'telefone')
+                    item = dict(existing or {'id': uuid4().hex, 'consentimento_marketing': False, 'nao_contatar': False,
+                                'aniversario': None, 'origem': 'equipe', 'ultima_visita': None, 'visitas': 0})
+                    item.update({k: body[k] for k in ('nome', 'telefone', 'consentimento_marketing', 'nao_contatar', 'aniversario', 'origem') if k in body})
+                    self.validate_client(item)
+                    duplicate = next((c for c in self.store.items(db, kind) if c['telefone'] == item['telefone'] and c['id'] != item['id']), None)
+                    if duplicate:
+                        if method == 'POST':
+                            return 200, {'id': duplicate['id']}
+                        raise APIError(409, 'telefone_repetido')
+                    if existing:
+                        self.store.update(db, kind, item)
+                    else:
+                        self.store.insert(db, kind, item)
+                    return (200, item) if existing else (201, {'id': item['id']})
+            if kind == 'reservas':
+                if method == 'GET' and identifier is None:
+                    return 200, {'reservas': self.reservation_list(db, query)}
+                if method == 'POST' and identifier is None:
+                    required(body, 'cliente_id', 'inicio', 'pessoas')
+                    client = self.find(db, 'clientes', body['cliente_id'])
+                    item = self.allocate(db, body['inicio'], body['pessoas'], body.get('salao'), body.get('mesa'))
+                    item.update(id=uuid4().hex, cliente_id=client['id'], observacao=body.get('observacao', ''))
+                    self.store.insert(db, kind, item)
+                    return 201, item
+                if method == 'POST' and existing:
+                    if action in ('cancelar', 'remarcar'):
+                        if existing['status'] not in ('reservada', 'confirmada', 'pendente'):
+                            raise APIError(409, 'status')
+                        if action == 'cancelar':
+                            self.cancel(db, existing)
+                        else:
+                            if not any(k in body for k in ('inicio', 'pessoas')):
+                                raise APIError(422, 'campos_obrigatorios')
+                            allocation = self.allocate(db, body.get('inicio', existing['inicio']), body.get('pessoas', existing['pessoas']), exclude=existing['id'])
+                            existing.update(allocation)
+                            existing.pop('confirmacao_enviada', None)
+                    elif action in ('aprovar', 'recusar'):
+                        if existing['status'] != 'pendente':
+                            raise APIError(409, 'status')
+                        existing['status'] = 'reservada' if action == 'aprovar' else 'recusada'
+                        client = self.find(db, 'clientes', existing['cliente_id'])
+                        self.output(db, client, 'aprovacao' if action == 'aprovar' else 'recusa',
+                                    ('Confirmada: ' + self.describe(existing)) if action == 'aprovar' else 'Não foi possível aprovar sua reserva.', existing['id'])
+                    elif action == 'chegada':
+                        if existing['status'] not in ('reservada', 'confirmada'):
+                            raise APIError(409, 'status')
+                        if type(body.get('compareceu')) is not bool:
+                            raise APIError(422, 'compareceu_invalido')
+                        existing['status'] = 'chegou' if body['compareceu'] else 'no_show'
+                    else:
+                        raise APIError(404, 'rota_inexistente')
+                    self.store.update(db, kind, existing)
+                    if existing['status'] == 'chegou':
+                        client = self.find(db, 'clientes', existing['cliente_id'])
+                        visits = [r for r in self.store.items(db, kind) if r['cliente_id'] == client['id'] and r['status'] == 'chegou']
+                        client.update(visitas=len(visits), ultima_visita=max(r['inicio'][:10] for r in visits))
+                        self.store.update(db, 'clientes', client)
+                    return 200, existing if action == 'remarcar' else {'status': existing['status']}
+            if kind == 'ocupacao' and method == 'GET':
+                self.check_room(query.get('salao'))
+                tables = {t['id'] for t in self.store.items(db, 'mesas') if t['ativa'] and (not query.get('salao') or t['salao'] == query['salao'])}
+                result = []
+                for h in self.grid(db, query.get('data')):
+                    reservations = [r for r in self.store.items(db, 'reservas') if r['status'] in ACTIVE and r['inicio'] <= h['inicio'] < r['fim'] and tables.intersection(r['mesas'])]
+                    occupied = {t for r in reservations for t in r['mesas']} & tables
+                    result.append({**h, 'mesas_total': len(tables), 'mesas_ocupadas': len(occupied), 'pessoas': sum(r['pessoas'] for r in reservations)})
+                return 200, {'data': query.get('data'), 'horarios': result}
+        raise APIError(404, 'rota_inexistente')
+
+exec
+/bin/bash -lc "cat src/storage.py src/cli.py; sed -n '1,100p' src/server.py; cat tests/test_lgpd_raiox.py" in /home/nmaldaner/projetos/reserva-restaurante
+ succeeded in 0ms:
+"""Persistência dos cadastros; cada operação usa sua própria conexão."""
+from contextlib import contextmanager
+import json
+from pathlib import Path
+import shutil
+import sqlite3
+
+ROOT = Path(__file__).resolve().parent.parent
+
+
+class Store:
+    def __init__(self, directory):
+        self.directory = Path(directory)
+        self.directory.mkdir(parents=True, exist_ok=True)
+        config = self.directory / "restaurante.json"
+        if not config.exists():
+            shutil.copyfile(ROOT / "exemplos/restaurante.json", config)
+        self.config = json.loads(config.read_text(encoding="utf-8"))
+        self.path = self.directory / "reservas.sqlite3"
+        with self.transaction() as db:
+            db.execute("CREATE TABLE IF NOT EXISTS metadata (chave TEXT PRIMARY KEY, valor TEXT)")
+            db.execute("""CREATE TABLE IF NOT EXISTS cadastros (
+                ordem INTEGER PRIMARY KEY AUTOINCREMENT,
+                tipo TEXT NOT NULL, id TEXT NOT NULL, dados TEXT NOT NULL,
+                UNIQUE(tipo, id))""")
+            if not db.execute("SELECT 1 FROM metadata WHERE chave='semeado'").fetchone():
+                for kind in ("mesas", "turnos", "faq"):
+                    for item in self.config.get(kind, []):
+                        item = dict(item)
+                        if kind == "mesas":
+                            item.setdefault("ativa", True)
+                        if kind == "turnos":
+                            item.setdefault("ativo", True)
+                        self.insert(db, kind, item)
+                db.execute("INSERT INTO metadata VALUES ('semeado', '1')")
+
+    @contextmanager
+    def transaction(self):
+        db = sqlite3.connect(self.path, timeout=30)
+        try:
+            db.execute("BEGIN IMMEDIATE")
+            yield db
+            db.commit()
+        except Exception:
+            db.rollback()
+            raise
+        finally:
+            db.close()
+
+    @staticmethod
+    def items(db, kind):
+        return [json.loads(row[0]) for row in db.execute(
+            "SELECT dados FROM cadastros WHERE tipo=? ORDER BY ordem", (kind,))]
+
+    @staticmethod
+    def insert(db, kind, item):
+        db.execute("INSERT INTO cadastros(tipo,id,dados) VALUES (?,?,?)",
+                   (kind, item["id"], json.dumps(item, ensure_ascii=False)))
+
+    @staticmethod
+    def update(db, kind, item):
+        db.execute("UPDATE cadastros SET dados=? WHERE tipo=? AND id=?",
+                   (json.dumps(item, ensure_ascii=False), kind, item["id"]))
+import argparse
+
+from .server import Application, make_server
+from .storage import Store
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Reservas de mesa para um restaurante")
+    commands = parser.add_subparsers(dest="command", required=True)
+    serve = commands.add_parser("serve", help="Iniciar o servidor HTTP")
+    serve.add_argument("--porta", type=int, default=8080)
+    serve.add_argument("--dados", required=True)
+    serve.add_argument("--host", default="127.0.0.1")
+    args = parser.parse_args()
+    app = Application(Store(args.dados))
+    with make_server(app, args.host, args.porta) as server:
+        print(f"PORTA={server.server_address[1]}", flush=True)
+        try:
+            server.serve_forever()
+        except KeyboardInterrupt:
+            pass
+"""HTTP JSON e autenticação central; regras de cadastros persistentes."""
+from datetime import datetime
+import hmac
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+import json
+import os
+import re
+from urllib.parse import urlsplit, parse_qs
+from uuid import uuid4
+
+from .storage import ROOT
+
+
+from .booking import APIError, Booking
+
+
+from .conversation import Conversation
+
+
+class Application(Conversation, Booking):
+    def __init__(self, store):
+        self.store = store
+        self.config = store.config
+        fixed = os.environ.get("RESERVA_AGORA")
+        self.fixed_now = datetime.strptime(fixed, "%Y-%m-%dT%H:%M") if fixed else None
+
+    def now(self):
+        return self.fixed_now or datetime.now().replace(second=0, microsecond=0)
+
+    def dispatch(self, method, path, body, query=None):
+        if path.split("/")[2:3] and path.split("/")[2] in ("mensagens", "saida", "espera", "tarefas", "campanhas", "atendimento-humano"):
+            return self.conversation_dispatch(method, path, body, query or {})
+        if path.split("/")[1:2] == ["api"] and path.split("/")[2:3] and path.split("/")[2] in ("clientes", "reservas", "horarios", "ocupacao"):
+            return self.booking_dispatch(method, path, body, query or {})
+        if method == "GET" and path == "/api/saude":
+            return 200, {"ok": True, "versao": (ROOT / "VERSION").read_text().strip()}
+        if method == "GET" and path == "/api/saloes":
+            return 200, {"saloes": self.config["saloes"]}
+        parts = path.strip("/").split("/")
+        if len(parts) not in (2, 3) or parts[0] != "api" or parts[1] not in ("mesas", "turnos", "faq"):
+            raise APIError(404, "rota_inexistente")
+        kind = parts[1]
+        identifier = parts[2] if len(parts) == 3 else None
+        with self.store.transaction() as db:
+            items = self.store.items(db, kind)
+            existing = next((item for item in items if item["id"] == identifier), None)
+            if identifier is not None and existing is None:
+                raise APIError(404, "nao_encontrado")
+            if method == "GET" and identifier is None:
+                if kind == "turnos":
+                    items = [item for item in items if item["ativo"]]
+                return 200, {kind: items}
+            if method == "DELETE" and identifier is not None:
+                if kind == "faq":
+                    db.execute("DELETE FROM cadastros WHERE tipo=? AND id=?", (kind, identifier))
+                    return 204, None
+                flag = "ativa" if kind == "mesas" else "ativo"
+                existing[flag] = False
+                self.store.update(db, kind, existing)
+                return 200, {flag: False}
+            if (method == "POST" and identifier is None) or (method == "PUT" and identifier is not None and kind != "faq"):
+                fields = {"mesas": ("id", "salao", "min", "max"),
+                          "turnos": ("id", "nome", "dias", "inicio", "fim"),
+                          "faq": ("perguntas", "resposta")}[kind]
+                if method == "POST" and any(key not in body for key in fields):
+                    raise APIError(422, "campos_obrigatorios")
+                item = dict(existing or {})
+                item.update({key: body[key] for key in fields if key != "id" and key in body})
+                if existing is None:
+                    item["id"] = body.get("id") if kind != "faq" else uuid4().hex
+                    if not isinstance(item["id"], str) or not item["id"]:
+                        raise APIError(422, "id_invalido")
+                    if any(other["id"] == item["id"] for other in items):
+                        raise APIError(409, "id_repetido")
+                    if kind != "faq":
+                        item["ativa" if kind == "mesas" else "ativo"] = True
+                self.validate(kind, item, items)
+                if existing is None:
+                    self.store.insert(db, kind, item)
+                else:
+                    self.store.update(db, kind, item)
+                return (201 if existing is None else 200), item
+        raise APIError(404, "rota_inexistente")
+
+    def validate(self, kind, item, items):
+        if kind == "mesas":
+            if item["salao"] not in [s["id"] for s in self.config["saloes"]]:
+                raise APIError(404, "salao_inexistente")
+            if any(type(item[key]) is not int for key in ("min", "max")) or not 1 <= item["min"] <= item["max"]:
+                raise APIError(422, "capacidade_invalida")
+        if kind == "turnos":
+            days = item["dias"]
+            if not isinstance(days, list) or not days or any(day not in ("seg", "ter", "qua", "qui", "sex", "sab", "dom") for day in days):
+                raise APIError(422, "dias_invalidos")
+            for key in ("inicio", "fim"):
+                if not isinstance(item[key], str) or not re.fullmatch(r"(?:[01]\d|2[0-3]):[0-5]\d", item[key]):
+                    raise APIError(422, "horario_invalido")
+            if item["inicio"] >= item["fim"]:
+                raise APIError(422, "intervalo_invalido")
+            if item["ativo"] and any(other["id"] != item["id"] and other["ativo"] and
+"""Seções 10 e 11: direitos do titular (LGPD) e exportação para o Painel de Recuperação do Raio-X (pacote restaurante)."""
+import json
+import subprocess
+
+from conftest import RAIZ, Servidor, norm
+
+# Mesa-minutos disponíveis em out/2026: 7 mesas × [dias ter–sab com almoço (210) + jantar (240) = 450 min
+# → ter 4 + qua 4 + qui 4 (5 menos o feriado 15/10) + sex 5 + sab 5 = 22 dias × 450 = 9.900;
+# domingos: 4 × 210 = 840] = 7 × 10.740 = 75.180
+DISPONIVEL_OUT = 75180
+
+
+def test_dados_e_exclusao(api):
+    tel = "41999990001"
+    cid = api.cliente("Maria Silva", tel, marketing=True, aniversario="05-02")
+    p2 = api.cliente("José", "41999990002")
+    _, a = api.reserva(cid, "2026-10-07T12:00", 2)
+    _, b = api.reserva(cid, "2026-10-08T12:00", 2)
+    api.post(f"/api/reservas/{b['id']}/chegada", {"compareceu": True})
+    api.post("/api/espera", {"cliente_id": p2, "data": "2026-10-07", "turno": "almoco", "pessoas": 2})
+    api.msg(tel, "tem estacionamento")
+    st, d = api.get(f"/api/clientes/{cid}/dados")
+    assert st == 200
+    assert d["cliente"]["nome"] == "Maria Silva" and d["cliente"]["telefone"] == "+5541999990001"
+    assert d["cliente"]["aniversario"] == "05-02" and d["cliente"]["visitas"] == 1
+    assert {x["id"] for x in d["reservas"]} == {a["id"], b["id"]}
+    assert {"entrada", "saida"} <= {m["direcao"] for m in d["mensagens"]}
+    assert any("estacionamento" in m["texto"] for m in d["mensagens"])
+
+    assert api.delete(f"/api/clientes/{cid}")[0] == 204
+    st, d = api.get(f"/api/clientes/{cid}/dados")
+    assert d["cliente"]["nome"] == "removido" and d["cliente"]["telefone"] is None and d["cliente"]["aniversario"] is None
+    assert {x["id"]: x["status"] for x in d["reservas"]} == {a["id"]: "cancelada", b["id"]: "chegou"}
+    assert d["mensagens"] and all(m["texto"] == "" for m in d["mensagens"])
+    assert [m["telefone"] for m in api.saida("espera")] == ["+5541999990002"]   # o cancelamento disparou a espera
+    st, r = api.get("/api/raiox?mes=2026-10")
+    assert r["valores"]["reservas_atendidas_mes"] == 1
+    assert api.post("/api/campanhas", {"texto": "oi"})[1]["enviadas"] == 0
+    assert "nome" in norm(api.msg(tel, "quero reservar"))   # telefone virou desconhecido
+
+
+def montar_mes(dados):
+    """Setembro: uma visita (coorte de set). Outubro: o cenário medido."""
+    s = Servidor(dados, agora="2026-09-01T10:00")   # terça
+    api = s.subir()
+    p9 = api.cliente("Nove", "41900000009")
+    st, a = api.reserva(p9, "2026-09-08T12:00", 2)   # terça 08/09
+    assert st == 201, a
+    api.post(f"/api/reservas/{a['id']}/chegada", {"compareceu": True})
+    s.parar()
+
+    s = Servidor(dados)  # agora = 06/10/2026 10:00
+    api = s.subir()
+    p1, p2, p3, p4, p5 = (api.cliente(n, f"4190000000{i}") for i, n in enumerate(["Um", "Dois", "Tres", "Quatro", "Cinco"], 1))
+
+    def marca(cid, inicio, pessoas, compareceu=None):
+        st, a = api.reserva(cid, inicio, pessoas)
+        assert st == 201, (inicio, a)
+        if compareceu is not None:
+            api.post(f"/api/reservas/{a['id']}/chegada", {"compareceu": compareceu})
+        return a
+
+    marca(p1, "2026-10-07T12:00", 2, True)      # m1, 90 min; novo
+    marca(p1, "2026-10-20T12:00", 2, True)      # m1, 90 min; volta em 13 dias
+    marca(p2, "2026-10-07T12:00", 4, True)      # m3, 120 min; novo, não volta
+    marca(p3, "2026-10-07T12:00", 2, False)     # m2, 90 min; no-show (ativa, não é cliente novo)
+    marca(p4, "2026-10-08T19:00", 7)            # m3+m4, 2 × 180 min; reservada (ativa)
+    c = marca(p5, "2026-10-08T12:00", 2)        # cancelada: não conta
+    api.post(f"/api/reservas/{c['id']}/cancelar")
+    marca(p9, "2026-10-10T12:00", 2, True)      # sáb; m1, 90 min; 2ª visita (32 dias após 08/09)
+    return s, api
+
+
+def test_raiox_numeros_do_mes(dados):
+    s, api = montar_mes(dados)
+    try:
+        st, r = api.get("/api/raiox?mes=2026-10")
+        assert st == 200 and r["pacote"] == "restaurante" and r["mes"] == "2026-10"
+        v = r["valores"]
+        assert v["reservas_atendidas_mes"] == 4          # p1 ×2, p2, p9
+        assert v["no_show_pct"] == 20.0                  # 1 ÷ (4 + 1)
+        assert v["clientes_novos_mes"] == 2              # p1, p2 (p9 é de setembro; p3 nunca chegou)
+        assert v["retorno_atual_pct"] == 50.0            # p1 voltou em 13 dias; p2 não
+        # reservados: 90 + 90 + 120 + 90 + 2×180 + 90 = 840 mesa-minutos
+        assert abs(v["ocupacao_pct"] - 840 / DISPONIVEL_OUT * 100) <= 0.06
+        st, setembro = api.get("/api/raiox?mes=2026-09")
+        assert setembro["valores"]["reservas_atendidas_mes"] == 1 and setembro["valores"]["clientes_novos_mes"] == 1
+        assert setembro["valores"]["retorno_atual_pct"] == 100.0 and setembro["valores"]["no_show_pct"] == 0
+        st, vazio = api.get("/api/raiox?mes=2026-08")
+        assert {k: vazio["valores"][k] for k in ("reservas_atendidas_mes", "clientes_novos_mes", "retorno_atual_pct", "no_show_pct")} == \
+            {"reservas_atendidas_mes": 0, "clientes_novos_mes": 0, "retorno_atual_pct": 0, "no_show_pct": 0}
+    finally:
+        s.parar()
+
+
+def test_cli_grava_mes_no_acompanhamento_do_painel(dados, tmp_path):
+    s, _ = montar_mes(dados)
+    s.parar()
+    arq = tmp_path / "acompanhamento.json"
+    arq.write_text(json.dumps({
+        "tipo": "acompanhamento", "pacote": "restaurante", "cliente": "Cantina Teste",
+        "base": {"data": "2026-09-01", "valores": {"retorno_atual_pct": 20, "ticket_medio": 50, "clientes_novos_mes": 400}},
+        "meses": [],
+    }))
+    cmd = [str(RAIZ / "reserva"), "raiox", "--dados", str(dados), "--mes", "2026-10", "--acompanhamento", str(arq)]
+    for _ in range(2):  # rodar duas vezes substitui o mês, não duplica
+        assert subprocess.run(cmd, cwd=RAIZ, capture_output=True, timeout=30).returncode == 0
+    acomp = json.loads(arq.read_text())
+    assert acomp["tipo"] == "acompanhamento" and acomp["base"]["valores"]["retorno_atual_pct"] == 20
+    [m] = acomp["meses"]
+    assert m["mes"] == "2026-10" and m["obs"] == "reserva-restaurante"
+    assert m["valores"]["ticket_medio"] == 50            # mesclado da base
+    assert m["valores"]["retorno_atual_pct"] == 50.0     # medido
+    assert m["valores"]["clientes_novos_mes"] == 2
+
+codex
+A base e os fluxos de reserva já passam em 68 testes. Neste ciclo vou completar bloqueios, backup/restauração, anonimização LGPD e Raio-X, reutilizando o cancelamento que já oferece vagas à lista de espera.
+
+exec
+/bin/bash -lc "sed -n '1,90p' src/conversation.py; cat README.md | tail -n 40; cat VERSION" in /home/nmaldaner/projetos/reserva-restaurante
+ succeeded in 0ms:
+"""Conversa e tarefas persistentes, usando o mesmo alocador das rotas da equipe."""
+from datetime import datetime, timedelta
+import re
+from uuid import uuid4
+from .booking import APIError, normalized, phone, required, instant
+
+
+def words(text):
+    return re.findall(r'\w+', normalized(text))
+
+
+class Conversation:
+    def history(self, db, tel, direction, text):
+        self.store.insert(db, 'mensagens', {'id': uuid4().hex, 'telefone': tel,
+            'direcao': direction, 'texto': text, 'quando': self.now().isoformat(timespec='minutes')})
+
+    def output(self, db, client, kind, text, reservation=None, **extra):
+        item = dict(id=uuid4().hex, tipo=kind, telefone=client['telefone'], cliente_id=client['id'],
+                    texto=text, reserva_id=reservation, status='simulado', quando=self.now().isoformat(timespec='minutes'), **extra)
+        self.store.insert(db, 'saida', item)
+        self.history(db, client['telefone'], 'saida', text)
+        return item
+
+    def cancel(self, db, reservation):
+        if reservation['status'] not in ('reservada', 'confirmada', 'pendente'):
+            raise APIError(409, 'status')
+        reservation['status'] = 'cancelada'
+        self.store.update(db, 'reservas', reservation)
+        for entry in self.store.items(db, 'espera'):
+            if entry['status'] != 'pendente' or entry['data'] != reservation['inicio'][:10] or entry['turno'] != reservation['turno']:
+                continue
+            client = self.find(db, 'clientes', entry['cliente_id'])
+            if client['nao_contatar'] or not client['telefone']:
+                continue
+            try:
+                self.allocate(db, reservation['inicio'], entry['pessoas'])
+            except APIError:
+                continue
+            entry.update(status='ofertada', inicio=reservation['inicio'])
+            self.store.update(db, 'espera', entry)
+            self.output(db, client, 'espera', f"Vaga às {entry['inicio'][11:]}. Responda 1 para reservar.", espera_id=entry['id'])
+            break
+
+    def new_wait(self, db, body):
+        required(body, 'cliente_id', 'data', 'turno', 'pessoas')
+        self.find(db, 'clientes', body['cliente_id'])
+        if not self.find(db, 'turnos', body['turno'])['ativo']:
+            raise APIError(404, 'turno_inativo')
+        if type(body['pessoas']) is not int or body['pessoas'] < 1:
+            raise APIError(422, 'pessoas_invalidas')
+        try:
+            datetime.strptime(body['data'], '%Y-%m-%d')
+        except (ValueError, TypeError):
+            raise APIError(422, 'data_invalida')
+        item = {k: body[k] for k in ('cliente_id', 'data', 'turno', 'pessoas')}
+        item.update(id=uuid4().hex, status='pendente')
+        self.store.insert(db, 'espera', item)
+        return item
+
+    def conversation_dispatch(self, method, path, body, query):
+        with self.store.transaction() as db:
+            if path == '/api/mensagens' and method == 'POST':
+                required(body, 'telefone', 'texto')
+                if not isinstance(body['texto'], str):
+                    raise APIError(422, 'texto_invalido')
+                return 200, {'respostas': self.converse(db, phone(body['telefone']), body['texto'])}
+            if path == '/api/saida' and method == 'GET':
+                return 200, {'mensagens': self.store.items(db, 'saida')}
+            if path == '/api/espera':
+                if method == 'POST':
+                    return 201, {'id': self.new_wait(db, body)['id']}
+                if method == 'GET':
+                    entries = []
+                    for entry in self.store.items(db, 'espera'):
+                        if entry['data'] == query.get('data', entry['data']):
+                            client = self.find(db, 'clientes', entry['cliente_id'])
+                            entries.append({**entry, 'nome': client['nome'], 'telefone': client['telefone']})
+                    return 200, {'espera': entries}
+            if path == '/api/tarefas/rodar' and method == 'POST':
+                now = instant(body['agora']) if 'agora' in body else self.now()
+                count = 0
+                for r in self.store.items(db, 'reservas'):
+                    c = self.find(db, 'clientes', r['cliente_id'])
+                    if r['status'] == 'reservada' and not r.get('confirmacao_enviada') and not c['nao_contatar'] and c['telefone'] and now < instant(r['inicio']) <= now + timedelta(hours=self.config['confirmacao_horas']):
+                        self.output(db, c, 'confirmacao', f"Confirme {self.describe(r)}: 1 confirmar / 2 cancelar.", r['id'])
+                        r['confirmacao_enviada'] = True
+                        self.store.update(db, 'reservas', r)
+                        count += 1
+                for c in self.store.items(db, 'clientes'):
+                    if not c['consentimento_marketing'] or c['nao_contatar'] or not c['telefone']:
+
+Requer Python 3, sem pacotes adicionais para a aplicação:
+
+```sh
+./reserva serve --porta 8080 --dados ./dados
+```
+
+A primeira linha informa `PORTA=<n>`; `--porta 0` escolhe uma porta livre.
+O servidor escuta em `127.0.0.1`. Na primeira execução cria a pasta de dados,
+copia `exemplos/restaurante.json` e semeia `reservas.sqlite3`.
+Troque o token no JSON antes de usar dados reais. Rotas da equipe exigem
+`X-Token`; `/api/saude`, `/api/saloes` e `GET /api/turnos` são públicas.
+Mesas, turnos e FAQ são persistidos no SQLite e editados pelas rotas da seção 14;
+editar essas listas no JSON depois da primeira execução não altera o banco.
+Outras configurações do JSON são recarregadas ao reiniciar.
+
+`RESERVA_AGORA=AAAA-MM-DDTHH:MM` fixa o relógio para testes; sem a variável,
+o sistema usa a hora local. Clientes e reservas já podem ser gerenciados pela API
+(`/api/clientes`, `/api/reservas` e `/api/ocupacao`); a disponibilidade é pública
+em `/api/horarios?data=AAAA-MM-DD&pessoas=N`. Cancelamento, remarcação e
+chegada/no-show usam as ações da seção 5 do contrato. A conversa funciona por `POST /api/mensagens`; ofertas de espera, confirmação,
+aprovação/recusa e campanhas usam uma caixa de saída simulada (`GET /api/saida`).
+Execute `POST /api/tarefas/rodar` para gerar confirmações, aniversários e convites
+de retorno devidos. Estado da conversa e histórico persistem no banco.
+As páginas e os canais Evolution/Telegram ainda estão pendentes.
+
+## Deploy na VPS
+
+**Pendente nesta versão:** Docker, integrações e comandos de backup ainda precisam
+ser implementados e validados antes do deploy. A entrega seguirá a seção 19 do
+contrato: serviço `reserva` no Compose, volume `/dados`, `.env` com as variáveis
+de integração e porta publicada apenas em `127.0.0.1:8080`.
+
+Com essa entrega disponível, o procedimento será `docker compose up -d --build`,
+com proxy reverso HTTPS na frente. Configure a Evolution com evento
+`MESSAGES_UPSERT` e caminho `/webhook/evolution/<segredo>`; registre o webhook do
+Telegram em `/webhook/telegram` usando `setWebhook` e `secret_token`.
+O backup diário usará `./reserva backup --dados DIR --saida ARQ` no cron;
+restauração será feita com o servidor parado. Estes comandos de operação serão
+completados e verificados no ciclo de Docker/backup. Nenhum deploy foi executado.
+0.4.0
+
+exec
+/bin/bash -lc "cat > src/operations.py <<'EOF'
+\"\"\"Bloqueios, anonimização e indicadores locais do restaurante.\"\"\"
+import calendar
+from datetime import datetime, timedelta
+import re
+from uuid import uuid4
+from .booking import ACTIVE, APIError, instant, required
+
+
+class Operations:
+    def operations_dispatch(self, method, path, body, query):
+        with self.store.transaction() as db:
+            if path == '/api/raiox' and method == 'GET':
+                return 200, self.raiox(db, query.get('mes'))
+            parts = path.strip('/').split('/')
+            identifier = parts[2] if len(parts) == 3 else None
+            if identifier is not None:
+                self.find(db, 'bloqueios', identifier)
+                if method == 'DELETE':
+                    db.execute('DELETE FROM cadastros WHERE tipo=? AND id=?', ('bloqueios', identifier))
+                    return 204, None
+            elif method == 'GET':
+                return 200, {'bloqueios': sorted(self.store.items(db, 'bloqueios'), key=lambda b: b['inicio'])}
+            elif method == 'POST':
+                self.check_room(body.get('salao'))
+                if body.get('mesa') is not None:
+                    self.find(db, 'mesas', body['mesa'])
+                required(body, 'inicio', 'fim', 'motivo')
+                if instant(body['inicio']) >= instant(body['fim']):
+                    raise APIError(422, 'intervalo_invalido')
+                item = {k: body.get(k) for k in ('inicio', 'fim', 'motivo', 'salao', 'mesa')}
+                item['id'] = uuid4().hex
+                affected = {t['id'] for t in self.store.items(db, 'mesas')
+                            if (t['id'] == item['mesa'] if item['mesa'] else
+                                not item['salao'] or t['salao'] == item['salao'])}
+                conflicts = [r['id'] for r in self.store.items(db, 'reservas') if r['status'] in ACTIVE
+                             and r['inicio'] < item['fim'] and r['fim'] > item['inicio']
+                             and affected.intersection(r['mesas'])]
+                self.store.insert(db, 'bloqueios', item)
+                return 201, {'id': item['id'], 'conflitos': conflicts}
+        raise APIError(404, 'rota_inexistente')
+
+    def anonymize(self, db, client):
+        tel = client['telefone']
+        client.update(nome='removido', telefone=None, aniversario=None,
+                      consentimento_marketing=False, nao_contatar=True)
+        self.store.update(db, 'clientes', client)
+        for entry in self.store.items(db, 'espera'):
+            if entry['cliente_id'] == client['id']:
+                entry['status'] = 'cancelada'
+                self.store.update(db, 'espera', entry)
+        for reservation in self.store.items(db, 'reservas'):
+            if reservation['cliente_id'] == client['id']:
+                reservation['observacao'] = ''
+                if reservation['status'] in ('reservada', 'confirmada', 'pendente') and instant(reservation['inicio']) > self.now():
+                    self.cancel(db, reservation)
+                self.store.update(db, 'reservas', reservation)
+        for kind in ('mensagens', 'saida', 'humano'):
+            for item in self.store.items(db, kind):
+                if (tel is not None and item.get('telefone') == tel) or item.get('cliente_id') == client['id']:
+                    item.update(telefone=None, cliente_id=client['id'], texto='')
+                    if kind == 'saida':
+                        item['respondida'] = True
+                    if kind == 'humano':
+                        item.update(nome='removido', motivo='', status='encerrado')
+                    self.store.update(db, kind, item)
+        if tel is not None:
+            db.execute('DELETE FROM cadastros WHERE tipo=? AND id=?', ('conversas', tel))
+
+    def raiox(self, db, month):
+        try:
+            if not isinstance(month, str) or not re.fullmatch(r'\\d{4}-\\d{2}', month):
+                raise ValueError()
+            first = datetime.strptime(month, '%Y-%m')
+        except ValueError:
+            raise APIError(422, 'mes_invalido')
+        reservations = self.store.items(db, 'reservas')
+        monthly = [r for r in reservations if r['inicio'][:7] == month]
+        visits = {}
+        for r in reservations:
+            if r['status'] == 'chegou':
+                visits.setdefault(r['cliente_id'], []).append(instant(r['inicio']).date())
+        cohort = [sorted(v) for v in visits.values() if min(v).strftime('%Y-%m') == month]
+        returning = sum(len(v) > 1 and v[1] <= v[0] + timedelta(days=60) for v in cohort)
+        attended = sum(r['status'] == 'chegou' for r in monthly)
+        absent = sum(r['status'] == 'no_show' for r in monthly)
+        reserved = sum(len(r['mesas']) * (instant(r['fim']) - instant(r['inicio'])).total_seconds() / 60
+                       for r in monthly if r['status'] in ACTIVE)
+        tables = sum(t['ativa'] for t in self.store.items(db, 'mesas'))
+        available = 0
+        for day in range(1, calendar.monthrange(first.year, first.month)[1] + 1):
+            date = first.replace(day=day)
+            if date.strftime('%Y-%m-%d') in self.config.get('feriados', []):
+                continue
+            weekday = ('seg', 'ter', 'qua', 'qui', 'sex', 'sab', 'dom')[date.weekday()]
+            for shift in self.store.items(db, 'turnos'):
+                if shift['ativo'] and weekday in shift['dias']:
+                    start, end = (datetime.strptime(shift[k], '%H:%M') for k in ('inicio', 'fim'))
+                    available += tables * (end - start).total_seconds() / 60
+        def percent(numerator, denominator):
+            return round(100 * numerator / denominator, 1) if denominator else 0
+        return {'pacote': 'restaurante', 'mes': month, 'valores': {
+            'clientes_novos_mes': len(cohort), 'retorno_atual_pct': percent(returning, len(cohort)),
+            'reservas_atendidas_mes': attended, 'no_show_pct': percent(absent, attended + absent),
+            'ocupacao_pct': percent(reserved, available)}}
+EOF
+python3 - <<'PY'
+from pathlib import Path
+p=Path('src/server.py'); s=p.read_text().replace('class Application(Conversation, Booking):','from .operations import Operations\\n\\n\\nclass Application(Operations, Conversation, Booking):'); s=s.replace('        if path.split(\"/\")[2:3]', '        if path == \"/api/raiox\" or path == \"/api/bloqueios\" or path.startswith(\"/api/bloqueios/\"):\\n            return self.operations_dispatch(method, path, body, query or {})\\n        if path.split(\"/\")[2:3]',1); p.write_text(s)
+p=Path('src/booking.py'); s=p.read_text().replace(\"if m['telefone'] == existing['telefone']\", \"if m.get('cliente_id') == existing['id'] or (existing['telefone'] is not None and m['telefone'] == existing['telefone'])\"); s=s.replace(\"            if kind == 'clientes':\", \"            if kind == 'clientes':\\n                if method == 'DELETE' and existing and action is None:\\n                    self.anonymize(db, existing)\\n                    return 204, None\",1); p.write_text(s)
+PY" in /home/nmaldaner/projetos/reserva-restaurante
+ succeeded in 0ms:
+exec
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+p=Path('src/cli.py'); s=p.read_text().replace('import argparse','import argparse\\nimport json\\nfrom pathlib import Path\\nimport sqlite3\\nimport tempfile\\nimport zipfile'); s=s.replace('    args = parser.parse_args()', '''    for command, option in (('backup', '--saida'), ('restaurar', '--entrada'), ('raiox', '--acompanhamento')):
+        sub = commands.add_parser(command)
+        sub.add_argument('--dados', required=True)
+        sub.add_argument(option, required=True)
+        if command == 'raiox':
+            sub.add_argument('--mes', required=True)
+    args = parser.parse_args()
+    if args.command in ('backup', 'restaurar'):
+        directory = Path(args.dados)
+        if args.command == 'backup':
+            with tempfile.TemporaryDirectory() as temporary:
+                snapshot = Path(temporary) / 'reservas.sqlite3'
+                with sqlite3.connect(directory / 'reservas.sqlite3') as source, sqlite3.connect(snapshot) as target:
+                    source.backup(target)
+                with zipfile.ZipFile(args.saida, 'w', compression=zipfile.ZIP_DEFLATED) as archive:
+                    archive.write(snapshot, 'reservas.sqlite3')
+                    archive.write(directory / 'restaurante.json', 'restaurante.json')
+        else:
+            with zipfile.ZipFile(args.entrada) as archive:
+                contents = {name: archive.read(name) for name in ('reservas.sqlite3', 'restaurante.json')}
+            json.loads(contents['restaurante.json'])
+            directory.mkdir(parents=True, exist_ok=True)
+            for name, content in contents.items():
+                target = directory / name
+                temporary = target.with_suffix('.restaurando')
+                temporary.write_bytes(content)
+                temporary.replace(target)
+        return'''); s=s.replace('    with make_server(app, args.host, args.porta) as server:', '''    if args.command == 'raiox':
+        path = Path(args.acompanhamento)
+        document = json.loads(path.read_text(encoding='utf-8'))
+        with app.store.transaction() as db:
+            measured = app.raiox(db, args.mes)['valores']
+        previous = [m for m in document['meses'] if m['mes'] < args.mes]
+        baseline = max(previous, key=lambda m: m['mes']) if previous else document['base']
+        entry = {'mes': args.mes, 'valores': {**baseline['valores'], **measured}, 'obs': 'reserva-restaurante'}
+        document['meses'] = sorted([m for m in document['meses'] if m['mes'] "'!= args.mes] + [entry], key=lambda m: m['"'mes'])
+        temporary = path.with_suffix(path.suffix + '.tmp')
+        temporary.write_text(json.dumps(document, ensure_ascii=False, indent=2) + '\\\\n', encoding='utf-8')
+        temporary.replace(path)
+        return
+    with make_server(app, args.host, args.porta) as server:'''); p.write_text(s)
+Path('VERSION').write_text('0.5.0\\n')
+p=Path('README.md'); s=p.read_text(); import re
+s=re.sub(r'(?m)"'^.*Estado.*$'"', '**Estado:** v0.5.0 — reservas, conversa, cadastros, bloqueios, backup, LGPD e Raio-X implementados; integrações, Docker e páginas pendentes.', s, count=1)
+s=s.replace('Docker, integrações e comandos de backup ainda precisam','Docker e integrações ainda precisam')
+s += '''\\n## Backup e indicadores\\n\\n"'`./reserva backup --dados ./dados --saida copia.bak` cria um arquivo ZIP com'"\\nconfiguração e cópia consistente do SQLite, mesmo com o servidor ligado.\\nPare o servidor antes de "'`./reserva restaurar --dados ./dados --entrada copia.bak`.'"\\nA restauração substitui banco e configuração. Guarde o backup com acesso restrito:\\nele contém os dados pessoais existentes no momento da cópia.\\n\\n"'`GET /api/raiox?mes=AAAA-MM` calcula os indicadores mensais para a equipe.'"\\n"'`./reserva raiox --dados ./dados --mes AAAA-MM --acompanhamento painel.json`'"\\natualiza o mês no acompanhamento existente, preservando as medidas herdadas\\ndo mês anterior (ou da base). Bloqueios são gerenciados em "'`/api/bloqueios`;'"\\na exclusão em "'`/api/clientes/{id}` anonimiza e cancela reservas futuras'"\\npelo fluxo normal de oferta à lista de espera.\\n'''; p.write_text(s)
+PY
+python3 -m pytest -q tests/ > longrun/2026-10-05-reservas-v1/pytest-ciclo-4.log 2>&1; tail -n 30 longrun/2026-10-05-reservas-v1/pytest-ciclo-4.log" in /home/nmaldaner/projetos/reserva-restaurante
+exec
+/bin/bash -lc "bash longrun/2026-10-05-reservas-v1/verificar-limites.sh; git diff --stat; rg -n 'Estado|respond|penden|conversas' src/conversation.py README.md" in /home/nmaldaner/projetos/reserva-restaurante
+ succeeded in 177ms:
+LIMITES OK (hash a177d907bfc8ce90, 93 testes, escopo ok, sem API/rede)
+ README.md                                      |  19 +-
+ VERSION                                        |   2 +-
+ longrun/2026-10-05-reservas-v1/loop.log        |   2 +
+ longrun/2026-10-05-reservas-v1/teste-final.log | 966 ++++---------------------
+ src/booking.py                                 |   5 +-
+ src/cli.py                                     |  45 ++
+ src/server.py                                  |   7 +-
+ 7 files changed, 204 insertions(+), 842 deletions(-)
+README.md:13:**Estado:** v0.5.0 — reservas, conversa, cadastros, bloqueios, backup, LGPD e Raio-X implementados; integrações, Docker e páginas pendentes.
+README.md:19:- Equipe: `/equipe` (token) com reservas do dia por turno e salão, mapa de ocupação por horário, chegada/no-show, aprovar/recusar grupo grande, cadastros e bloqueios; Telegram com `/reservas`, `/fila`, `/responder`, `/encerrar`, `/aprovar`, `/recusar` e avisos de reserva nova, cancelada e grupo grande.
+README.md:25:O ciclo é: responder as decisões → congelar o contrato → rodar um agente até `93 passed` + `LIMITES OK` → verificação independente. Tudo pela assinatura (Codex ou Claude Code); nenhuma API paga é chamada.
+README.md:32:- Para a verificação independente: `docker` (faz `docker build` e sobe o container uma vez).
+README.md:79:python3 longrun/2026-10-05-reservas-v1/verificar-independente.py   # INDEPENDENTE OK
+README.md:82:`verificar-limites.sh` é a camada "limite" do `goal.md`: hash do contrato intacto, nº de testes igual, só arquivos do escopo, sem SDK/dependência externa, sem credencial, sem URL externa, sem `0.0.0.0` no código. `verificar-independente.py` (nível 4, o agente não o vê no prompt) procura valores da fixture copiados no código, sobe um restaurante **nunca visto** (passo de 15 min, um turno, combinação de 3 mesas, sem limite de cozinha) com todos os argumentos explícitos, e faz `docker build` + healthcheck do container. Depois, abrir `/` e `/equipe` no navegador.
+README.md:122:de retorno devidos. Estado da conversa e histórico persistem no banco.
+README.md:123:As páginas e os canais Evolution/Telegram ainda estão pendentes.
+src/conversation.py:25:        if reservation['status'] not in ('reservada', 'confirmada', 'pendente'):
+src/conversation.py:30:            if entry['status'] != 'pendente' or entry['data'] != reservation['inicio'][:10] or entry['turno'] != reservation['turno']:
+src/conversation.py:56:        item.update(id=uuid4().hex, status='pendente')
+src/conversation.py:120:                if method == 'POST' and parts[3] == 'responder':
+src/conversation.py:134:        state = next((s for s in self.store.items(db, 'conversas') if s['id'] == tel), None)
+src/conversation.py:137:            self.store.insert(db, 'conversas', state)
+src/conversation.py:141:            self.store.update(db, 'conversas', state)
+src/conversation.py:214:                    return reply(('Aguardando aprovação da equipe: ' if r['status'] == 'pendente' else 'Reservado: ') + self.describe(r))
+src/conversation.py:236:                    if r['status'] not in ('reservada', 'confirmada', 'pendente'):
+src/conversation.py:245:        if last and not last.get('respondida'):
+src/conversation.py:254:                    last['respondida'] = True
+src/conversation.py:260:                last['respondida'] = True
+src/conversation.py:274:            reservations = [r for r in self.reservation_list(db, {'cliente_id': client['id']}) if r['status'] in ('reservada', 'confirmada', 'pendente') and instant(r['inicio']) > self.now()] if client else []
+
+codex
+As quatro partes estão implementadas, e o verificador já retornou `LIMITES OK`. A suíte completa está rodando. Vou conferir também se a anonimização mantém os históricos de clientes diferentes separados, algo que o teste atual de exclusão não cobre.
+
+exec
+/bin/bash -lc "python3 - <<'PY'
+from tempfile import TemporaryDirectory
+from src.server import Application
+from src.storage import Store
+with TemporaryDirectory() as directory:
+    app = Application(Store(directory))
+    ids = []
+    for name, tel in [('Cliente A', '11912345678'), ('Cliente B', '21912345678')]:
+        _, client = app.dispatch('POST', '/api/clientes', {'nome': name, 'telefone': tel})
+        ids.append(client['id'])
+        app.dispatch('POST', '/api/mensagens', {'telefone': tel, 'texto': 'mensagem privada ' + name})
+        app.dispatch('DELETE', '/api/clientes/' + client['id'], {})
+    for cid in ids:
+        _, data = app.dispatch('GET', '/api/clientes/' + cid + '/dados', {})
+        assert len(data['mensagens']) == 2, data
+        assert all(m['texto'] == '' for m in data['mensagens'])
+    _, response = app.dispatch('POST', '/api/mensagens', {'telefone': '11912345678', 'texto': 'reservar'})
+    assert 'nome' in response['respostas'][0]
+print('LGPD: históricos isolados e telefone antigo desconhecido OK')
+PY" in /home/nmaldaner/projetos/reserva-restaurante
+ succeeded in 38ms:
+LGPD: históricos isolados e telefone antigo desconhecido OK
+
+exec
+/bin/bash -lc "date '+%Y-%m-%d %H:%M %z'; cat FALHAS.md; cat longrun/2026-10-05-reservas-v1/decisions.md; git status --short" in /home/nmaldaner/projetos/reserva-restaurante
+ succeeded in 0ms:
+2026-10-19 14:03 -0300
+# FALHAS
+
+| data | o que quebrou | menor correção | prompt \| infra |
+|---|---|---|---|
+| 2026-10-19 13:59 -0300 | Conversa e automações ainda retornavam rota inexistente | Adicionar estado/histórico persistentes e reutilizar alocador/cancelamento; 68 testes passam | prompt (implementação parcial) |
+| 2026-10-19 13:54 -0300 | Horários e reservas respondiam 404 e bloqueavam os fluxos dependentes | Implementar clientes e alocador transacional compartilhado; 38 testes passam | infra (implementação ausente) |
+| 2026-10-05 | validação: `Servidor` subido fora de `try/finally` em 5 testes (`test_estado_persiste_ao_reiniciar`, `test_confirmacao_sobrevive_a_reinicio`, `test_reativacao_apos_60_dias_uma_por_visita`, `test_semente_so_na_primeira_vez`, `test_backup_e_restaurar`, `montar_mes`) — asserção falhando antes do `parar()` deixava `reserva serve` órfão (aconteceu 14 h no atende-clinica) | `conftest.py`: lista `SERVIDORES` + fixture `autouse` que para todos no teardown | infra |
+| 2026-10-05 | validação: contradição spec × teste — §14 e `test_mesa_nova_validacoes` diziam 422 para `POST /api/mesas` com salão inexistente, mas a regra geral da §5 (commit `fc103f3`) manda 404 para id inexistente no corpo; implementador honesto falharia o teste | unificar para 404 (linha 15 do teste + 2 células da tabela §14) | prompt |
+| 2026-10-05 | validação: spec §1 não dizia que `--dados DIR` é criado se faltar; o `verificar-independente.py` faz `docker run` sem volume em `/dados` → container cairia e `INDEPENDENTE OK` nunca sairia | frase em §1 ("cria DIR se não existir") e §19 (sobe sem volume; healthcheck via `python3 -c`) | prompt |
+| 2026-10-05 | validação: §4 não dizia que o 401 precede 404/409/422 (`test_rotas_da_equipe_exigem_token` manda `{}` sem token e espera 401) | frase em §4 | prompt |
+| 2026-10-05 | validação: §6.5 não fixava a ordem da lista "minha reserva" (teste espera ordem de `inicio` e o número escolhido depende dela) | "em ordem de `inicio`" em §6.5 | prompt |
+| 2026-10-05 | validação: §6.4 "última mensagem de saída" ambígua — §11 chama de `saida` também as respostas do bot; lida assim, qualquer FAQ apagaria a pendência de confirmação | "última mensagem da caixa de saída (`/api/saida`)" em §6.4 | prompt |
+| 2026-10-05 | validação: §5 `remarcar` dizia que as mesas da própria reserva contam como livres, mas não que as `pessoas` dela saem da soma do limite da cozinha | frase na linha de `remarcar` | prompt |
+| 2026-10-05 | validação: §14 turnos — "sobreposição" sem regra de ponta; `test_turno_novo_e_validacoes` espera que `[11:30,15:00)` e `[15:00,17:00)` não se sobreponham | referência à regra semiaberta da §3 | prompt |
+| 2026-10-05 | validação: `test_env_exemplo` exige `"http" not in` o arquivo inteiro e a §19 só dizia "nenhuma URL real" (um comentário `# ex.: http://...` derrubaria o teste); o exemplo `http://evolution:8080` da §17 copiado para o código cai no grep do `verificar-limites.sh` | frases em §17 e §19 | prompt |
+| 2026-10-05 | validação: conftest só decodifica JSON em 2xx quando `Content-Type` contém `json`; a spec não exigia o header | frase no topo da §5 | prompt |
+| 2026-10-05 | validação: `test_dados_e_exclusao` espera `GET .../dados` 200 anonimizado após `DELETE`; §5/§11 só diziam "204; anonimiza" | frase na linha do `DELETE` | prompt |
+| 2026-10-05 | validação: §10 não dizia que a data de um `chegou` é o `inicio` da reserva (não o momento da marcação) para coorte e retorno | frase em §10 | prompt |
+| 2026-10-05 | validação: §6 fluxo — `test_reserva_cliente_conhecido` exige que a resposta ao cliente conhecido não contenha `nome`; spec só dizia o caso do desconhecido | frase em §6 | prompt |
+| 2026-10-05 | hash congelado não cobria `verificar-independente.py`: no /goal interativo o agente podia enfraquecer o verificador (achado na validação do reserva-hotel) | incluir o arquivo na lista do hash em congelar.sh e verificar-limites.sh | prompt |
+# Decisões (só acrescentar)
+
+| data | decisão | motivo | alternativa descartada |
+|---|---|---|---|
+
+- 2026-10-19 13:50 -0300 · Cadastros em tabela SQLite com ordem autoincremental e JSON por item; marcador de semente independente de tabelas vazias. Cada operação usa conexão própria e BEGIN IMMEDIATE; motor de reservas deverá validar e inserir na mesma transação. HTTP com biblioteca padrão e autenticação central antes do corpo.
+
+- 2026-10-19 13:54 -0300 · Clientes e reservas reutilizam armazenamento de documentos SQLite ordenados por criação, com ids UUID. Booking concentra validação/alocação e todas as mutações ocorrem sob BEGIN IMMEDIATE, incluindo remarcação e atualização das visitas. Horários consultam o mesmo alocador das reservas.
+
+- 2026-10-19 13:59 -0300: conversa e efeitos locais ficam na mesma transação SQLite do alocador. Histórico separado da caixa de saída: resposta do bot não substitui pendência de confirmação/espera. Cancelamento compartilhado oferece espera; recusa de grupo não oferece. Transporte externo fica para próximo ciclo.
+ M README.md
+ M VERSION
+ M longrun/2026-10-05-reservas-v1/loop.log
+ M longrun/2026-10-05-reservas-v1/teste-final.log
+ M src/booking.py
+ M src/cli.py
+ M src/server.py
+?? longrun/2026-10-05-reservas-v1/ciclo-4.log
+?? longrun/2026-10-05-reservas-v1/pytest-ciclo-4.log
+?? src/operations.py
+
+exec
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+p=Path('README.md'); s=p.read_text().replace('O backup diário usará "'`./reserva backup --dados DIR --saida ARQ` no cron;'"\\nrestauração será feita com o servidor parado. Estes comandos de operação serão\\ncompletados e verificados no ciclo de Docker/backup. Nenhum deploy foi executado.', 'O backup diário usa "'`./reserva backup --dados DIR --saida ARQ` no cron;'"\\na restauração deve ser feita com o servidor parado. Os comandos de backup e\\nrestauração já estão disponíveis localmente. Nenhum deploy foi executado.'); p.write_text(s)
+PY" in /home/nmaldaner/projetos/reserva-restaurante
+ succeeded in 0ms:
+ succeeded in 67517ms:
+        cid = api_int.cliente("Maria", TEL)
+        api_int.reserva(cid, "2026-10-06T19:00", 2)
+        api_int.post("/api/tarefas/rodar", {})
+        assert "cancelad" in norm(api_int.msg(TEL, "2"))
+>       assert esperar(lambda: any(t.startswith("Cancelada:") and "06/10 19:00" in t for t in textos_tg(externo)))
+E       assert False
+E        +  where False = esperar(<function test_cancelamento_pelo_chat_avisa_equipe.<locals>.<lambda> at 0xe2789e71bf60>)
+
+tests/test_integracoes.py:225: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_basico.py::test_paginas - assert (404 == 200)
+FAILED tests/test_docker.py::test_dockerfile - AssertionError: falta Dockerfile
+FAILED tests/test_docker.py::test_compose - AssertionError: falta docker-comp...
+FAILED tests/test_docker.py::test_env_exemplo_tem_todas_as_variaveis_vazias
+FAILED tests/test_integracoes.py::test_whatsapp_responde_pela_evolution - ass...
+FAILED tests/test_integracoes.py::test_whatsapp_ignora_o_que_nao_e_do_cliente
+FAILED tests/test_integracoes.py::test_whatsapp_sem_texto - assert 404 == 200
+FAILED tests/test_integracoes.py::test_whatsapp_reserva_e_avisa_equipe - asse...
+FAILED tests/test_integracoes.py::test_saida_pela_evolution_com_reenvio - Ass...
+FAILED tests/test_integracoes.py::test_abertura_vai_ao_grupo - assert False
+FAILED tests/test_integracoes.py::test_atendimento_aberto_silencia_bot_e_repassa
+FAILED tests/test_integracoes.py::test_equipe_responde_em_cima_da_mensagem - ...
+FAILED tests/test_integracoes.py::test_webhook_telegram_protegido - assert False
+FAILED tests/test_integracoes.py::test_comandos_responder_encerrar_fila - ass...
+FAILED tests/test_integracoes.py::test_comando_reservas - assert False
+FAILED tests/test_integracoes.py::test_grupo_grande_avisa_e_aprova_pelo_telegram
+FAILED tests/test_integracoes.py::test_recusa_pelo_telegram - assert False
+FAILED tests/test_integracoes.py::test_pagina_da_equipe_responde_e_encerra - ...
+FAILED tests/test_integracoes.py::test_cancelamento_pelo_chat_avisa_equipe - ...
+19 failed, 74 passed in 67.36s (0:01:07)
+
+codex
+A suíte terminou com **74 passed / 19 failed**, seis testes a mais passando e nenhuma regressão observada. Bloqueios, backup/restauração, LGPD e Raio-X passaram; as falhas restantes são de integrações, Docker e páginas. A checagem adicional de isolamento dos históricos também passou. Vou registrar o estado para o próximo ciclo.
+
+exec
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+from datetime import datetime
+stamp=datetime.now().astimezone().strftime('%Y-%m-%d %H:%M %z')
+p=Path('longrun/2026-10-05-reservas-v1')
+(p/'state.md').write_text(f'''# Estado — atualizado {stamp}
+
+## Funciona
+- v0.5.0: base HTTP/SQLite/auth/relógio, cadastros, clientes, horários/alocação, reservas e conversa persistente.
+- Confirmação/espera, aprovação/recusa, aniversários, reativação, campanhas e fila humana local com saída simulada.
+- Bloqueios de restaurante, salão e mesa, com conflitos sem cancelamento automático; DELETE libera disponibilidade.
+- Backup CLI consistente via SQLite backup + configuração em ZIP; restauração com servidor parado.
+- LGPD: anonimização preserva id e visitas, limpa textos/observações, cancela esperas próprias antes de oferecer vagas, cancela reservas futuras pelo caminho normal e remove estado do telefone antigo. Históricos anonimizados associados por cliente_id para não misturar clientes sem telefone.
+- Raio-X HTTP/CLI: coorte da primeira visita, retorno em até 60 dias, presença/no-show e mesa-minutos; CLI mescla sobre mês anterior/base e substitui mês sem duplicar.
+- Suíte completa: **74 passed / 19 failed** em 67,36 s; log "'`pytest-ciclo-4.log`. Nenhuma regressão observada. Checagem local adicional de dois históricos anonimizados isolados e telefone antigo desconhecido: OK.
+- Verificador: **LIMITES OK**, hash a177d907bfc8ce90, 93 testes, escopo preservado. Sem API real/rede externa ou commit.
+
+## Falta
+- Evolution/Telegram, reenvio de pendentes, webhooks e avisos à equipe (15 testes de integrações ainda falham).
+- Dockerfile, Compose e .env.exemplo (3 testes); páginas web (1 teste), finalizar README operacional.
+- Rever pendências de confirmação após remarcação e vínculo do histórico ao editar telefone (fora da cobertura atual).
+- Não marcar concluído: restam 19 testes e partes do contrato.
+
+## Como retomar
+1. Ler goal → state → plan → canal → fim de progress/failures. Spec inteira, conftest e fixture foram lidos neste ciclo.
+2. `Application` herda Operations, Conversation e Booking. `src/operations.py` concentra bloqueios, anonimização e indicadores; CLI em `src/cli.py`.
+3. `output()` deve integrar transporte por ambiente; `cancel()` já oferece espera. As operações estão sob Store.transaction(). Integrações só contra falso local dos testes.
+4. Histórico atual por telefone; registros anonimizados recebem cliente_id. Não comparar telefone nulo na consulta de dados. Backup inclui banco e restaurante.json; restauração exige processo parado.
+5. Rodar suíte completa com saída em arquivo e ler apenas tail -n 30; executar verificar-limites.sh. Não fazer commit.
+'"''')
+(p/'plan.md').write_text('''# Plano
+
+## Estratégia atual
+Operações locais implementadas e verificadas; 74/93 testes passam. Próximo ciclo deve implementar transportes por ambiente e testar somente com servidor falso.
+
+## Próximos 3 passos
+1. Evolution: webhook com segredo/deduplicação, origem whatsapp, envio de respostas e saída, retry de pendentes; revisar pendência de confirmação após remarcação.
+2. Telegram: abertura/repasse da fila humana, replies/comandos, proteção do webhook e avisos de reservas/grupos/cancelamentos; rodar suíte completa.
+3. Docker/Compose/.env.exemplo, README operacional e páginas web; testar suíte e limites, concluir apenas com 93 passed e LIMITES OK.
+''')
+for name,line in {
+'progress.md': f'| {stamp} | v0.5.0 bloqueios, backup/restauração, LGPD e Raio-X HTTP/CLI | sem commit (loop externo) | 74 passed / 19 failed (67,36 s); LIMITES OK; isolamento LGPD OK | — | 0 |',
+'failures.md': f'| {stamp} | 19 testes ainda falham em integrações, Docker e páginas ausentes | Implementadas operações locais e rodada suíte completa | 74 passed / 19 failed; nenhum conflito teste/spec identificado | implementação parcial |',
+'decisions.md': f'- {stamp} · Backup ZIP contém snapshot obtido por sqlite3.Connection.backup e restaurante.json; restauração com servidor parado. LGPD vincula histórico apagado ao id do cliente e desvincula o telefone; cancela espera própria antes de liberar mesas. Raio-X compartilhado HTTP/CLI calcula visitas pelo início da reserva e mescla sobre último mês anterior/base.',
+'canal.md': f'- {stamp} · fato · Operações locais passam; total 74/93. Novo mixin Operations em src/operations.py. Backup é ZIP (SQLite + JSON), não arquivo SQLite puro. Históricos apagados usam cliente_id; comparar telefone=None misturaria clientes removidos. Checagem com dois clientes anonimizados passou. Faltam 15 testes de integrações, 3 Docker e 1 páginas.'
+}.items():
+    with (p/name).open('a') as out: out.write('\\n'+line+'\\n')
+p=Path('FALHAS.md'); s=p.read_text(); line=f'| {stamp} | Bloqueios/LGPD/Raio-X retornavam 404 e CLI não tinha backup/restauração | Adicionar operações locais compartilhadas, snapshot SQLite e vínculo de histórico anonimizado por id; 74 testes passam | infra (implementação ausente) |\\n'; marker='|---|---|---|---|\\n'; s=s.replace(marker,marker+line,1); p.write_text(s)
+PY
+bash longrun/2026-10-05-reservas-v1/verificar-limites.sh" in /home/nmaldaner/projetos/reserva-restaurante
+ succeeded in 141ms:
+LIMITES OK (hash a177d907bfc8ce90, 93 testes, escopo ok, sem API/rede)
+
+codex
+Ciclo registrado: v0.5.0 implementa bloqueios, backup/restauração, LGPD e Raio-X HTTP/CLI.
+
+- **Pytest:** 74 passed / 19 failed.
+- **Limites:** LIMITES OK.
+- Estado, plano e registros atualizados; sem commit.
+
+Restam integrações Evolution/Telegram, Docker e páginas. O projeto ainda não está concluído.
+hook: Stop
+hook: Stop Completed
+tokens used
+67,583
+Ciclo registrado: v0.5.0 implementa bloqueios, backup/restauração, LGPD e Raio-X HTTP/CLI.
+
+- **Pytest:** 74 passed / 19 failed.
+- **Limites:** LIMITES OK.
+- Estado, plano e registros atualizados; sem commit.
+
+Restam integrações Evolution/Telegram, Docker e páginas. O projeto ainda não está concluído.

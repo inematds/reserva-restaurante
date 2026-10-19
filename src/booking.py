@@ -172,12 +172,15 @@ class Booking:
             if kind == 'horarios' and method == 'GET':
                 return 200, {'horarios': self.slots(db, query)}
             if kind == 'clientes':
+                if method == 'DELETE' and existing and action is None:
+                    self.anonymize(db, existing)
+                    return 204, None
                 if method == 'GET' and identifier is None:
                     term = normalized(query.get('busca', ''))
                     digits = re.sub(r'\D', '', term)
                     return 200, {'clientes': [c for c in self.store.items(db, kind) if term in normalized(c['nome']) or (digits and digits in (c['telefone'] or ''))]}
                 if method == 'GET' and action == 'dados':
-                    return 200, {'cliente': existing, 'reservas': self.reservation_list(db, {'cliente_id': existing['id']}), 'mensagens': [{k: m[k] for k in ('direcao', 'texto', 'quando')} for m in self.store.items(db, 'mensagens') if m['telefone'] == existing['telefone']]}
+                    return 200, {'cliente': existing, 'reservas': self.reservation_list(db, {'cliente_id': existing['id']}), 'mensagens': [{k: m[k] for k in ('direcao', 'texto', 'quando')} for m in self.store.items(db, 'mensagens') if m.get('cliente_id') == existing['id'] or (existing['telefone'] is not None and m['telefone'] == existing['telefone'])]}
                 if method in ('POST', 'PUT') and action is None:
                     if method == 'POST':
                         required(body, 'nome', 'telefone')

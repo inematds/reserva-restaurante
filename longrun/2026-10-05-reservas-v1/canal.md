@@ -15,3 +15,5 @@ Formato: `- AAAA-MM-DD HH:MM · fato|aprendizado|glossário|armadilha · texto`
 
 - 2026-10-19 13:59 -0300 · fato · Conversa/confirmação/espera/grupo/base própria passam integralmente; total 68/93. Conversation é mixin de Application, com saída simulada e histórico por telefone. Store suporta novos tipos sem migração.
 - 2026-10-19 13:59 -0300 · armadilha · Testes de integrações aguardam avisos ausentes e levam a suíte a 65 s. Ainda não há transporte: reenviadas=0. Fila humana local silencia bot; mensagens recebidas ficam no histórico, mas repasse Telegram falta. LGPD deve limpar conversas e textos antigos além de cancelar pelo helper cancel().
+
+- 2026-10-19 14:04 -0300 · fato · Operações locais passam; total 74/93. Novo mixin Operations em src/operations.py. Backup é ZIP (SQLite + JSON), não arquivo SQLite puro. Históricos apagados usam cliente_id; comparar telefone=None misturaria clientes removidos. Checagem com dois clientes anonimizados passou. Faltam 15 testes de integrações, 3 Docker e 1 páginas.

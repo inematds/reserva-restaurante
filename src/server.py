@@ -17,7 +17,10 @@ from .booking import APIError, Booking
 from .conversation import Conversation
 
 
-class Application(Conversation, Booking):
+from .operations import Operations
+
+
+class Application(Operations, Conversation, Booking):
     def __init__(self, store):
         self.store = store
         self.config = store.config
@@ -28,6 +31,8 @@ class Application(Conversation, Booking):
         return self.fixed_now or datetime.now().replace(second=0, microsecond=0)
 
     def dispatch(self, method, path, body, query=None):
+        if path == "/api/raiox" or path == "/api/bloqueios" or path.startswith("/api/bloqueios/"):
+            return self.operations_dispatch(method, path, body, query or {})
         if path.split("/")[2:3] and path.split("/")[2] in ("mensagens", "saida", "espera", "tarefas", "campanhas", "atendimento-humano"):
             return self.conversation_dispatch(method, path, body, query or {})
         if path.split("/")[1:2] == ["api"] and path.split("/")[2:3] and path.split("/")[2] in ("clientes", "reservas", "horarios", "ocupacao"):

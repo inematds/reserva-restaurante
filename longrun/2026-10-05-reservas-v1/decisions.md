@@ -8,3 +8,5 @@
 - 2026-10-19 13:54 -0300 · Clientes e reservas reutilizam armazenamento de documentos SQLite ordenados por criação, com ids UUID. Booking concentra validação/alocação e todas as mutações ocorrem sob BEGIN IMMEDIATE, incluindo remarcação e atualização das visitas. Horários consultam o mesmo alocador das reservas.
 
 - 2026-10-19 13:59 -0300: conversa e efeitos locais ficam na mesma transação SQLite do alocador. Histórico separado da caixa de saída: resposta do bot não substitui pendência de confirmação/espera. Cancelamento compartilhado oferece espera; recusa de grupo não oferece. Transporte externo fica para próximo ciclo.
+
+- 2026-10-19 14:04 -0300 · Backup ZIP contém snapshot obtido por sqlite3.Connection.backup e restaurante.json; restauração com servidor parado. LGPD vincula histórico apagado ao id do cliente e desvincula o telefone; cancela espera própria antes de liberar mesas. Raio-X compartilhado HTTP/CLI calcula visitas pelo início da reserva e mescla sobre último mês anterior/base.

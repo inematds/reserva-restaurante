@@ -10,7 +10,7 @@ Guia completo (landing + passo a passo): **https://inematds.github.io/reserva-re
 
 Reserva de mesa para **um restaurante**, com Python 3 e biblioteca padrão (planejado): salões e mesas com capacidade, turnos por dia da semana, alocação automática da menor mesa que serve, confirmação automática ("1 confirma / 2 cancela"), no-show, lista de espera, grupo grande com aprovação da equipe, FAQ, passagem para humano, base própria de clientes com consentimento (aniversário, convite de retorno, campanhas), chat web + WhatsApp pela Evolution API, equipe pelo Telegram e pela página `/equipe`, backup/restauração, Docker e exportação mensal para o Painel de Recuperação do Raio-X de Margem (pacote `restaurante`).
 
-**Estado (19/10/2026): implementação em andamento, v0.4.0.** Base HTTP/SQLite, cadastros, clientes, alocação/reservas, conversa persistente e histórico, FAQ, fila humana local, confirmação/espera, aprovação de grupos e campanhas implementados. Verificação deste ciclo: **68 passed / 25 failed**, com `LIMITES OK`. Integrações, páginas, bloqueios, LGPD/Raio-X, backup e Docker ainda pendentes. O roteiro de execução longa abaixo continua válido.
+**Estado:** v0.5.0 — reservas, conversa, cadastros, bloqueios, backup, LGPD e Raio-X implementados; integrações, Docker e páginas pendentes.
 
 ## O que o sistema faz (resumo do contrato)
 
@@ -124,7 +124,7 @@ As páginas e os canais Evolution/Telegram ainda estão pendentes.
 
 ## Deploy na VPS
 
-**Pendente nesta versão:** Docker, integrações e comandos de backup ainda precisam
+**Pendente nesta versão:** Docker e integrações ainda precisam
 ser implementados e validados antes do deploy. A entrega seguirá a seção 19 do
 contrato: serviço `reserva` no Compose, volume `/dados`, `.env` com as variáveis
 de integração e porta publicada apenas em `127.0.0.1:8080`.
@@ -133,6 +133,21 @@ Com essa entrega disponível, o procedimento será `docker compose up -d --build
 com proxy reverso HTTPS na frente. Configure a Evolution com evento
 `MESSAGES_UPSERT` e caminho `/webhook/evolution/<segredo>`; registre o webhook do
 Telegram em `/webhook/telegram` usando `setWebhook` e `secret_token`.
-O backup diário usará `./reserva backup --dados DIR --saida ARQ` no cron;
-restauração será feita com o servidor parado. Estes comandos de operação serão
-completados e verificados no ciclo de Docker/backup. Nenhum deploy foi executado.
+O backup diário usa `./reserva backup --dados DIR --saida ARQ` no cron;
+a restauração deve ser feita com o servidor parado. Os comandos de backup e
+restauração já estão disponíveis localmente. Nenhum deploy foi executado.
+
+## Backup e indicadores
+
+`./reserva backup --dados ./dados --saida copia.bak` cria um arquivo ZIP com
+configuração e cópia consistente do SQLite, mesmo com o servidor ligado.
+Pare o servidor antes de `./reserva restaurar --dados ./dados --entrada copia.bak`.
+A restauração substitui banco e configuração. Guarde o backup com acesso restrito:
+ele contém os dados pessoais existentes no momento da cópia.
+
+`GET /api/raiox?mes=AAAA-MM` calcula os indicadores mensais para a equipe.
+`./reserva raiox --dados ./dados --mes AAAA-MM --acompanhamento painel.json`
+atualiza o mês no acompanhamento existente, preservando as medidas herdadas
+do mês anterior (ou da base). Bloqueios são gerenciados em `/api/bloqueios`;
+a exclusão em `/api/clientes/{id}` anonimiza e cancela reservas futuras
+pelo fluxo normal de oferta à lista de espera.
