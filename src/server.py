@@ -20,7 +20,10 @@ from .conversation import Conversation
 from .operations import Operations
 
 
-class Application(Operations, Conversation, Booking):
+from .integrations import Integrations
+
+
+class Application(Integrations, Operations, Conversation, Booking):
     def __init__(self, store):
         self.store = store
         self.config = store.config
@@ -31,6 +34,10 @@ class Application(Operations, Conversation, Booking):
         return self.fixed_now or datetime.now().replace(second=0, microsecond=0)
 
     def dispatch(self, method, path, body, query=None):
+        if method == "POST" and path.startswith("/webhook/evolution/"):
+            return self.evolution_webhook(body)
+        if method == "POST" and path == "/webhook/telegram":
+            return self.telegram_webhook(body)
         if path == "/api/raiox" or path == "/api/bloqueios" or path.startswith("/api/bloqueios/"):
             return self.operations_dispatch(method, path, body, query or {})
         if path.split("/")[2:3] and path.split("/")[2] in ("mensagens", "saida", "espera", "tarefas", "campanhas", "atendimento-humano"):
@@ -121,6 +128,7 @@ def make_server(app, host, port):
         def handle_request(self):
             path = urlsplit(self.path).path
             try:
+                app.webhook_auth(path, self.headers)
                 if path.startswith("/api/") and (self.command, path) not in PUBLIC:
                     expected = app.config.get("token", "")
                     supplied = self.headers.get("X-Token", "")

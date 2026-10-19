@@ -207,6 +207,7 @@ class Booking:
                     item = self.allocate(db, body['inicio'], body['pessoas'], body.get('salao'), body.get('mesa'))
                     item.update(id=uuid4().hex, cliente_id=client['id'], observacao=body.get('observacao', ''))
                     self.store.insert(db, kind, item)
+                    self.notify_reservation(db, item)
                     return 201, item
                 if method == 'POST' and existing:
                     if action in ('cancelar', 'remarcar'):

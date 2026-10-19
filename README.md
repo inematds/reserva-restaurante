@@ -10,7 +10,7 @@ Guia completo (landing + passo a passo): **https://inematds.github.io/reserva-re
 
 Reserva de mesa para **um restaurante**, com Python 3 e biblioteca padrão (planejado): salões e mesas com capacidade, turnos por dia da semana, alocação automática da menor mesa que serve, confirmação automática ("1 confirma / 2 cancela"), no-show, lista de espera, grupo grande com aprovação da equipe, FAQ, passagem para humano, base própria de clientes com consentimento (aniversário, convite de retorno, campanhas), chat web + WhatsApp pela Evolution API, equipe pelo Telegram e pela página `/equipe`, backup/restauração, Docker e exportação mensal para o Painel de Recuperação do Raio-X de Margem (pacote `restaurante`).
 
-**Estado:** v0.5.0 — reservas, conversa, cadastros, bloqueios, backup, LGPD e Raio-X implementados; integrações, Docker e páginas pendentes.
+**Estado:** v0.6.0 — reservas, conversa, cadastros, bloqueios, backup, LGPD, Raio-X e integrações Evolution/Telegram implementados; 89/93 testes passam. Docker e páginas pendentes.
 
 ## O que o sistema faz (resumo do contrato)
 

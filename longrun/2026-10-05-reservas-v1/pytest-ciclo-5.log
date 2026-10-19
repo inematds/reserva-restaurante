@@ -1,0 +1,79 @@
+....F.................................FFF............................... [ 77%]
+.....................                                                    [100%]
+=================================== FAILURES ===================================
+_________________________________ test_paginas _________________________________
+
+api = <conftest.Cliente object at 0xe667ee5e8f50>
+
+    def test_paginas(api):
+        st, html = api.get("/", token=None)
+>       assert st == 200 and 'id="chat"' in html
+E       assert (404 == 200)
+
+tests/test_basico.py:40: AssertionError
+_______________________________ test_dockerfile ________________________________
+
+    def test_dockerfile():
+>       d = ler("Dockerfile")
+            ^^^^^^^^^^^^^^^^^
+
+tests/test_docker.py:14: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+nome = 'Dockerfile'
+
+    def ler(nome):
+        p = RAIZ / nome
+>       assert p.exists(), f"falta {nome}"
+E       AssertionError: falta Dockerfile
+E       assert False
+E        +  where False = exists()
+E        +    where exists = PosixPath('/home/nmaldaner/projetos/reserva-restaurante/Dockerfile').exists
+
+tests/test_docker.py:9: AssertionError
+_________________________________ test_compose _________________________________
+
+    def test_compose():
+>       c = ler("docker-compose.yml")
+            ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_docker.py:22: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+nome = 'docker-compose.yml'
+
+    def ler(nome):
+        p = RAIZ / nome
+>       assert p.exists(), f"falta {nome}"
+E       AssertionError: falta docker-compose.yml
+E       assert False
+E        +  where False = exists()
+E        +    where exists = PosixPath('/home/nmaldaner/projetos/reserva-restaurante/docker-compose.yml').exists
+
+tests/test_docker.py:9: AssertionError
+________________ test_env_exemplo_tem_todas_as_variaveis_vazias ________________
+
+    def test_env_exemplo_tem_todas_as_variaveis_vazias():
+>       e = ler(".env.exemplo")
+            ^^^^^^^^^^^^^^^^^^^
+
+tests/test_docker.py:28: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+nome = '.env.exemplo'
+
+    def ler(nome):
+        p = RAIZ / nome
+>       assert p.exists(), f"falta {nome}"
+E       AssertionError: falta .env.exemplo
+E       assert False
+E        +  where False = exists()
+E        +    where exists = PosixPath('/home/nmaldaner/projetos/reserva-restaurante/.env.exemplo').exists
+
+tests/test_docker.py:9: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_basico.py::test_paginas - assert (404 == 200)
+FAILED tests/test_docker.py::test_dockerfile - AssertionError: falta Dockerfile
+FAILED tests/test_docker.py::test_compose - AssertionError: falta docker-comp...
+FAILED tests/test_docker.py::test_env_exemplo_tem_todas_as_variaveis_vazias
+4 failed, 89 passed in 18.11s

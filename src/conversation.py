@@ -17,6 +17,7 @@ class Conversation:
     def output(self, db, client, kind, text, reservation=None, **extra):
         item = dict(id=uuid4().hex, tipo=kind, telefone=client['telefone'], cliente_id=client['id'],
                     texto=text, reserva_id=reservation, status='simulado', quando=self.now().isoformat(timespec='minutes'), **extra)
+        item['status'] = self.whatsapp(client['telefone'], text)
         self.store.insert(db, 'saida', item)
         self.history(db, client['telefone'], 'saida', text)
         return item
@@ -78,6 +79,16 @@ class Conversation:
                     return 200, {'espera': entries}
             if path == '/api/tarefas/rodar' and method == 'POST':
                 now = instant(body['agora']) if 'agora' in body else self.now()
+                resent = 0
+                for item in self.store.items(db, 'saida'):
+                    if item['status'] != 'pendente' or not item['telefone']:
+                        continue
+                    client = next((c for c in self.store.items(db, 'clientes') if c['id'] == item['cliente_id']), None)
+                    if item['tipo'] in ('confirmacao', 'espera', 'aniversario', 'reativacao', 'campanha') and (not client or client['nao_contatar']):
+                        continue
+                    item['status'] = self.whatsapp(item['telefone'], item['texto'])
+                    self.store.update(db, 'saida', item)
+                    resent += item['status'] == 'enviado'
                 count = 0
                 for r in self.store.items(db, 'reservas'):
                     c = self.find(db, 'clientes', r['cliente_id'])
@@ -98,7 +109,7 @@ class Conversation:
                         c['reativacao_visita'] = c['ultima_visita']
                         count += 1
                     self.store.update(db, 'clientes', c)
-                return 200, {'enviadas': count, 'reenviadas': 0}
+                return 200, {'enviadas': count, 'reenviadas': resent}
             if path == '/api/campanhas' and method == 'POST':
                 if not isinstance(body.get('texto'), str) or not body['texto'].strip():
                     raise APIError(422, 'texto_invalido')
@@ -144,8 +155,10 @@ class Conversation:
             self.history(db, tel, 'saida', message)
             return [message]
         def human(reason):
-            self.store.insert(db, 'humano', dict(id=uuid4().hex, telefone=tel, nome=client['nome'] if client else None,
-                motivo=reason, status='aberto', ultima_mensagem=text))
+            item = dict(id=uuid4().hex, telefone=tel, nome=client['nome'] if client else None,
+                motivo=reason, status='aberto', ultima_mensagem=text)
+            self.store.insert(db, 'humano', item)
+            self.relay_human(db, item, text, opening=True)
             state.update(step=None, misses=0)
         if norm in ('parar', 'sair', 'pare'):
             state['stop'] = True
@@ -153,7 +166,9 @@ class Conversation:
                 client['nao_contatar'] = True
                 self.store.update(db, 'clientes', client)
             return reply('Você não vai mais receber mensagens automáticas.')
-        if any(h['telefone'] == tel and h['status'] == 'aberto' for h in self.store.items(db, 'humano')):
+        opened = next((h for h in self.store.items(db, 'humano') if h['telefone'] == tel and h['status'] == 'aberto'), None)
+        if opened:
+            self.relay_human(db, opened, text)
             return reply(None)
         if any(t in norm for t in ('atendente', 'humano', 'falar com alguem')):
             human('pedido de atendente')
@@ -210,6 +225,7 @@ class Conversation:
                         return reply('Horário ocupado. Escolha outro dia.')
                     r.update(id=uuid4().hex, cliente_id=client['id'], observacao='')
                     self.store.insert(db, 'reservas', r)
+                    self.notify_reservation(db, r, conversation=True)
                     state['step'] = None
                     return reply(('Aguardando aprovação da equipe: ' if r['status'] == 'pendente' else 'Reservado: ') + self.describe(r))
                 shifts = {s['id']: s['nome'] for s in state['shifts']}
@@ -237,6 +253,7 @@ class Conversation:
                         state['step'] = None
                         return reply('Reserva já não pode ser cancelada.')
                     self.cancel(db, r)
+                    self.telegram('Cancelada: ' + self.describe(r))
                     state['step'] = None
                     return reply('Cancelada: ' + self.describe(r))
                 return reply(state['options'])
@@ -251,6 +268,7 @@ class Conversation:
                         self.store.update(db, 'reservas', r)
                     else:
                         self.cancel(db, r)
+                        self.telegram('Cancelada: ' + self.describe(r))
                     last['respondida'] = True
                     self.store.update(db, 'saida', last)
                     state['misses'] = 0
@@ -265,6 +283,7 @@ class Conversation:
                     return reply('Horário já ocupado.')
                 r.update(id=uuid4().hex, cliente_id=entry['cliente_id'], observacao='')
                 self.store.insert(db, 'reservas', r)
+                self.notify_reservation(db, r, conversation=True)
                 entry['status'] = 'atendida'
                 self.store.update(db, 'espera', entry)
                 state['misses'] = 0
@@ -276,6 +295,7 @@ class Conversation:
                 return reply('Não encontrei reservas futuras.')
             if 'cancelar' in norm and len(reservations) == 1:
                 self.cancel(db, reservations[0])
+                self.telegram('Cancelada: ' + self.describe(reservations[0]))
                 return reply('Cancelada: ' + self.describe(reservations[0]))
             options = '\n'.join(f'{i}) {self.describe(r)}' for i, r in enumerate(reservations, 1))
             if 'cancelar' in norm:
