@@ -1,4 +1,4 @@
-# Estado — atualizado 2026-10-19 14:15 -0300
+# Estado — atualizado 2026-10-19 (verificação independente, Claude)
 
 ## Funciona
 concluído
@@ -12,8 +12,8 @@ concluído
 - Navegador Chromium local: chat, login, dados, criação de mesa, logout e mobile 390 px sem overflow; nenhum erro JS. Detector da interface sem apontamentos. Regressão local adicional de troca/reuso de telefone, LGPD e confirmação antiga/nova: OK.
 
 ## Falta
-- Portão humano de nível 4: executar verificar-independente.py, incluindo build Docker e healthcheck real do container, e avaliar as páginas. Build não executado neste ciclo; somente contrato Docker estático verificado pela suíte.
-- Deploy e configuração real de integrações são tarefas do operador, fora deste ciclo. Nenhuma pendência conhecida nos critérios automatizados de nível 3.
+- ~~Portão nível 4~~ FEITO 2026-10-19 (Claude, verificação independente): 93 passed, LIMITES OK, `verificar-independente.py` → INDEPENDENTE OK com `docker build` real + healthcheck do container (imagem `reserva-restaurante-verif`, 148 MB). Dockerfile, docker-compose.yml, .env.exemplo (8 variáveis vazias) e README "Deploy na VPS" conferidos contra a seção 19. Nenhum código alterado; VERSION fica 0.7.0.
+- Humano: abrir `/` e `/equipe` no navegador (opcional; o ciclo 6 já testou em Chromium headless), criar remoto/push e deploy na VPS com credenciais reais.
 
 ## Como retomar
 1. Ler goal → state → plan → canal → fim de progress/failures. Spec inteira, conftest e fixture já foram lidos neste ciclo.
