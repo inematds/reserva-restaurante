@@ -8,6 +8,8 @@
 
 Guia completo (landing + passo a passo): **https://inematds.github.io/reserva-restaurante/guia/**
 
+🎬 Vídeo: https://www.youtube.com/watch?v=Gx2LZlqWa6M
+
 Reserva de mesa para **um restaurante**, com Python 3 e biblioteca padrão: salões e mesas com capacidade, turnos por dia da semana, alocação automática da menor mesa que serve, confirmação automática ("1 confirma / 2 cancela"), no-show, lista de espera, grupo grande com aprovação da equipe, FAQ, passagem para humano, base própria de clientes com consentimento (aniversário, convite de retorno, campanhas), chat web + WhatsApp pela Evolution API, equipe pelo Telegram e pela página `/equipe`, backup/restauração, Docker e exportação mensal para o Painel de Recuperação do Raio-X de Margem (pacote `restaurante`).
 
 **Estado:** v0.7.0 — implementação completa, incluindo chat, equipe e entrega Docker; 93/93 testes passam e LIMITES OK. Navegador local validado; verificação independente OK (restaurante nunca visto, `docker build` + healthcheck do container). Falta o que depende do dono: credenciais reais da Evolution/WhatsApp e do Telegram, deploy na VPS dele e dados reais do restaurante. Para rodar, veja [Executar localmente](#executar-localmente) e [Deploy na VPS](#deploy-na-vps).
